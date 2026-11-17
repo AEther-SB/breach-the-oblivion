@@ -1,0 +1,162 @@
+{
+  "acqua": {
+    "theme": "L'Acqua è l'arte di sopravvivere cambiando forma. Nell'Exalt il corpo diventa una corrente, alternando impeto, adattamento e controllo dei fluidi vitali. Può travolgere ciò che incontra, resistere ai colpi materiali e sottrarre umidità alle creature, senza perdere la propria natura mutevole.",
+    "history": "Nella tradizione dei quattro elementi, l'acqua rappresentava il freddo e l'umido: una qualità della materia, non il moderno elemento chimico. Il suo scorrere e il suo assumere la forma del recipiente spiegano la relazione, qui fantastica, fra malleabilità e trasformazione.",
+    "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+  },
+  "alkahest": {
+    "theme": "Alkahest non cerca di spezzare un'armatura: vuole dimostrare che ogni difesa può essere dissolta. Il materiale separa le protezioni dalla sostanza che dovrebbero custodire, fino a lasciare esposta l'essenza del bersaglio. Il suo potere ha però anche un versante opposto: rendere temporaneamente inalterabile ciò che normalmente muterebbe.",
+    "history": "L'alkahest fu immaginato da alcuni alchimisti come un solvente universale, capace di riportare le sostanze a una condizione fondamentale. Non era un composto identificabile della chimica moderna: era un ideale teorico discusso anche nell'ambito della preparazione dei rimedi.",
+    "historicalUrl": "https://pubmed.ncbi.nlm.nih.gov/11875242/"
+  },
+  "aria": {
+    "theme": "Aria governa le distanze. Nell'Exalt non è soltanto volo, ma un sistema di correnti che solleva, devia, trascina e respinge: dal vortice concentrato fino a una tempesta di cicloni. Chi ne padroneggia la Purezza non occupa semplicemente lo spazio, ma ne ridisegna continuamente i percorsi.",
+    "history": "Per la fisica aristotelica ripresa dagli alchimisti l'aria era uno dei quattro elementi, associato al caldo e all'umido. Il vento non veniva considerato una sostanza distinta: la lettura dei movimenti atmosferici diventa qui una disciplina alchemica autonoma.",
+    "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+  },
+  "fuoco": {
+    "theme": "Fuoco converte l'esistenza dell'Exalt in combustibile. Le faville si moltiplicano, le scie incandescenti segnano il terreno e la fiamma cresce fino all'esplosione di una stella. Il suo tratto distintivo è il prezzo della potenza: più energia viene liberata, più difficile diventa impedire che divori chi la genera.",
+    "history": "Il fuoco era uno dei quattro elementi della filosofia naturale, associato al caldo e al secco. La combustione e la calcinazione erano operazioni essenziali nei laboratori alchemici, benché il fuoco, nella chimica moderna, non sia un elemento materiale.",
+    "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+  },
+  "terra": {
+    "theme": "Terra è la persistenza della materia organizzata. L’Exalt innalza corazze minerali, fa germogliare piattaforme nella pietra e interpone menhir fra gli alleati e il pericolo. Quando la struttura cede, la stessa forza che la teneva salda può propagarsi nel sottosuolo e trasformarsi in una frattura primordiale.",
+    "history": "La terra, nella tradizione dei quattro elementi, era fredda e secca: immagine della stabilità, del peso e della consistenza. In alchimia il lavoro sui minerali era anche un lavoro sulle trasformazioni della materia; qui la metafora diventa costruzione e difesa tangibili.",
+    "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+  },
+  "zero": {
+    "theme": "Zero rappresenta ciò che resta prima che una forma si distingua dalle altre. Non manipola soltanto l'assenza: sottrae proprietà, altera i rapporti fra corpi ed energie e mette in discussione le condizioni che sembravano inevitabili. È un materiale di eccezione, che usa il vuoto come possibilità di riscrittura.",
+    "history": "Zero non è una sostanza storica dell'alchimia. La sua idea si avvicina, per libera interpretazione, alla ricerca della materia prima: uno stato originario da cui le forme particolari dovrebbero emergere. Nel compendio questa nozione è tradotta in una forza fantastica autonoma.",
+    "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+  },
+  "argento": {
+    "theme": "Argento custodisce il potere del riflesso: riproduce volti e gesti, restituisce il colpo ricevuto e permette alle azioni di lasciare un'eco. La sua perfezione non consiste nell'essere immobile, ma nel diventare specchio di ciò che lo circonda; a livelli più profondi, anche il ricordo può essere rimodellato.",
+    "history": "Nell'alchimia planetaria l'argento era associato alla Luna e al suo simbolo. Il nesso con la luce riflessa e con la mutevolezza lunare è un'elaborazione tematica del compendio, non una proprietà attribuita alla metallurgia storica.",
+    "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+  },
+  "argentovivo": {
+    "theme": "Argentovivo è un metallo che non accetta il confine fra solido e fluido. L'Exalt ne assume la mobilità e la dispersione, creando nebbie, riflessi e manifestazioni che attingono al vigore delle creature. La sua opera più grande tende a una presenza quasi incorporea, più difficile da afferrare che da vedere.",
+    "history": "Argentovivo è un nome storico del mercurio, metallo liquido a temperatura ambiente e uno dei protagonisti delle pratiche alchemiche. Nella simbologia tradizionale era collegato al pianeta Mercurio e, in varie dottrine, al principio della volatilità e della trasformazione.",
+    "historicalUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9214491/"
+  },
+  "ferro": {
+    "theme": "Ferro raccoglie la forza del conflitto. Catene e lance impongono la distanza, le ferite alimentano la pressione e la conquista diventa una regola che grava su tutto il campo di battaglia. Nella sua forma estrema, l'Exalt continua a combattere pagando di persona il costo di ogni istante di resistenza.",
+    "history": "Fra i sette metalli planetari, il ferro corrispondeva a Marte. La sua associazione con le armi e la guerra nasce anche dagli usi storici del metallo; le capacità del compendio traducono questa relazione simbolica in una disciplina marziale.",
+    "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+  },
+  "rame": {
+    "theme": "Rame combina attrazione e scarica. Può dirigere l'energia verso il proprio corpo per proteggere altri, generare campi elettrici e legare le creature attraverso un fascino che diventa dipendenza. L'amore evocato da questo materiale non è soltanto benevolenza: è anche una forza capace di trattenere e deviare.",
+    "history": "Nella corrispondenza alchemica dei metalli planetari il rame apparteneva a Venere. Il suo ruolo nella metallurgia è reale; i legami con affinità, desiderio ed elettricità sono invece interpretazioni ludiche costruite attorno al materiale e alla sua figura planetaria.",
+    "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+  },
+  "oro": {
+    "theme": "Oro è la ricerca della forma perfetta. Il suo splendore illumina e purifica, ma la perfezione può irrigidirsi fino a trasformarsi in stasi: ciò che non deve più cambiare finisce per essere immobilizzato. L'Exalt ne trae luce, simmetria e un ideale di compimento che non sempre lascia spazio alla vita.",
+    "history": "L'oro, tradizionalmente associato al Sole, rappresentava uno dei risultati più ambiti della trasmutazione alchemica. La crisopoeia era proprio la produzione dell'oro da altri metalli: il compendio ne fa anche un principio di proporzione e fissità.",
+    "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+  },
+  "piombo": {
+    "theme": "Piombo esercita il peso del tempo sulle cose. Cerchi difensivi e falci simboliche rallentano l'avversario, mentre l'Exalt guadagna lo spazio necessario ad agire dove gli altri restano intrappolati. È una difesa che non respinge soltanto: consuma l'occasione del nemico e conserva la propria.",
+    "history": "Il piombo era associato a Saturno, figura legata anche alla vecchiaia, alla lentezza e al tempo nelle letture simboliche posteriori. È un metallo denso e malleabile; i poteri temporali del compendio sono un'estensione fantastica della corrispondenza planetaria.",
+    "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+  },
+  "stagno": {
+    "theme": "Stagno incarna l'espansione del corpo oltre la misura umana. La presenza dell'Exalt si fa titanica, sostenuta da una vitalità che richiama l'ichor e la memoria degli dèi antichi. La forza è qui sovrabbondanza: statura, vigore e un'eredità che sembra più grande dell'individuo.",
+    "history": "Nella serie dei sette metalli planetari lo stagno era associato a Giove. Il richiamo a sovranità, abbondanza e figure mitiche deriva dal simbolismo del pianeta; non va confuso con le proprietà chimiche dello stagno.",
+    "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+  },
+  "antimonio": {
+    "theme": "Antimonio vive fra metamorfosi e separazione. Le sue capacità attraversano l'oscuramento, la dissoluzione della forma e la ricomposizione degli opposti: Nigredo, Caput Mortuum, Sublimatio e Rebis non indicano colpi isolati, ma tappe di un processo che cambia la natura stessa del corpo.",
+    "history": "I composti di antimonio erano lavorati nella chimica antica e moderna, soprattutto in pratiche metallurgiche e medicinali. Termini come nigredo e rebis appartengono invece al lessico simbolico più ampio dell'alchimia; il compendio li unisce in una progressione fantastica.",
+    "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+  },
+  "arsenico": {
+    "theme": "Arsenico offre forza contaminata. Ogni vantaggio sembra lasciarsi dietro una frattura: il vigore può diventare tossicità, il riflesso trasformarsi in inganno e il giudizio finale assomigliare a una sentenza già scritta. È un materiale costruito sul sospetto e sul prezzo nascosto del potere.",
+    "history": "L'arsenico e diversi suoi composti erano noti nella lavorazione di minerali e pigmenti. La loro tossicità ha contribuito alla reputazione sinistra della sostanza; il compendio usa quella reputazione come linguaggio narrativo, senza riprodurre reazioni chimiche reali.",
+    "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+  },
+  "bismuto": {
+    "theme": "Bismuto è la geometria che rifiuta di restare regolare. L'Exalt distorce urti e direzioni, costruisce forme inaspettate e usa le irregolarità come risorsa. Non cancella il difetto: lo moltiplica finché diventa una nuova architettura, sorprendente e difficile da prevedere.",
+    "history": "Il bismuto è noto per le forme geometriche a gradini dei cristalli ottenuti durante la solidificazione e per le iridescenze superficiali di alcuni campioni. La tradizione alchemica non gli assegnava universalmente un pianeta fra i sette metalli classici; il compendio valorizza soprattutto l'aspetto materiale moderno.",
+    "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+  },
+  "manganese": {
+    "theme": "Manganese governa i doppi. L'identità può rispecchiarsi, separarsi e ricomporsi in configurazioni che sembrano contraddirsi. Dove un nemico vede un'unica presenza, l'Exalt introduce una falsa unione e costringe a distinguere l'originale dalle sue immagini.",
+    "history": "Il manganese fu impiegato storicamente in minerali usati anche per colorare o decolorare il vetro. I doppi e gli specchi del compendio sono un'estensione immaginativa della trasformazione visiva, non una dottrina alchemica storicamente associata al metallo.",
+    "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+  },
+  "nichel": {
+    "theme": "Nichel è l'arte della somiglianza imperfetta. Copia comportamenti, simula legami e costruisce un falso così preciso da diventare difficile da distinguere dall'originale. Il suo potere non nasce dalla forza della sostanza, ma dall'incertezza che produce in chi la osserva.",
+    "history": "Il nichel compare nella storia della metallurgia e nelle leghe; non appartiene alla serie dei sette metalli planetari tradizionali. Il suo ruolo di 'falso alchemico' è una scelta narrativa del compendio, non un corrispettivo documentato dell'alchimia classica.",
+    "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+  },
+  "platino": {
+    "theme": "Platino tratta l'energia come qualcosa da trasferire fra corpi. Catalisi, scambio, perdita e riconquista diventano aspetti della stessa forza; la materia umana sembra un reagente capace di accelerare o deviare ogni processo. La sua forma finale lascia affiorare una mente intensa e pericolosa.",
+    "history": "Il platino è un metallo prezioso e resistente alla corrosione. Non faceva parte delle sette corrispondenze planetarie della tradizione europea; l'idea di 'catalisi umanoide' nasce dalla rilettura fantastica delle proprietà e degli impieghi dei metalli del gruppo del platino.",
+    "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+  },
+  "zinco": {
+    "theme": "Zinco parla il linguaggio dell'equilibrio: ogni forza può ricevere un contrappeso, ogni traiettoria una deviazione. L'Exalt sposta vantaggi e svantaggi fra i contendenti e spezza la regolarità degli esiti, come se il combattimento fosse una bilancia da ritarare continuamente.",
+    "history": "Lo zinco era impiegato nelle leghe metalliche prima di essere pienamente distinto come elemento chimico nella tradizione europea. La bilancia del compendio è una metafora alchemica dei rapporti e degli scambi, non un attributo storico esclusivo dello zinco.",
+    "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+  },
+  "ossigeno": {
+    "theme": "Ossigeno è il confine fra respiro e privazione. Alimenta corpi e reazioni, concede un secondo slancio e può trasformare il vuoto in un'arma. Ciò che per altri è semplice aria diventa, per l'Exalt, una riserva vitale da distribuire o negare.",
+    "history": "L'ossigeno venne riconosciuto come sostanza distinta nello sviluppo della chimica moderna. Non era uno dei quattro elementi dell'alchimia tradizionale; nel compendio assume un ruolo autonomo per le sue relazioni con respirazione e combustione.",
+    "historicalUrl": "https://plato.stanford.edu/entries/chemistry/index.html"
+  },
+  "flogisto": {
+    "theme": "Flogisto è il carburante segreto dell'esistenza. L'Exalt separa temporaneamente le componenti della propria essenza, le rimette in circolo e spinge la propria Unicità oltre la misura. Il rischio non è soltanto bruciare: è perdere la forma che tiene insieme ciò che si è.",
+    "history": "Il flogisto fu una sostanza ipotetica proposta nella teoria storica della combustione, poi abbandonata con lo sviluppo della chimica dell'ossigeno. Non è un elemento realmente isolato; il compendio lo reinterpreta come energia vitale alchemica.",
+    "historicalUrl": "https://plato.stanford.edu/entries/chemistry/index.html"
+  },
+  "fosforo-bianco": {
+    "theme": "Fosforo Bianco è luce che marca e perseguita. Le sue fiamme lasciano segni sui nemici e ogni marchio diventa un invito alla deflagrazione: una corona cresce attorno all'Exalt finché tutta l'energia accumulata viene proiettata in un astro abbagliante.",
+    "history": "Il fosforo bianco è una forma allotropica del fosforo, molto reattiva e capace di emissione luminosa in determinate condizioni. Il richiamo a stelle, albe e luce inestinguibile è una traduzione fantastica di questa luminosità, non una pratica alchemica storica codificata.",
+    "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+  },
+  "fosforo-nero": {
+    "theme": "Fosforo Nero non illumina: sottrae riferimenti. Labirinti percettivi, punti ciechi e un orizzonte deformato impediscono ai nemici di stabilire dove si trovi davvero l'Exalt. La difesa consiste nel sottrarsi alla corretta percezione, facendo dello spazio un alleato mutevole.",
+    "history": "Il fosforo nero è un allotropo reale del fosforo, con proprietà fisiche diverse dal fosforo bianco. La connessione con ombre, duplicazioni e illusioni spaziali è specifica del mondo di Breach the Oblivion.",
+    "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+  },
+  "zolfo": {
+    "theme": "Zolfo è la pressione del giudizio. La Colpa si accumula sulle creature che agiscono contro l'Exalt e i suoi alleati, finché l'aria stessa sembra diventare insufficiente. Fulmini, penitenza e annullamento delle azioni esprimono una giustizia implacabile, che soffoca prima di assolvere.",
+    "history": "Lo zolfo è stato centrale nel pensiero alchemico, spesso come principio legato alla combustibilità, contrapposto o associato al mercurio. L'immagine della condanna divina e del soffocamento appartiene però alla cosmologia fantastica del compendio.",
+    "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+  },
+  "aqua-fortis": {
+    "theme": "Aqua fortis corrode tanto il nemico quanto il suo utilizzatore. L'Exalt accetta ferite inevitabili per convertire il proprio corpo in un reagente aggressivo; ogni esposizione indebolisce le difese e avvicina la materia avversaria alla dissoluzione completa.",
+    "history": "Aqua fortis, 'acqua forte', era un nome storico dell'acido nitrico, impiegato per aggredire numerosi metalli. Il compendio ne trasforma l'azione corrosiva in una disciplina di sacrificio e progressiva decomposizione.",
+    "historicalUrl": "https://newton.dlib.indiana.edu/page/glossary"
+  },
+  "aqua-regia": {
+    "theme": "Aqua regia è una trasformazione violenta che si manifesta soprattutto quando il nemico agisce. I Petali si accumulano fino a formare la Rosa dei Maestri, simbolo di un potere che interrompe, dissolve e incorona la reazione stessa come arma. Anche il Sangue del Drago Rosso nasce da questa tensione.",
+    "history": "L'aqua regia, o 'acqua regale', è una miscela fortemente corrosiva nota per la capacità di dissolvere anche l'oro, il metallo regale. Il legame fra sovranità e dissoluzione viene qui riletto come offensiva reattiva e trasmutazione forzata.",
+    "historicalUrl": "https://newton.dlib.indiana.edu/page/glossary"
+  },
+  "aqua-vitae": {
+    "theme": "Aqua vitae è l'alchimia dell'ebbrezza. Il ritmo di una festa diventa un modo di combattere: passi imprevedibili, brindisi, danze e un baccanale che stravolge le posizioni in campo. L'Exalt cresce con la confusione dei nemici e ne trasforma l'incertezza in libertà di movimento.",
+    "history": "Aqua vitae, 'acqua della vita', indicava storicamente spiriti ottenuti per distillazione, spesso associati a usi medicinali e alla ricerca di essenze. Il compendio ne riprende il linguaggio dell'inebriamento come allegoria fantastica, non come effetto farmacologico realistico.",
+    "historicalUrl": "https://newton.dlib.indiana.edu/page/glossary"
+  },
+  "amalgama": {
+    "theme": "Amalgama non è ancora una forma compiuta. L'Exalt sospende i danni, li conserva come materia non risolta e tenta di trasformarli prima che si manifestino. Quando sacrifica la Purezza degli altri materiali, abbandona la figura umana e diviene una massa che protegge, ingloba e cresce divorando ciò che incontra.",
+    "history": "Nella chimica e nell'alchimia una amalgama è una lega che contiene mercurio. Il compendio usa il termine in senso più ampio e dichiaratamente fantastico: la materia transitoria come tappa verso una perfezione non ancora raggiunta.",
+    "historicalUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9214491/"
+  },
+  "cinabro": {
+    "theme": "Cinabro è energia rossa che attraversa il mondo come un fulmine. Il movimento alimenta la scarica e la scarica richiama nuovo movimento: il corpo diventa un motore filosofale, capace di lanciare saette e proiettare sulla materia una violenza quasi sovrannaturale.",
+    "history": "Il cinabro è un minerale rosso composto da solfuro di mercurio, importante come pigmento e materia prima nella storia dell'estrazione del mercurio. Nel compendio il rosso del minerale è trasformato in elettricità e velocità, invece che in un processo chimico reale.",
+    "historicalUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9214491/"
+  },
+  "vitriolum": {
+    "theme": "Vitriòlum invita a scendere dentro ciò che appare integro. Il suo marchio è una condanna, la sua opera una visita nelle profondità della materia, e la pietra nascosta è il punto in cui una verità definitiva può emergere. È alchimia di introspezione, rivelazione e giudizio irreversibile.",
+    "history": "Il nome richiama i vetrioli, termine storico per diversi solfati, e l'acrostico V.I.T.R.I.O.L.: 'Visita Interiora Terrae, Rectificando Invenies Occultum Lapidem'. La formula collega la ricerca della pietra nascosta a un percorso di trasformazione; gli effetti del gioco sono una rilettura fantastica.",
+    "historicalUrl": "https://cultura.cervantes.es/milan/it/V.I.T.R.I.O.L.-Visita-Interiora-Terrae%2C-Rectificando-Invenies-Occultum-Lapidem/159831"
+  },
+  "zolfo-nero": {
+    "theme": "Zolfo Nero è la ribellione elevata a patto. Ogni creatura può scegliere di accettare un Debito Infernale e ottenere un vantaggio, oppure rifiutare e concedere all'Exalt un'altra forma di potere. La sua connessione demoniaca alimenta esalazioni, immunità conquistate e il dominio del Trono dell'Esule.",
+    "history": "Lo zolfo esiste realmente e ha una lunga storia alchemica, ma uno 'Zolfo Nero' inteso come sostanza dei patti demoniaci non appartiene a un catalogo storico di reagenti. La figura luciferina e il sistema dei Debiti appartengono alla lore di Breach the Oblivion.",
+    "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+  }
+}

@@ -1,0 +1,126 @@
+/* Breach the Oblivion · v2.4
+   Animazioni d'interfaccia discrete, blu notte / ambra / lavanda.
+   L'anteprima dell'Atlante è una visualizzazione, non un controllo. */
+
+.home-atlas-ambient-stage,
+.home-atlas-ambient-stage .relation-canvas,
+.home-atlas-ambient-stage .relation-canvas-ambient {
+  pointer-events:none !important;
+  cursor:default !important;
+  touch-action:auto;
+}
+.home-atlas-ambient-stage .home-atlas-stage-hint {
+  color:#a6abc4;
+  letter-spacing:.16em;
+}
+.home-atlas-ambient-detail {
+  min-height:64px;
+  padding:13px 20px;
+  gap:10px;
+}
+.home-atlas-ambient-stats {
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  font:650 10px/1.35 'DM Sans',sans-serif;
+  letter-spacing:.045em;
+  color:#e3d6c2;
+  white-space:nowrap;
+}
+.home-atlas-ambient-stats svg {color:#c9aadf;flex:none}
+.home-atlas-ambient-stats>span {color:#646a80}
+.home-atlas-ambient-note {
+  font:400 17px/1.2 'EB Garamond',Garamond,serif;
+  color:#abb3c9;
+  text-align:right;
+}
+.home-atlas-ambient .home-atlas-indicator {animation:bto-beacon 3.6s ease-in-out infinite}
+.home-atlas-ambient .home-atlas-expand {transition:color .2s ease,gap .28s ease}
+
+@keyframes bto-beacon {
+  0%,100% {opacity:.7;box-shadow:0 0 4px rgba(213,184,138,.4)}
+  50% {opacity:1;box-shadow:0 0 13px rgba(213,184,138,.9)}
+}
+@keyframes bto-reveal {
+  from {opacity:0;translate:0 12px}
+  to {opacity:1;translate:0 0}
+}
+@keyframes bto-soft-appear {
+  from {opacity:0}
+  to {opacity:1}
+}
+
+/* Gli effetti d'ingresso non incidono sul layout a 100vh. */
+.home-page .hero-copy .eyebrow {animation:bto-reveal .58s cubic-bezier(.2,.8,.2,1) both}
+.home-page .hero-copy h1 {animation:bto-reveal .75s .07s cubic-bezier(.18,.78,.2,1) both}
+.home-page .hero-copy>p {animation:bto-reveal .65s .19s cubic-bezier(.2,.8,.2,1) both}
+.home-page .hero-cta {animation:bto-reveal .62s .29s cubic-bezier(.2,.8,.2,1) both}
+.home-page .hero-stats {animation:bto-soft-appear .8s .40s both}
+.home-page .home-atlas {animation:bto-reveal .85s .16s cubic-bezier(.18,.75,.25,1) both}
+.home-explore .home-card {animation:bto-reveal .6s .38s cubic-bezier(.2,.8,.2,1) both}
+
+/* Carte e voci: comparsa sfalsata al cambio pagina/filtri. */
+.section-landing .home-card,
+.materials-grid .material-card {
+  animation:bto-reveal .44s cubic-bezier(.2,.8,.2,1) both;
+}
+.section-landing .home-card:nth-child(2),
+.materials-grid .material-card:nth-child(4n + 2) {animation-delay:.06s}
+.section-landing .home-card:nth-child(3),
+.materials-grid .material-card:nth-child(4n + 3) {animation-delay:.105s}
+.section-landing .home-card:nth-child(4),
+.materials-grid .material-card:nth-child(4n + 4) {animation-delay:.145s}
+.page-heading {animation:bto-reveal .48s cubic-bezier(.2,.8,.2,1) both}
+.detail-hero,.material-portrait,.material-facts,.requirements-card,.material-relations {
+  animation:bto-reveal .48s cubic-bezier(.2,.8,.2,1) both;
+}
+.material-portrait {animation-delay:.055s}
+.material-facts {animation-delay:.09s}
+.requirements-card {animation-delay:.13s}
+.material-relations {animation-delay:.16s}
+.ability-entry {animation:bto-reveal .40s cubic-bezier(.2,.8,.2,1) both}
+.ability-entry:nth-child(2) {animation-delay:.045s}
+.ability-entry:nth-child(3) {animation-delay:.09s}
+.ability-entry:nth-child(4) {animation-delay:.13s}
+
+/* Hover leggibili senza variazioni aggressive o flash. */
+.material-card-symbol {transition:transform .28s cubic-bezier(.2,.8,.2,1),filter .28s ease;display:inline-block}
+.material-card:hover .material-card-symbol,
+.material-card:focus-visible .material-card-symbol {transform:scale(1.09) rotate(-3deg);filter:drop-shadow(0 0 7px color-mix(in srgb,var(--tone-color) 30%,transparent))}
+.home-card .home-card-bottom svg,
+.material-relation-links svg,
+.home-atlas-expand svg {transition:transform .23s ease}
+.home-card:hover .home-card-bottom svg,
+.home-atlas-expand:hover svg {transform:translate(2px,-2px)}
+.requirement-path {transition:border-color .25s ease,background-color .25s ease}
+.requirement-path:hover {border-left-color:var(--section-accent);background:color-mix(in srgb,var(--section-accent) 5%,var(--paper))}
+.ability-head {transition:background-color .24s ease,border-color .24s ease}
+.ability-head:hover {background:color-mix(in srgb,var(--section-accent) 3%,var(--paper))}
+
+@media(max-width:590px) {
+  .home-atlas-ambient-detail {min-height:61px;padding:12px 14px}
+  .home-atlas-ambient-note {font-size:14px}
+  .home-atlas-ambient-stats {font-size:9px;gap:6px}
+}
+@media(prefers-reduced-motion:reduce) {
+  .home-atlas-ambient .home-atlas-indicator,
+  .home-page .hero-copy .eyebrow,
+  .home-page .hero-copy h1,
+  .home-page .hero-copy>p,
+  .home-page .hero-cta,
+  .home-page .hero-stats,
+  .home-page .home-atlas,
+  .home-explore .home-card,
+  .section-landing .home-card,
+  .materials-grid .material-card,
+  .page-heading,
+  .detail-hero,.material-portrait,.material-facts,.requirements-card,.material-relations,
+  .ability-entry {animation:none !important}
+  .material-card-symbol,.home-card .home-card-bottom svg,.home-atlas-expand svg {transition:none !important}
+}
+@media (min-width:791px) and (max-width:1150px) {
+  .home-atlas-ambient-note {display:none}
+}
+@media (max-width:590px) {
+  .home-atlas-ambient-note {display:none}
+}

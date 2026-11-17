@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function gm() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.enabled == true;
+    }
+    // Il GM è abilitato manualmente dal proprietario nella console Firebase.
+    match /admins/{uid} {
+      allow get: if request.auth != null && request.auth.uid == uid;
+      allow list, create, update, delete: if false;
+    }
+    // Solo contenuti pubblicati. Sono intenzionalmente leggibili da tutti.
+    match /entries/{entryId} {
+      allow read: if true;
+      allow create, update, delete: if gm();
+    }
+    // Le bozze e la cronologia non sono accessibili ai lettori.
+    match /drafts/{entryId} {
+      allow read, write: if gm();
+    }
+    match /revisions/{revisionId} {
+      allow read, create: if gm();
+      allow update, delete: if false;
+    }
+    match /site/{id} {
+      allow read: if id == 'config';
+      allow write: if id == 'config' && gm();
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

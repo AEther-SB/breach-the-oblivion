@@ -1,0 +1,30 @@
+{
+  "name": "compendio-breach-the-oblivion",
+  "private": true,
+  "version": "2.4.2",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "check:content": "node scripts/check-content.mjs",
+    "check:structure": "node scripts/check-structure.mjs",
+    "check:relations": "node scripts/check-relations.mjs",
+    "check:ui": "node scripts/check-ui.mjs",
+    "check": "npm run check:content && npm run check:structure && npm run check:relations && npm run check:ui"
+  },
+  "dependencies": {
+    "lucide-react": "0.468.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-router-dom": "7.18.5",
+    "firebase": "13.4.0",
+    "dompurify": "^3.2.7"
+  },
+  "devDependencies": {
+    "vite": "7.3.8"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "1.14.7"
+  }
+}

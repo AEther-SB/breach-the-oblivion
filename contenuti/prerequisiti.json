@@ -1,0 +1,16 @@
+{
+  "alkahest": "Saggezza 16+ e un altro materiale con Purezza almeno pari a quella di Arsenico +3.",
+  "zero": "Livello Exalt 3+; nessun altro Elemento posseduto (incompatibilità reciproca).",
+  "argento": "Zero o Alkahest 1+ insieme a Ossigeno 1+; oppure un materiale della Materia Vitale 1+ e Ferro/Argentovivo/Rame con Purezza superiore di 1 a quella di Argento; oppure Arsenico 3+ e un Elemento 2+. Verificato a ogni aumento.",
+  "oro": "Zero o Alkahest 1+ insieme a Flogisto 1+; oppure un Elemento 1+ e Piombo/Stagno/Rame con Purezza superiore di 1 a quella di Oro; oppure Platino 3+ e un materiale della Materia Vitale 2+. Verificato a ogni aumento.",
+  "arsenico": "Costituzione 16+ e un altro materiale con Purezza almeno 4; il Catalizzatore d’Essenza può ignorare questi requisiti.",
+  "platino": "Forza 16+ e un altro materiale con Purezza almeno 3; il Catalizzatore d’Essenza può ignorare questi requisiti.",
+  "flogisto": "Livello Exalt 7+, un altro materiale con Purezza almeno 3 e verifica manuale del GM dell’accesso alla Fiamma.",
+  "vitriolum": "Livello Exalt 10+ e una via fra: Metallo Planetario 2+ e Zero 1+; Metallo Pesante 2+ e Zolfo 1+; un metallo 2+ e Alkahest 2+; Catalizzatore d’Essenza con Arsenico o Platino 2+.",
+  "cinabro": "Livello Exalt 10+ e una via fra: Metallo Planetario 2+ e Metallo Pesante 2+; Rame 2+ e Catalizzatore; un metallo 2+ con Aria 2+ o archetipo Studente; oppure archetipo Comandante. Le ultime due vie archetipiche dipendono da altre sottoclassi.",
+  "aqua-fortis": "Acqua 2+ e (Fuoco 2+ oppure Alkahest 1+).",
+  "aqua-regia": "Aqua fortis 2+ e (Oro 1+ oppure Alkahest 2+).",
+  "aqua-vitae": "Acqua 2+ e (Carisma 16+ oppure Flogisto 1+).",
+  "amalgama": "Livello Exalt 10+ e una via fra: un materiale per ogni categoria non composita con Purezza superiore di 1 rispetto ad Amalgama; due metalli, Planetario e Pesante, con tutte le capacità sbloccate; oppure due altri Compositi con Purezza superiore di 1. Verificato a ogni aumento.",
+  "zolfo-nero": "Livello Exalt 10+ e una via fra: Connessione Demoniaca (tag su Quirk, Controcorpo od oggetto posseduto); un Elemento 10+; oppure un Metallo Planetario e uno Pesante entrambi con Purezza superiore di 1 a Zolfo Nero. Verificato a ogni aumento."
+}
