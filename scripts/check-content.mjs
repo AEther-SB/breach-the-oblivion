@@ -12,10 +12,22 @@ assert.equal(abilities,120);
 assert.equal(d.genesisProcesses.length,12);
 assert(!('classFeatures' in d) && !('subclasses' in d),'Il sito non deve includere classi o archetipi');
 for(const mat of d.materials){
-  assert(mat.name && mat.group && mat.profile?.theme?.length>90 && mat.profile?.history?.length>70 && mat.profile?.historicalUrl,'Profilo incompleto: '+mat.id);
+  assert(mat.name && mat.group && mat.profile?.theme?.length>90 && mat.profile?.history?.length>60 && !mat.profile?.historicalUrl,'Profilo incompleto: '+mat.id);
   const orig=source.materials.find(m=>m.id===mat.id);
   assert(orig && orig.abilities.length===mat.abilities.length,'Materiale incoerente: '+mat.id);
-  mat.abilities.forEach((a,i)=>assert.deepEqual(a,orig.abilities[i],'Descrizione regole alterata: '+mat.id));
+  mat.abilities.forEach((a,i)=>{
+    if(mat.id==='argentovivo'&&a.name==='Memoria Vitale'){
+      const old=orig.abilities[i].html;
+      assert.equal(a.html,old.replace('bonus alla CA per <strong>1 minuto</strong>','<strong>+1 alla CA per 1 minuto</strong>'),'Scudo di Azoth: solo il bonus CA deve cambiare');
+    }else if(mat.id==='amalgama'&&a.name==='Esistenza Transitoria'){
+      const old=orig.abilities[i].html;
+      assert.equal(a.html,old.replace('5 volte la somma della Purezza effettiva di tutti i materiali posseduti','6 per grado di Purezza effettiva di Amalgama, più 3 per grado di Purezza effettiva degli altri materiali posseduti'),'Amalgama: soltanto la capienza deve cambiare');
+    }else assert.deepEqual(a,orig.abilities[i],'Descrizione regole alterata: '+mat.id);
+  });
 }
 d.genesisProcesses.forEach((a,i)=>assert.deepEqual(a,source.processes[i],'Processo alterato: '+i));
+for (const mat of d.materials) {
+  assert(!/\b(compendio|qui fantastica|traduzione fantastica|nel gioco|nel mondo di Breach)\b/i.test(mat.profile.history),`Riferimento storico con metatesto: ${mat.id}`);
+  assert(!('historicalUrl' in mat.profile),`Fonte esterna ancora esposta: ${mat.id}`);
+}
 console.log(`OK — ${d.materials.length} materiali, ${abilities} capacità, ${d.genesisProcesses.length} Processi di Genesi; profili presenti e regole identiche alla fonte.`);

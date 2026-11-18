@@ -1,0 +1,265 @@
+{
+  "materials": [
+    {
+      "id": "acqua",
+      "profile": {
+        "history": "Nella tradizione dei quattro elementi, l'acqua rappresentava il freddo e l'umido: una qualità della materia, non il moderno elemento chimico. Il suo scorrere e il suo assumere la forma del recipiente spiegano la relazione, qui fantastica, fra malleabilità e trasformazione.",
+        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+      },
+      "abilities": []
+    },
+    {
+      "id": "alkahest",
+      "profile": {
+        "history": "L'alkahest fu immaginato da alcuni alchimisti come un solvente universale, capace di riportare le sostanze a una condizione fondamentale. Non era un composto identificabile della chimica moderna: era un ideale teorico discusso anche nell'ambito della preparazione dei rimedi.",
+        "historicalUrl": "https://pubmed.ncbi.nlm.nih.gov/11875242/"
+      },
+      "abilities": []
+    },
+    {
+      "id": "aria",
+      "profile": {
+        "history": "Per la fisica aristotelica ripresa dagli alchimisti l'aria era uno dei quattro elementi, associato al caldo e all'umido. Il vento non veniva considerato una sostanza distinta: la lettura dei movimenti atmosferici diventa qui una disciplina alchemica autonoma.",
+        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+      },
+      "abilities": []
+    },
+    {
+      "id": "fuoco",
+      "profile": {
+        "history": "Il fuoco era uno dei quattro elementi della filosofia naturale, associato al caldo e al secco. La combustione e la calcinazione erano operazioni essenziali nei laboratori alchemici, benché il fuoco, nella chimica moderna, non sia un elemento materiale.",
+        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+      },
+      "abilities": []
+    },
+    {
+      "id": "terra",
+      "profile": {
+        "history": "La terra, nella tradizione dei quattro elementi, era fredda e secca: immagine della stabilità, del peso e della consistenza. In alchimia il lavoro sui minerali era anche un lavoro sulle trasformazioni della materia; qui la metafora diventa costruzione e difesa tangibili.",
+        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+      },
+      "abilities": []
+    },
+    {
+      "id": "zero",
+      "profile": {
+        "history": "Zero non è una sostanza storica dell'alchimia. La sua idea si avvicina, per libera interpretazione, alla ricerca della materia prima: uno stato originario da cui le forme particolari dovrebbero emergere. Nel compendio questa nozione è tradotta in una forza fantastica autonoma.",
+        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+      },
+      "abilities": []
+    },
+    {
+      "id": "argento",
+      "profile": {
+        "history": "Nell'alchimia planetaria l'argento era associato alla Luna e al suo simbolo. Il nesso con la luce riflessa e con la mutevolezza lunare è un'elaborazione tematica del compendio, non una proprietà attribuita alla metallurgia storica.",
+        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+      },
+      "abilities": []
+    },
+    {
+      "id": "argentovivo",
+      "profile": {
+        "history": "Argentovivo è un nome storico del mercurio, metallo liquido a temperatura ambiente e uno dei protagonisti delle pratiche alchemiche. Nella simbologia tradizionale era collegato al pianeta Mercurio e, in varie dottrine, al principio della volatilità e della trasformazione.",
+        "historicalUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9214491/"
+      },
+      "abilities": []
+    },
+    {
+      "id": "ferro",
+      "profile": {
+        "history": "Fra i sette metalli planetari, il ferro corrispondeva a Marte. La sua associazione con le armi e la guerra nasce anche dagli usi storici del metallo; le capacità del compendio traducono questa relazione simbolica in una disciplina marziale.",
+        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+      },
+      "abilities": []
+    },
+    {
+      "id": "rame",
+      "profile": {
+        "history": "Nella corrispondenza alchemica dei metalli planetari il rame apparteneva a Venere. Il suo ruolo nella metallurgia è reale; i legami con affinità, desiderio ed elettricità sono invece interpretazioni ludiche costruite attorno al materiale e alla sua figura planetaria.",
+        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+      },
+      "abilities": []
+    },
+    {
+      "id": "oro",
+      "profile": {
+        "history": "L'oro, tradizionalmente associato al Sole, rappresentava uno dei risultati più ambiti della trasmutazione alchemica. La crisopoeia era proprio la produzione dell'oro da altri metalli: il compendio ne fa anche un principio di proporzione e fissità.",
+        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+      },
+      "abilities": []
+    },
+    {
+      "id": "piombo",
+      "profile": {
+        "history": "Il piombo era associato a Saturno, figura legata anche alla vecchiaia, alla lentezza e al tempo nelle letture simboliche posteriori. È un metallo denso e malleabile; i poteri temporali del compendio sono un'estensione fantastica della corrispondenza planetaria.",
+        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+      },
+      "abilities": []
+    },
+    {
+      "id": "stagno",
+      "profile": {
+        "history": "Nella serie dei sette metalli planetari lo stagno era associato a Giove. Il richiamo a sovranità, abbondanza e figure mitiche deriva dal simbolismo del pianeta; non va confuso con le proprietà chimiche dello stagno.",
+        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+      },
+      "abilities": []
+    },
+    {
+      "id": "antimonio",
+      "profile": {
+        "history": "I composti di antimonio erano lavorati nella chimica antica e moderna, soprattutto in pratiche metallurgiche e medicinali. Termini come nigredo e rebis appartengono invece al lessico simbolico più ampio dell'alchimia; il compendio li unisce in una progressione fantastica.",
+        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+      },
+      "abilities": []
+    },
+    {
+      "id": "arsenico",
+      "profile": {
+        "history": "L'arsenico e diversi suoi composti erano noti nella lavorazione di minerali e pigmenti. La loro tossicità ha contribuito alla reputazione sinistra della sostanza; il compendio usa quella reputazione come linguaggio narrativo, senza riprodurre reazioni chimiche reali.",
+        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+      },
+      "abilities": []
+    },
+    {
+      "id": "bismuto",
+      "profile": {
+        "history": "Il bismuto è noto per le forme geometriche a gradini dei cristalli ottenuti durante la solidificazione e per le iridescenze superficiali di alcuni campioni. La tradizione alchemica non gli assegnava universalmente un pianeta fra i sette metalli classici; il compendio valorizza soprattutto l'aspetto materiale moderno.",
+        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+      },
+      "abilities": []
+    },
+    {
+      "id": "manganese",
+      "profile": {
+        "history": "Il manganese fu impiegato storicamente in minerali usati anche per colorare o decolorare il vetro. I doppi e gli specchi del compendio sono un'estensione immaginativa della trasformazione visiva, non una dottrina alchemica storicamente associata al metallo.",
+        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+      },
+      "abilities": []
+    },
+    {
+      "id": "nichel",
+      "profile": {
+        "history": "Il nichel compare nella storia della metallurgia e nelle leghe; non appartiene alla serie dei sette metalli planetari tradizionali. Il suo ruolo di 'falso alchemico' è una scelta narrativa del compendio, non un corrispettivo documentato dell'alchimia classica.",
+        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+      },
+      "abilities": []
+    },
+    {
+      "id": "platino",
+      "profile": {
+        "history": "Il platino è un metallo prezioso e resistente alla corrosione. Non faceva parte delle sette corrispondenze planetarie della tradizione europea; l'idea di 'catalisi umanoide' nasce dalla rilettura fantastica delle proprietà e degli impieghi dei metalli del gruppo del platino.",
+        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+      },
+      "abilities": []
+    },
+    {
+      "id": "zinco",
+      "profile": {
+        "history": "Lo zinco era impiegato nelle leghe metalliche prima di essere pienamente distinto come elemento chimico nella tradizione europea. La bilancia del compendio è una metafora alchemica dei rapporti e degli scambi, non un attributo storico esclusivo dello zinco.",
+        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+      },
+      "abilities": []
+    },
+    {
+      "id": "ossigeno",
+      "profile": {
+        "history": "L'ossigeno venne riconosciuto come sostanza distinta nello sviluppo della chimica moderna. Non era uno dei quattro elementi dell'alchimia tradizionale; nel compendio assume un ruolo autonomo per le sue relazioni con respirazione e combustione.",
+        "historicalUrl": "https://plato.stanford.edu/entries/chemistry/index.html"
+      },
+      "abilities": []
+    },
+    {
+      "id": "flogisto",
+      "profile": {
+        "history": "Il flogisto fu una sostanza ipotetica proposta nella teoria storica della combustione, poi abbandonata con lo sviluppo della chimica dell'ossigeno. Non è un elemento realmente isolato; il compendio lo reinterpreta come energia vitale alchemica.",
+        "historicalUrl": "https://plato.stanford.edu/entries/chemistry/index.html"
+      },
+      "abilities": []
+    },
+    {
+      "id": "fosforo-bianco",
+      "profile": {
+        "history": "Il fosforo bianco è una forma allotropica del fosforo, molto reattiva e capace di emissione luminosa in determinate condizioni. Il richiamo a stelle, albe e luce inestinguibile è una traduzione fantastica di questa luminosità, non una pratica alchemica storica codificata.",
+        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+      },
+      "abilities": []
+    },
+    {
+      "id": "fosforo-nero",
+      "profile": {
+        "history": "Il fosforo nero è un allotropo reale del fosforo, con proprietà fisiche diverse dal fosforo bianco. La connessione con ombre, duplicazioni e illusioni spaziali è specifica del mondo di Breach the Oblivion.",
+        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+      },
+      "abilities": []
+    },
+    {
+      "id": "zolfo",
+      "profile": {
+        "history": "Lo zolfo è stato centrale nel pensiero alchemico, spesso come principio legato alla combustibilità, contrapposto o associato al mercurio. L'immagine della condanna divina e del soffocamento appartiene però alla cosmologia fantastica del compendio.",
+        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+      },
+      "abilities": []
+    },
+    {
+      "id": "aqua-fortis",
+      "profile": {
+        "history": "Aqua fortis, 'acqua forte', era un nome storico dell'acido nitrico, impiegato per aggredire numerosi metalli. Il compendio ne trasforma l'azione corrosiva in una disciplina di sacrificio e progressiva decomposizione.",
+        "historicalUrl": "https://newton.dlib.indiana.edu/page/glossary"
+      },
+      "abilities": []
+    },
+    {
+      "id": "aqua-regia",
+      "profile": {
+        "history": "L'aqua regia, o 'acqua regale', è una miscela fortemente corrosiva nota per la capacità di dissolvere anche l'oro, il metallo regale. Il legame fra sovranità e dissoluzione viene qui riletto come offensiva reattiva e trasmutazione forzata.",
+        "historicalUrl": "https://newton.dlib.indiana.edu/page/glossary"
+      },
+      "abilities": []
+    },
+    {
+      "id": "aqua-vitae",
+      "profile": {
+        "history": "Aqua vitae, 'acqua della vita', indicava storicamente spiriti ottenuti per distillazione, spesso associati a usi medicinali e alla ricerca di essenze. Il compendio ne riprende il linguaggio dell'inebriamento come allegoria fantastica, non come effetto farmacologico realistico.",
+        "historicalUrl": "https://newton.dlib.indiana.edu/page/glossary"
+      },
+      "abilities": []
+    },
+    {
+      "id": "amalgama",
+      "profile": {
+        "history": "Nella chimica e nell'alchimia una amalgama è una lega che contiene mercurio. Il compendio usa il termine in senso più ampio e dichiaratamente fantastico: la materia transitoria come tappa verso una perfezione non ancora raggiunta.",
+        "historicalUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9214491/"
+      },
+      "abilities": [
+        {
+          "name": "Esistenza Transitoria",
+          "html": "<section class=\"exalt-prose\"><p>Con un'<strong>azione bonus</strong>, per <strong>1 minuto</strong> l'Exalt rende instabile la propria materia. Utilizzi giornalieri: <strong>Competenza</strong>. Ottiene una riserva di <strong>Danni Sospesi</strong> pari a <strong>5 volte la somma della Purezza effettiva di tutti i materiali posseduti</strong>, compreso Amalgama.</p><p>Una volta per turno, quando subisce danni, può sospenderne una quantità a scelta fino alla capienza disponibile, dopo le altre riduzioni. I danni sospesi non sono ancora subiti. All'inizio di ogni proprio turno subisce <strong>un terzo della riserva (arrotondato per eccesso)</strong> come danni da forza non riducibili, direttamente ai Punti Ferita ignorando eventuali punti ferita temporanei; i punti subiti vengono rimossi dalla riserva.</p><p>Ottiene <strong>+1 ai tiri per colpire e ai danni degli attacchi ogni 20 Danni Sospesi</strong>, fino a metà Competenza arrotondata per eccesso. <strong>Una volta per proprio turno</strong>, su un attacco riuscito può consumare <strong>10 Danni Sospesi per 1d8 danni da forza aggiuntivi</strong>, fino a metà Competenza dadi arrotondata per eccesso.</p><p>Quando l'effetto termina, subisce immediatamente tutti i Danni Sospesi residui come danni da forza non riducibili, direttamente ai Punti Ferita ignorando eventuali punti ferita temporanei.</p></section>"
+        }
+      ]
+    },
+    {
+      "id": "cinabro",
+      "profile": {
+        "history": "Il cinabro è un minerale rosso composto da solfuro di mercurio, importante come pigmento e materia prima nella storia dell'estrazione del mercurio. Nel compendio il rosso del minerale è trasformato in elettricità e velocità, invece che in un processo chimico reale.",
+        "historicalUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9214491/"
+      },
+      "abilities": []
+    },
+    {
+      "id": "vitriolum",
+      "profile": {
+        "history": "Il nome richiama i vetrioli, termine storico per diversi solfati, e l'acrostico V.I.T.R.I.O.L.: 'Visita Interiora Terrae, Rectificando Invenies Occultum Lapidem'. La formula collega la ricerca della pietra nascosta a un percorso di trasformazione; gli effetti del gioco sono una rilettura fantastica.",
+        "historicalUrl": "https://cultura.cervantes.es/milan/it/V.I.T.R.I.O.L.-Visita-Interiora-Terrae%2C-Rectificando-Invenies-Occultum-Lapidem/159831"
+      },
+      "abilities": []
+    },
+    {
+      "id": "zolfo-nero",
+      "profile": {
+        "history": "Lo zolfo esiste realmente e ha una lunga storia alchemica, ma uno 'Zolfo Nero' inteso come sostanza dei patti demoniaci non appartiene a un catalogo storico di reagenti. La figura luciferina e il sistema dei Debiti appartengono alla lore di Breach the Oblivion.",
+        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+      },
+      "abilities": []
+    }
+  ]
+}

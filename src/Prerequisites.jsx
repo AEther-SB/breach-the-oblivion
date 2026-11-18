@@ -8,7 +8,7 @@ import { parseRequirements } from './prerequisite-utils';
 // I percorsi sono solo una riformattazione del testo originale; non modificano i requisiti.
 
 function RequirementPhrase({text, glossary}) {
-  const html=useMemo(()=>linkedHtml(sanitizeHtml(`<span>${String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>`),glossary),[text,glossary]);
+  const html=useMemo(()=>linkedHtml(sanitizeHtml(`<span>${String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>`),glossary,{allowAuto:true}),[text,glossary]);
   return <span className="req-phrase" dangerouslySetInnerHTML={{__html:html}}/>;
 }
 

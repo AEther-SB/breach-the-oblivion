@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
-import { getFirestore, collection, doc, getDoc, getDocs, onSnapshot, query, where, setDoc, deleteDoc, serverTimestamp, writeBatch } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDoc, getDocs, onSnapshot, query, where, setDoc, deleteDoc, deleteField, serverTimestamp, writeBatch } from 'firebase/firestore';
 import source from './data/compendium.json';
+import previousSource from './data/editorial-baseline-v242.json';
+import previousV25 from './data/editorial-baseline-v250-history.json';
 
 export const normalize = (value) => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[’‘]/g, "'");
 export const slug = (value) => normalize(value).replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -38,7 +40,11 @@ function fallbackEntries() {
     parentId: 'alchimia-genesi', order: index,
   }));
   const base = { id: 'alchimia', kind: 'chapter', title: 'Alchimia', description: 'Materiali e processi alchemici.', parentId: 'root', order: 0, blocks: [], imageUrl: '' };
-  return [base, ...mat, ...gen];
+  const collections = [
+    {id:'alchimia-materiali',kind:'collection',title:'Materiali alchemici',description:'Catalogo dei materiali e delle capacità.',parentId:'alchimia',order:1,blocks:[]},
+    {id:'alchimia-genesi',kind:'collection',title:'Processi alchemici',description:'I processi dell’Opera.',parentId:'alchimia',order:2,blocks:[]},
+  ];
+  return [base, ...collections, ...mat, ...gen];
 }
 const fallback = fallbackEntries();
 const context = createContext(null);
@@ -85,12 +91,14 @@ export function ContentProvider({children}) {
   const entries = useMemo(() => {
     const primary = seeded && loaded ? published : fallback;
     const map = new Map(primary.map(e => [e.id,e]));
+    // Le due raccolte strutturali esistono anche nei database inizializzati prima della v2.5.
+    for (const builtIn of fallback.filter(e => ['alchimia-materiali','alchimia-genesi'].includes(e.id))) if (!map.has(builtIn.id)) map.set(builtIn.id,builtIn);
     if (gm) for (const draft of drafts) map.set(draft.id,{...draft, _draft:true});
     return [...map.values()];
   }, [seeded, loaded, published, gm, drafts]);
   const materials = useMemo(() => entries.filter(e => e.kind === 'material').sort((a,b) => a.order - b.order || a.title.localeCompare(b.title,'it')), [entries]);
   const processes = useMemo(() => entries.filter(e => e.kind === 'genesis').sort((a,b) => a.order - b.order || a.title.localeCompare(b.title,'it')), [entries]);
-  const pages = useMemo(() => entries.filter(e => e.kind === 'page' || e.kind === 'chapter').sort((a,b) => a.order - b.order || a.title.localeCompare(b.title,'it')), [entries]);
+  const pages = useMemo(() => entries.filter(e => e.kind === 'page' || e.kind === 'chapter' || e.kind === 'collection').sort((a,b) => a.order - b.order || a.title.localeCompare(b.title,'it')), [entries]);
   const isDraft = (id) => gm && drafts.some(d => d.id===id);
   async function login() { if (!auth) throw Error('Configura prima Firebase.'); setError(''); await signInWithPopup(auth, new GoogleAuthProvider()); }
   async function logout() { if (auth) await signOut(auth); }
@@ -133,15 +141,75 @@ export function ContentProvider({children}) {
     batch.set(doc(db,'site','config'), {initialized:true, source:source.source, initializedAt:serverTimestamp(),initializedBy:user.uid});
     await batch.commit();
   }
-  const value = { configured, user, gm, authPending, seeded, loaded, error, setError, entries, materials, processes, pages, isDraft, login, logout, saveDraft, publish, remove, loadHistory, bootstrap, baseVersion:source.version };
+  async function syncEditorial() {
+    requireGM();
+    if (!seeded) throw Error('Importa prima il compendio iniziale.');
+    // Mai sovrascrivere testi personalizzati, né le bozze ancora in lavorazione.
+    const previous = new Map(previousSource.materials.map(m => [m.id,m]));
+    const previous250 = new Map(previousV25.materials.map(m => [m.id,m]));
+    const current = new Map(source.materials.map(m => [m.id,m]));
+    const live = new Map(published.map(e => [e.materialId,e]));
+    const draftIds = new Set(drafts.map(d => d.id));
+    let updated=0,skipped=0;
+    for (const [id,newMaterial] of current) {
+      const oldMaterial=previous.get(id),old250=previous250.get(id),record=live.get(id);
+      if (!record || !oldMaterial || !old250 || draftIds.has(record.id)) {skipped++;continue;}
+      const changes={};
+      if (newMaterial.profile?.theme!==oldMaterial.profile?.theme) {
+        if (record.profile?.theme===oldMaterial.profile?.theme) changes['profile.theme']=newMaterial.profile.theme;
+        else skipped++;
+      }
+      // Migrazione selettiva: i riferimenti storici personalizzati dal GM non vanno riscritti.
+      if (newMaterial.profile?.history!==old250.profile?.history) {
+        if (record.profile?.history===old250.profile?.history) changes['profile.history']=newMaterial.profile.history;
+        else skipped++;
+      }
+      // Il collegamento bibliografico precedente è stato rimosso dall'editor e dal sito.
+      if (record.profile?.historicalUrl && record.profile.historicalUrl===old250.profile?.historicalUrl && !newMaterial.profile?.historicalUrl) {
+        changes['profile.historicalUrl']=deleteField();
+      }
+      if (id==='amalgama') {
+        const previousAbility=old250.abilities.find(a=>a.name==='Esistenza Transitoria');
+        const nextAbility=newMaterial.abilities.find(a=>a.name==='Esistenza Transitoria');
+        const currentAbility=record.abilities?.find(a=>a.name==='Esistenza Transitoria');
+        if (previousAbility && nextAbility && currentAbility?.html===previousAbility.html) {
+          changes.abilities=record.abilities.map(a=>a.name==='Esistenza Transitoria'?{...a,html:nextAbility.html}:a);
+        } else skipped++;
+      }
+      if (id==='argentovivo') {
+        const previousAbility=oldMaterial.abilities.find(a=>a.name==='Memoria Vitale');
+        const nextAbility=newMaterial.abilities.find(a=>a.name==='Memoria Vitale');
+        const currentAbility=record.abilities?.find(a=>a.name==='Memoria Vitale');
+        if (previousAbility && nextAbility && currentAbility?.html===previousAbility.html) changes.abilities=record.abilities.map(a=>a.name==='Memoria Vitale'?{...a,html:nextAbility.html}:a);
+        else skipped++;
+      }
+      if (Object.keys(changes).length) {
+        const updatedRecord={...record};
+        if(changes['profile.theme'])updatedRecord.profile={...updatedRecord.profile,theme:changes['profile.theme']};
+        if(changes['profile.history'])updatedRecord.profile={...updatedRecord.profile,history:changes['profile.history']};
+        if(changes['profile.historicalUrl']){updatedRecord.profile={...updatedRecord.profile};delete updatedRecord.profile.historicalUrl;}
+        if(changes.abilities)updatedRecord.abilities=changes.abilities;
+        const batch=writeBatch(db);
+        batch.update(doc(db,'entries',record.id),{...changes,updatedAt:serverTimestamp(),updatedBy:user.uid});
+        batch.set(doc(collection(db,'revisions')),{entryId:record.id,content:omitServer(updatedRecord),author:user.uid,at:serverTimestamp()});
+        await batch.commit();updated++;
+      }
+    }
+    for(const id of ['alchimia-materiali','alchimia-genesi']) {
+      if(!published.some(e=>e.id===id)) {
+        const item=fallback.find(e=>e.id===id);
+        await setDoc(doc(db,'entries',id),{...omitServer(item),published:true,updatedAt:serverTimestamp(),updatedBy:user.uid});updated++;
+      }
+    }
+    return {updated,skipped};
+  }
+  const value = { configured, user, gm, authPending, seeded, loaded, error, setError, entries, materials, processes, pages, isDraft, login, logout, saveDraft, publish, remove, loadHistory, bootstrap, syncEditorial, baseVersion:source.version };
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 export function useContent() { const value = useContext(context); if(!value) throw Error('ContentProvider mancante'); return value; }
 export const newEntry = (kind, title, parentId='root') => {
+  if (!['collection','page'].includes(kind)) throw Error('Per nuovi contenuti utilizza una Raccolta o una Pagina.');
   const unique = `${slug(title)}-${Math.random().toString(36).slice(2,7)}`;
   const id = `${kind}-${unique}`;
-  const common = {id, kind, title, parentId, order:Date.now(), description:'', imageUrl:'',imageAlt:''};
-  if(kind==='material') return {...common, materialId:unique, name:title, group:'Elementi',symbol:'◇', bonus:'',ability:'int',requirementsText:'Nessuno.',profile:{theme:'',history:'',historicalUrl:''},abilities:[],parentId:'alchimia-materiali'};
-  if(kind==='genesis') return {...common,name:title,html:'<p>Descrizione del processo…</p>',parentId:'alchimia-genesi'};
-  return {...common,blocks:[{id:'blocco-1',type:'rich',html:'<p>Inserisci il testo…</p>'}]};
+  return {id,kind,title,parentId,order:Date.now(),description:'',imageUrl:'',imageAlt:'',blocks:[]};
 };

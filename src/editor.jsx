@@ -1,115 +1,137 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Link, useNavigate } from 'react-router-dom';
-import { Check, ChevronDown, ChevronUp, Clock3, Edit3, ExternalLink, FilePlus2, Image as ImageIcon, Link2, LockKeyhole, LogIn, LogOut, Plus, Save, Send, ShieldCheck, Trash2, X } from 'lucide-react';
-import { useContent, newEntry, safeUrl } from './content-store';
+import { useNavigate } from 'react-router-dom';
+import { ChevronDown, ChevronUp, Clock3, Copy, Edit3, ExternalLink, FilePlus2, Image as ImageIcon, Link2, LockKeyhole, LogIn, LogOut, Plus, Save, Send, ShieldCheck, Trash2, X } from 'lucide-react';
+import { useContent, newEntry, safeUrl, normalize } from './content-store';
 import { sanitizeHtml, validatedImageUrl } from './sanitize';
 
-const kinds = { chapter:'Capitolo',page:'Pagina',material:'Materiale',genesis:'Processo' };
-function Wysiwyg({value,onChange,label}) {
-  const ref = useRef(null);
-  useEffect(() => {if(ref.current && ref.current.innerHTML !== (value || '')) ref.current.innerHTML=value || '<p></p>';},[value]);
-  function format(command, param) {
-    ref.current?.focus();
-    document.execCommand(command, false, param);
-    onChange(ref.current?.innerHTML || '');
-  }
-  function link() {
-    const url = window.prompt('URL del collegamento (https:// oppure #/pagina/…):', 'https://');
-    if(!url)return;
-    const allowed = safeUrl(url,true);
-    if(!allowed){window.alert('Usa un URL http(s) o un link interno che inizia con #/.');return;}
-    format('createLink',allowed);
-  }
-  return <div className="gm-wysiwyg-field"><label>{label}</label><div className="gm-formatbar" role="toolbar" aria-label={`Formato: ${label}`}>
-    <button type="button" title="Grassetto" onClick={()=>format('bold')}><strong>B</strong></button>
-    <button type="button" title="Corsivo" onClick={()=>format('italic')}><em>I</em></button>
-    <button type="button" title="Elenco puntato" onClick={()=>format('insertUnorderedList')}>• ≡</button>
-    <button type="button" title="Elenco numerato" onClick={()=>format('insertOrderedList')}>1. ≡</button>
-    <button type="button" title="Collegamento" onClick={link}><Link2 size={16}/></button>
-    <button type="button" title="Rimuovi formattazione" onClick={()=>format('removeFormat')}>Tx</button>
-  </div><div ref={ref} contentEditable suppressContentEditableWarning className="gm-wysiwyg" role="textbox" aria-multiline="true" aria-label={label} onInput={e=>onChange(e.currentTarget.innerHTML)} onPaste={e=>{ e.preventDefault();document.execCommand('insertText',false,e.clipboardData.getData('text/plain'));onChange(e.currentTarget.innerHTML);}}/></div>;
+const kindNames={chapter:'Sezione',collection:'Raccolta',page:'Pagina',material:'Materiale',genesis:'Processo'};
+const blockNames={rich:'Testo',heading:'Titolo',image:'Immagine URL',gallery:'Galleria',quote:'Citazione',callout:'Riquadro',list:'Elenco',link:'Collegamento',links:'Collegamenti',table:'Tabella',divider:'Separatore'};
+const blockTemplates={
+ rich:()=>({html:'<p>Scrivi qui…</p>'}), heading:()=>({text:'Nuovo titolo',level:2}),
+ image:()=>({url:'',alt:'',caption:''}),gallery:()=>({images:[{url:'',alt:''}]}),
+ quote:()=>({text:'',attribution:''}),callout:()=>({text:'',tone:'note'}),
+ list:()=>({items:['Nuova voce'],ordered:false}),link:()=>({text:'',url:''}),
+ links:()=>({links:[{text:'',url:''}]}),table:()=>({columns:['Colonna 1','Colonna 2'],rows:[['','']]}),divider:()=>({})
+};
+const bid=()=>`blocco-${(typeof crypto!=='undefined'&&crypto.randomUUID)?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2)}`;
+const Input=({label,value,onChange,as='input',...props})=><label className="gm-input"><span>{label}</span>{as==='textarea'?<textarea value={value??''} onChange={e=>onChange(e.target.value)} {...props}/>:<input value={value??''} onChange={e=>onChange(e.target.value)} {...props}/>}</label>;
+const Controls=({up,down,remove,duplicate})=><div className="gm-reorder"><button title="Sposta sopra" type="button" onClick={up}><ChevronUp size={16}/></button><button title="Sposta sotto" type="button" onClick={down}><ChevronDown size={16}/></button>{duplicate&&<button title="Duplica" type="button" onClick={duplicate}><Copy size={16}/></button>}<button title="Elimina blocco" type="button" onClick={remove}><Trash2 size={16}/></button></div>;
+const patched=(items,index,patch)=>items.map((v,i)=>i===index?{...v,...patch}:v);
+function move(items,index,direction){const j=index+direction;if(j<0||j>=items.length)return items;const next=[...items];[next[index],next[j]]=[next[j],next[index]];return next;}
+const entryPath=e=>e.kind==='material'?`#/alchimia/materiali/${e.materialId}`:e.kind==='genesis'?`#/alchimia/processi?abilita=${e.order||0}`:e.id==='alchimia'?'#/alchimia':e.id==='alchimia-materiali'?'#/alchimia/materiali':e.id==='alchimia-genesi'?'#/alchimia/processi':`#/pagina/${e.id}`;
+function useTargets(){
+ const {materials,processes,pages}=useContent();
+ return useMemo(()=>[...materials,...processes,...pages].map(e=>({id:e.id,title:e.title||e.name,url:entryPath(e)})).filter(e=>e.title&&e.title.length>2).sort((a,b)=>b.title.length-a.title.length),[materials,processes,pages]);
 }
-const Input=({label,value,onChange,as='input',...props})=><label className="gm-input"><span>{label}</span>{as==='textarea'? <textarea value={value||''} onChange={e=>onChange(e.target.value)} {...props}/>:<input value={value||''} onChange={e=>onChange(e.target.value)} {...props}/>}</label>;
-const SectionActions=({up,down,remove})=><div className="gm-reorder"><button title="Sposta su" type="button" onClick={up}><ChevronUp size={16}/></button><button title="Sposta giù" type="button" onClick={down}><ChevronDown size={16}/></button><button title="Rimuovi" type="button" onClick={remove}><Trash2 size={16}/></button></div>;
-function updateArray(items,index,patch) {return items.map((v,i)=>i===index?{...v,...patch}:v);}
-function swap(items, i, direction){const j=i+direction;if(j<0||j>=items.length)return items;const out=[...items];[out[i],out[j]]=[out[j],out[i]];return out;}
-
-export function EntryEditor({entry,open,onClose}) {
-  const {gm,saveDraft,publish,remove,loadHistory,isDraft,pages,setError} = useContent();
-  const navigate=useNavigate();
-  const [form,setForm] = useState(entry);
-  const [busy,setBusy] = useState(false);
-  const [message,setMessage] = useState('');
-  const [revisions,setRevisions] = useState([]);
-  const [showHistory,setShowHistory] = useState(false);
-  useEffect(()=>{setForm(JSON.parse(JSON.stringify(entry)));setMessage('');setRevisions([]);setShowHistory(false);},[entry?.id,open]);
-  if(!open||!gm||!form) return null;
-  const field=(key,value)=>setForm(old=>({...old,[key]:value}));
-  const profile=(key,value)=>setForm(old=>({...old,profile:{...(old.profile||{}),[key]:value}}));
-  const run=async(cb,success)=>{setBusy(true);setMessage('');try{await cb();setMessage(success);}catch(e){setMessage(e.message);setError(e.message);}finally{setBusy(false);}};
-  const save=()=>run(()=>saveDraft(form),'Bozza salvata. Soltanto il GM può visualizzarla.');
-  const goPublish=()=>run(async()=>{await publish(form);onClose();},'Pubblicato.');
-  const del=()=>{if(entry.id==='alchimia')return;if(!window.confirm(`Eliminare definitivamente «${form.title}» dalla pubblicazione e dalle bozze?`))return;run(async()=>{await remove(entry.id);onClose();navigate('/');},'Eliminato.');};
-  const findHistory=()=>run(async()=>{setRevisions(await loadHistory(entry.id));setShowHistory(true);},'');
-  return createPortal(<div className="gm-overlay" onMouseDown={e=>e.target===e.currentTarget&&onClose()}>
-    <section className="gm-drawer" role="dialog" aria-modal="true" aria-label={`Modifica ${form.title}`}>
-      <div className="gm-drawer-header"><div><small>MODALITÀ GM · {kinds[form.kind]||'Voce'}</small><h2>Modifica contenuto</h2><p>{form.title}</p></div><button type="button" className="icon-button" onClick={onClose} aria-label="Chiudi"><X/></button></div>
-      <div className="gm-drawer-body">
-        <Input label="Titolo" value={form.title} onChange={v=>field('title',v)}/>
-        {form.kind==='material'&&<>
-          <div className="gm-two-col"><Input label="Simbolo" value={form.symbol} onChange={v=>field('symbol',v)}/><label className="gm-input"><span>Categoria</span><select value={form.group} onChange={e=>field('group',e.target.value)}>{['Elementi','Metalli Planetari','Metalli Pesanti','Materia Vitale','Compositi'].map(g=><option key={g}>{g}</option>)}</select></label></div>
-          <Input label="Bonus di Purezza" value={form.bonus} onChange={v=>field('bonus',v)}/>
-          <Input label="Prerequisiti" value={form.requirementsText} onChange={v=>field('requirementsText',v)} as="textarea" rows={2}/>
-          <Input label="Descrizione nel mondo di gioco" value={form.profile?.theme} onChange={v=>profile('theme',v)} as="textarea" rows={5}/>
-          <Input label="Riferimento alchemico reale" value={form.profile?.history} onChange={v=>profile('history',v)} as="textarea" rows={4}/>
-          <Input label="URL della fonte storica" value={form.profile?.historicalUrl} onChange={v=>profile('historicalUrl',v)} placeholder="https://…"/>
-          <div className="gm-section-heading"><h3>Capacità</h3><button type="button" onClick={()=>field('abilities',[...(form.abilities||[]),{id:`abilita-${Date.now()}`,name:'Nuova capacità',level:1,html:'<p></p>'}])}><Plus size={15}/> Aggiungi</button></div>
-          {(form.abilities||[]).map((a,i)=><div className="gm-block-editor" key={a.id||i}><div className="gm-block-title"><strong>Capacità {i+1}</strong><SectionActions up={()=>field('abilities',swap(form.abilities,i,-1))} down={()=>field('abilities',swap(form.abilities,i,1))} remove={()=>field('abilities',form.abilities.filter((_,j)=>i!==j))}/></div><div className="gm-two-col"><Input label="Nome" value={a.name} onChange={v=>field('abilities',updateArray(form.abilities,i,{name:v}))}/><Input label="Grado" type="number" min="1" value={a.level} onChange={v=>field('abilities',updateArray(form.abilities,i,{level:Number(v)}))}/></div><Wysiwyg key={`${entry.id}-${a.id||i}`} label="Descrizione meccanica" value={a.html} onChange={v=>field('abilities',updateArray(form.abilities,i,{html:v}))}/></div>)}
-        </>}
-        {form.kind==='genesis'&&<Wysiwyg label="Descrizione del processo" value={form.html} onChange={v=>field('html',v)}/>}
-        {(form.kind==='page'||form.kind==='chapter')&&<>
-          <Input label="Descrizione breve" value={form.description} onChange={v=>field('description',v)} as="textarea" rows={2}/>
-          {form.kind==='page'&&<label className="gm-input"><span>Sezione di appartenenza</span><select value={form.parentId||'root'} onChange={e=>field('parentId',e.target.value)}><option value="root">Compendio · Home</option><option value="alchimia">Alchimia</option>{pages.filter(p=>p.kind==='chapter'&&p.id!==form.id&&p.id!=='alchimia').map(p=><option key={p.id} value={p.id}>{p.title}</option>)}</select></label>}
-          <div className="gm-section-heading"><h3>Blocchi</h3><div className="gm-add-block">{[['rich','Testo'],['image','Immagine URL'],['link','Collegamento']].map(([type,label])=><button type="button" key={type} onClick={()=>field('blocks',[...(form.blocks||[]),{id:`blocco-${Date.now()}`,type,html:'<p></p>',url:'',text:'',alt:''}])}><Plus size={14}/>{label}</button>)}</div></div>
-          {(form.blocks||[]).map((block,i)=><div className="gm-block-editor" key={block.id||i}><div className="gm-block-title"><strong>{block.type==='rich'?'Testo':block.type==='image'?'Immagine':'Collegamento'} · {i+1}</strong><SectionActions up={()=>field('blocks',swap(form.blocks,i,-1))} down={()=>field('blocks',swap(form.blocks,i,1))} remove={()=>field('blocks',form.blocks.filter((_,j)=>i!==j))}/></div>
-            {block.type==='rich'&&<Wysiwyg key={block.id} label="Contenuto" value={block.html} onChange={v=>field('blocks',updateArray(form.blocks,i,{html:v}))}/>}
-            {block.type==='image'&&<><Input label="URL immagine HTTPS" value={block.url} onChange={v=>field('blocks',updateArray(form.blocks,i,{url:v}))} placeholder="https://…"/><Input label="Testo alternativo (accessibilità)" value={block.alt} onChange={v=>field('blocks',updateArray(form.blocks,i,{alt:v}))}/>{validatedImageUrl(block.url)&&<img className="gm-image-preview" src={validatedImageUrl(block.url)} alt={block.alt||'Anteprima'} referrerPolicy="no-referrer"/>}</>}
-            {block.type==='link'&&<><Input label="Testo del collegamento" value={block.text} onChange={v=>field('blocks',updateArray(form.blocks,i,{text:v}))}/><Input label="URL esterno o #/pagina/…" value={block.url} onChange={v=>field('blocks',updateArray(form.blocks,i,{url:v}))}/></>}
-          </div>)}
-        </>}
-        {(form.kind==='material'||form.kind==='page'||form.kind==='chapter')&&<div className="gm-image-fields"><h3>Immagine introduttiva (solo URL)</h3><Input label="URL HTTPS" value={form.imageUrl} onChange={v=>field('imageUrl',v)} placeholder="https://…"/><Input label="Testo alternativo" value={form.imageAlt} onChange={v=>field('imageAlt',v)}/>{validatedImageUrl(form.imageUrl)&&<img className="gm-image-preview" alt={form.imageAlt||'Anteprima'} src={validatedImageUrl(form.imageUrl)} referrerPolicy="no-referrer"/>}</div>}
-        <div className="gm-history"><button type="button" onClick={findHistory}><Clock3 size={16}/> Cronologia pubblicazioni</button>{showHistory&&<div>{revisions.length===0?<p>Nessuna versione precedente.</p>:revisions.map(rev=><button type="button" key={rev.id} onClick={()=>{setForm(rev.content);setMessage('Versione caricata nell’editor. Salva come bozza o pubblicala per ripristinarla.');}}>{rev.at?.toDate?.().toLocaleString('it-IT')||'Versione precedente'} · Ripristina nell’editor</button>)}</div>}</div>
-      </div>
-      <div className="gm-drawer-footer"><div className="gm-status" role="status">{message|| (isDraft(entry.id)?'Esiste una bozza non pubblicata.':'I lettori vedono soltanto la versione pubblicata.')}</div><div className="gm-footer-actions">{entry.id!=='alchimia'&&<button className="gm-danger" type="button" onClick={del} disabled={busy}><Trash2 size={15}/> Elimina</button>}<button className="gm-secondary" type="button" disabled={busy} onClick={save}><Save size={16}/> Salva bozza</button><button className="gm-primary" type="button" disabled={busy} onClick={goPublish}><Send size={16}/> Pubblica</button></div></div>
-    </section>
-  </div>, document.body);
+function LinkPicker({value,onChange,targets,placeholder='https://… o cerca una pagina'}){
+ const [q,setQ]=useState('');
+ const candidates=targets.filter(t=>normalize(t.title).includes(normalize(q))&&q.trim().length>=2).slice(0,6);
+ return <div className="gm-linkpicker"><Input label="URL" value={value} onChange={onChange} placeholder={placeholder}/><div className="gm-linkpicker-search"><input value={q} onChange={e=>setQ(e.target.value)} aria-label="Cerca un collegamento interno" placeholder="Cerca pagina da collegare…"/>{candidates.length>0&&<div className="gm-link-options">{candidates.map(t=><button type="button" key={t.id} onClick={()=>{onChange(t.url);setQ('');}}>{t.title}<small>Collega</small></button>)}</div>}</div></div>;
 }
-export function EditTrigger({entry,children}) {const {gm,seeded,isDraft}=useContent();const[open,setOpen]=useState(false);if(!gm||!seeded||!entry)return null;return <>{<button type="button" className="gm-edit-trigger" onClick={()=>setOpen(true)}><Edit3 size={15}/>{children||'Modifica pagina'}{isDraft(entry.id)&&<span>Bozza</span>}</button>}<EntryEditor entry={entry} open={open} onClose={()=>setOpen(false)}/></>;}
-
-export function GMControls() {
-  const {configured,user,gm,authPending,seeded,login,logout,bootstrap,pages,setError,error}=useContent();
-  const [open,setOpen]=useState(false);const [add,setAdd]=useState(false);
-  const [type,setType]=useState('page');const [title,setTitle]=useState('');const [parent,setParent]=useState('alchimia');const [busy,setBusy]=useState(false);
-  const navigate=useNavigate();
-  const {saveDraft}=useContent();
-  async function create(e) {e.preventDefault();if(!title.trim())return;setBusy(true);try{const entry=newEntry(type,title.trim(),type==='chapter'?'root':parent);await saveDraft(entry);setAdd(false);setTitle('');navigate(type==='material'?`/alchimia/materiali/${entry.materialId}`:type==='genesis'?'/alchimia/processi':`/pagina/${entry.id}`);}catch(e){setError(e.message);window.alert(e.message);}finally{setBusy(false);}}
-  const loginAction=async()=>{try{await login();}catch(e){setError(e.message);window.alert(e.message);}};
-  const seedAction=async()=>{if(!window.confirm('Importare 32 materiali, 12 processi e la sezione Alchimia in Firestore? Esegui questa operazione una sola volta.'))return;setBusy(true);try{await bootstrap();}catch(e){setError(e.message);window.alert(e.message);}finally{setBusy(false);}};
-  return <>
-    <div className="gm-header-area"><button type="button" className="icon-button gm-account-trigger" onClick={()=>setOpen(!open)} title="Accesso GM" aria-label="Accesso GM"><LockKeyhole size={18}/>{gm&&<span className="gm-live-dot"/>}</button>
-    {open&&<div className="gm-account-menu">{!configured?<p>Firebase non configurato. Inserisci i parametri della Web App nelle variabili VITE_FIREBASE_*.</p>:!user?<><strong>Accesso Game Master</strong><p>Accedi con Google. Il proprietario del progetto deve abilitare il tuo UID in Firestore.</p><button className="gm-primary" type="button" onClick={loginAction}><LogIn size={16}/> Accedi con Google</button></>:<><strong>{gm?'Game Master':'Account non abilitato'}</strong><small>{user.email}</small><button type="button" title="Copia UID" className="gm-uid gm-uid-button" onClick={()=>navigator.clipboard?.writeText(user.uid)}>UID: {user.uid} · Copia</button>{error&&<small className="gm-error">{error}</small>}{gm&&<>{seeded&&<button type="button" className="gm-primary" onClick={()=>{setAdd(true);setOpen(false);}}><FilePlus2 size={15}/> Nuova pagina / sezione</button>}{!seeded&&<button type="button" disabled={busy} className="gm-secondary" onClick={seedAction}>Importa compendio iniziale</button>}</>}<button type="button" className="gm-secondary" onClick={()=>logout().then(()=>setOpen(false))}><LogOut size={15}/> Esci</button></>}</div>}</div>
-    {add&&createPortal(<div className="gm-overlay" onMouseDown={e=>e.target===e.currentTarget&&setAdd(false)}><form onSubmit={create} className="gm-create-modal" role="dialog" aria-modal="true" aria-label="Nuova voce"><div className="gm-create-top"><h2>Nuova voce</h2><button type="button" className="icon-button" onClick={()=>setAdd(false)}><X/></button></div><label className="gm-input"><span>Tipo</span><select value={type} onChange={e=>setType(e.target.value)}><option value="page">Pagina</option><option value="chapter">Sezione principale</option><option value="material">Materiale alchemico</option><option value="genesis">Processo alchemico</option></select></label><Input label="Titolo" value={title} onChange={setTitle} required placeholder="Nome della nuova voce"/>{type==='page'&&<label className="gm-input"><span>In quale sezione?</span><select value={parent} onChange={e=>setParent(e.target.value)}><option value="root">Home</option><option value="alchimia">Alchimia</option>{pages.filter(p=>p.kind==='chapter'&&p.id!=='alchimia').map(p=><option key={p.id} value={p.id}>{p.title}</option>)}</select></label>}<div className="gm-footer-actions"><button className="gm-secondary" type="button" onClick={()=>setAdd(false)}>Annulla</button><button className="gm-primary" type="submit" disabled={busy}><Plus size={15}/> Crea bozza</button></div></form></div>,document.body)}
-  </>;
+function RichEditor({value,onChange,label,targets,currentId}){
+ const ref=useRef(null),caret=useRef(null); const [suggestions,setSuggestions]=useState([]);
+ useEffect(()=>{if(ref.current&&ref.current.innerHTML!==(value||''))ref.current.innerHTML=value||'<p></p>';},[value]);
+ const scan=useCallback(()=>{
+  const selection=window.getSelection(); const node=selection?.anchorNode;
+  if(!selection?.isCollapsed||!node||node.nodeType!==Node.TEXT_NODE||!ref.current?.contains(node)||node.parentElement?.closest('a')){setSuggestions([]);return;}
+  const before=node.textContent.slice(0,selection.anchorOffset);
+  const fragment=before.match(/[\p{L}\p{N}’'-]+(?:\s+[\p{L}\p{N}’'-]+){0,3}$/u)?.[0]||'';
+  const words=fragment.trim().split(/\s+/), candidatePhrases=[];
+  for(let count=1;count<=Math.min(4,words.length);count++)candidatePhrases.push(words.slice(-count).join(' '));
+  const picks=targets.filter(t=>t.id!==currentId&&candidatePhrases.some(w=>w.length>=3&&normalize(t.title).startsWith(normalize(w))));
+  if(!picks.length){setSuggestions([]);return;}
+  caret.current={node,offset:selection.anchorOffset,phrases:candidatePhrases};setSuggestions(picks.slice(0,5));
+ },[targets,currentId]);
+ function format(action,param){ref.current?.focus();document.execCommand(action,false,param);onChange(ref.current?.innerHTML||'');setSuggestions([]);}
+ function insertSuggested(t){
+  const position=caret.current;if(!position||!ref.current?.contains(position.node))return;
+  const matched=position.phrases.find(w=>normalize(t.title).startsWith(normalize(w))&&w.length>=3);
+  if(!matched)return;
+  const range=document.createRange();range.setStart(position.node,position.offset-matched.length);range.setEnd(position.node,position.offset);
+  const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);
+  document.execCommand('createLink',false,t.url);onChange(ref.current.innerHTML);setSuggestions([]);
+ }
+ function addExternal(){const url=window.prompt('URL HTTPS o collegamento interno #/…','https://');if(!url)return;if(!safeUrl(url,true)){window.alert('URL non valido.');return;}format('createLink',url);}
+ return <div className="gm-wysiwyg-field"><label>{label}</label><div className="gm-formatbar" role="toolbar" aria-label={`Formato: ${label}`}><button type="button" title="Grassetto" onClick={()=>format('bold')}><b>B</b></button><button type="button" title="Corsivo" onClick={()=>format('italic')}><i>I</i></button><button type="button" title="Elenco" onClick={()=>format('insertUnorderedList')}>• ≡</button><button type="button" title="Elenco numerato" onClick={()=>format('insertOrderedList')}>1. ≡</button><button type="button" onClick={addExternal} title="Inserisci collegamento"><Link2 size={16}/></button><button type="button" onClick={()=>format('removeFormat')} title="Rimuovi formato">Tx</button></div>
+ <div ref={ref} contentEditable suppressContentEditableWarning role="textbox" aria-multiline="true" aria-label={label} className="gm-wysiwyg" onInput={e=>{onChange(e.currentTarget.innerHTML);scan();}} onKeyUp={scan} onClick={scan} onBlur={()=>setTimeout(()=>setSuggestions([]),100)} onPaste={e=>{e.preventDefault();document.execCommand('insertText',false,e.clipboardData.getData('text/plain'));onChange(e.currentTarget.innerHTML);}}/>
+ {suggestions.length>0&&<div className="gm-link-suggestions" role="listbox" aria-label="Collegamenti suggeriti"><small>COLLEGA LA PAROLA SELEZIONATA</small>{suggestions.map(t=><button type="button" key={t.id} onMouseDown={e=>{e.preventDefault();insertSuggested(t);}}><Link2 size={14}/> {t.title}</button>)}</div>}</div>;
 }
-
-export function GenericBlocks({entry}) {
-  return <>
-    {entry.imageUrl&&validatedImageUrl(entry.imageUrl)&&<figure className="gm-content-image"><img src={validatedImageUrl(entry.imageUrl)} alt={entry.imageAlt||entry.title} loading="lazy" referrerPolicy="no-referrer"/></figure>}
-    {(entry.blocks||[]).map((block,i)=><div key={block.id||i} className={`gm-content-block gm-content-${block.type}`}>
-      {block.type==='rich'&&<div className="rules" dangerouslySetInnerHTML={{__html:sanitizeHtml(block.html)}}/>}
-      {block.type==='image'&&validatedImageUrl(block.url)&&<figure className="gm-content-image"><img src={validatedImageUrl(block.url)} alt={block.alt||''} loading="lazy" referrerPolicy="no-referrer"/></figure>}
-      {block.type==='link'&&safeUrl(block.url,true)&&(block.url.startsWith('#/')?<a href={block.url} className="gm-content-link">{block.text||block.url} <ExternalLink size={16}/></a>:<a href={safeUrl(block.url)} target="_blank" rel="noopener noreferrer" className="gm-content-link">{block.text||block.url}<ExternalLink size={16}/></a>)}
-    </div>)}
-  </>;
+function BlockEditor({block,index,items,onChange,targets,currentId}){
+ const patch=value=>onChange(patched(items,index,value));
+ const modify=(key,value)=>patch({[key]:value});
+ const duplicate=()=>onChange([...items.slice(0,index+1),{...JSON.parse(JSON.stringify(block)),id:bid()},...items.slice(index+1)]);
+ const row=(i,value)=>patch({rows:block.rows.map((r,j)=>i===j?value:r)});
+ return <div className="gm-block-editor"><div className="gm-block-title"><strong>{blockNames[block.type]||block.type} · {index+1}</strong><Controls up={()=>onChange(move(items,index,-1))} down={()=>onChange(move(items,index,1))} duplicate={duplicate} remove={()=>onChange(items.filter((_,j)=>j!==index))}/></div>
+ {block.type==='rich'&&<RichEditor key={block.id} label="Testo formattato" value={block.html} onChange={v=>modify('html',v)} targets={targets} currentId={currentId}/>}
+ {block.type==='heading'&&<div className="gm-two-col"><Input label="Titolo" value={block.text} onChange={v=>modify('text',v)}/><label className="gm-input"><span>Livello</span><select value={block.level||2} onChange={e=>modify('level',Number(e.target.value))}><option value={2}>Titolo di sezione</option><option value={3}>Sottotitolo</option></select></label></div>}
+ {block.type==='image'&&<><Input label="URL immagine HTTPS" value={block.url} onChange={v=>modify('url',v)}/><Input label="Descrizione per accessibilità" value={block.alt} onChange={v=>modify('alt',v)}/><Input label="Didascalia (facoltativa)" value={block.caption} onChange={v=>modify('caption',v)}/>{validatedImageUrl(block.url)&&<img className="gm-image-preview" src={validatedImageUrl(block.url)} alt={block.alt||'Anteprima'} referrerPolicy="no-referrer"/>}</>}
+ {block.type==='gallery'&&<>{(block.images||[]).map((img,j)=><div className="gm-multi-item" key={j}><Input label={`Immagine ${j+1} · URL HTTPS`} value={img.url} onChange={v=>modify('images',patched(block.images,j,{url:v}))}/><Input label="Descrizione" value={img.alt} onChange={v=>modify('images',patched(block.images,j,{alt:v}))}/><button type="button" className="gm-secondary" onClick={()=>modify('images',block.images.filter((_,k)=>j!==k))}>Rimuovi immagine</button></div>)}<button type="button" className="gm-secondary" onClick={()=>modify('images',[...(block.images||[]),{url:'',alt:''}])}><Plus size={14}/> Aggiungi immagine</button></>}
+ {block.type==='quote'&&<><Input label="Citazione" as="textarea" rows={3} value={block.text} onChange={v=>modify('text',v)}/><Input label="Attribuzione" value={block.attribution} onChange={v=>modify('attribution',v)}/></>}
+ {block.type==='callout'&&<><Input label="Contenuto" as="textarea" rows={3} value={block.text} onChange={v=>modify('text',v)}/><label className="gm-input"><span>Stile</span><select value={block.tone||'note'} onChange={e=>modify('tone',e.target.value)}><option value="note">Nota</option><option value="lore">Lore</option><option value="warning">Attenzione</option></select></label></>}
+ {block.type==='list'&&<><Input label="Una voce per riga" as="textarea" rows={5} value={(block.items||[]).join('\n')} onChange={v=>modify('items',v.split('\n'))}/><label className="gm-toggle"><input type="checkbox" checked={!!block.ordered} onChange={e=>modify('ordered',e.target.checked)}/> Elenco numerato</label></>}
+ {block.type==='link'&&<><Input label="Testo" value={block.text} onChange={v=>modify('text',v)}/><LinkPicker targets={targets} value={block.url} onChange={v=>modify('url',v)}/></>}
+ {block.type==='links'&&<>{(block.links||[]).map((link,j)=><div className="gm-multi-item" key={j}><Input label={`Link ${j+1} · testo`} value={link.text} onChange={v=>modify('links',patched(block.links,j,{text:v}))}/><LinkPicker targets={targets} value={link.url} onChange={v=>modify('links',patched(block.links,j,{url:v}))}/><button type="button" className="gm-secondary" onClick={()=>modify('links',block.links.filter((_,k)=>j!==k))}>Rimuovi</button></div>)}<button type="button" className="gm-secondary" onClick={()=>modify('links',[...(block.links||[]),{text:'',url:''}])}><Plus size={14}/> Aggiungi link</button></>}
+ {block.type==='table'&&<><p className="gm-hint">Le celle sono testo semplice; puoi aggiungere righe e colonne.</p><div className="gm-table-edit"><div className="gm-table-edit-row">{(block.columns||[]).map((v,j)=><Input key={j} label={`Colonna ${j+1}`} value={v} onChange={x=>modify('columns',block.columns.map((c,k)=>k===j?x:c))}/>)}</div>{(block.rows||[]).map((values,i)=><div className="gm-table-edit-row" key={i}>{values.map((v,j)=><Input key={j} label={`R${i+1}, C${j+1}`} value={v} onChange={x=>row(i,values.map((c,k)=>k===j?x:c))}/>)}</div>)}</div><div className="gm-add-block"><button type="button" onClick={()=>modify('rows',[...(block.rows||[]),Array((block.columns||[]).length).fill('')])}><Plus size={14}/> Riga</button><button type="button" onClick={()=>patch({columns:[...block.columns,`Colonna ${block.columns.length+1}`],rows:block.rows.map(r=>[...r,''])})}><Plus size={14}/> Colonna</button><button type="button" disabled={(block.rows||[]).length<2} onClick={()=>modify('rows',block.rows.slice(0,-1))}>− Riga</button><button type="button" disabled={(block.columns||[]).length<2} onClick={()=>patch({columns:block.columns.slice(0,-1),rows:block.rows.map(r=>r.slice(0,-1))})}>− Colonna</button></div></>}
+ {block.type==='divider'&&<p className="gm-hint">Separatore visivo, senza contenuto.</p>}</div>;
+}
+function BlocksComposer({blocks,onChange,targets,currentId}){
+ const [open,setOpen]=useState(false);
+ return <section className="gm-blocks-composer"><div className="gm-section-heading"><h3>Blocchi della pagina</h3><button type="button" className="gm-primary" onClick={()=>setOpen(!open)}><Plus size={15}/> Aggiungi blocco</button></div>
+ {open&&<div className="gm-block-palette">{Object.entries(blockNames).map(([type,label])=><button type="button" key={type} onClick={()=>{onChange([...(blocks||[]),{id:bid(),type,...blockTemplates[type]()}]);setOpen(false);}}><Plus size={13}/>{label}</button>)}</div>}
+ {(blocks||[]).length===0&&<p className="gm-hint">La pagina è vuota. Puoi comporla con i blocchi, nell’ordine che preferisci.</p>}
+ {(blocks||[]).map((block,i)=><BlockEditor key={block.id||i} block={block} index={i} items={blocks} onChange={onChange} targets={targets} currentId={currentId}/>)}</section>;
+}
+export function EntryEditor({entry,open,onClose}){
+ const {gm,saveDraft,publish,remove,loadHistory,isDraft,pages,materials,processes,setError}=useContent();
+ const targets=useTargets(),navigate=useNavigate();
+ const [form,setForm]=useState(entry),[busy,setBusy]=useState(false),[message,setMessage]=useState(''),[revisions,setRevisions]=useState([]),[showHistory,setShowHistory]=useState(false);
+ useEffect(()=>{setForm(entry?JSON.parse(JSON.stringify(entry)):null);setMessage('');setRevisions([]);setShowHistory(false);},[entry?.id,open]);
+ if(!open||!gm||!form)return null;
+ const field=(key,value)=>setForm(old=>({...old,[key]:value}));
+ const profile=(key,value)=>setForm(old=>({...old,profile:{...(old.profile||{}),[key]:value}}));
+ const run=async(cb,success)=>{setBusy(true);setMessage('');try{const result=await cb();setMessage(typeof success==='function'?success(result):success);}catch(e){setMessage(e.message);setError(e.message);}finally{setBusy(false);}};
+ const del=()=>{if(['alchimia','alchimia-materiali','alchimia-genesi'].includes(entry.id))return; if(!window.confirm(`Eliminare «${form.title}»?`))return;run(async()=>{await remove(entry.id);onClose();navigate('/');},'Eliminato.');};
+ const excluded=new Set([form.id]);
+ for(let n=0;n<pages.length;n++)for(const p of pages)if(excluded.has(p.parentId))excluded.add(p.id);
+ const parents=pages.filter(p=>['chapter','collection'].includes(p.kind)&&!excluded.has(p.id));
+ return createPortal(<div className="gm-overlay" onMouseDown={e=>e.target===e.currentTarget&&onClose()}><section className="gm-drawer" role="dialog" aria-modal="true" aria-label={`Modifica ${form.title}`}>
+ <header className="gm-drawer-header"><div><small>MODALITÀ GM · {kindNames[form.kind]||'Voce'}</small><h2>Modifica contenuto</h2><p>{form.title}</p></div><button type="button" className="icon-button" onClick={onClose} aria-label="Chiudi"><X/></button></header>
+ <div className="gm-drawer-body"><Input label="Titolo" value={form.title} onChange={v=>field('title',v)}/>
+ {(form.kind==='page'||form.kind==='collection'||form.kind==='chapter')&&<><Input label="Descrizione breve" value={form.description} onChange={v=>field('description',v)} as="textarea" rows={2}/><Input label="Ordine nella raccolta" type="number" value={form.order??0} onChange={v=>field('order',Number(v))}/>{form.id!=='alchimia'&&<label className="gm-input"><span>Raccolta di appartenenza</span><select value={form.parentId||'root'} onChange={e=>field('parentId',e.target.value)}><option value="root">Compendio · Home</option>{parents.map(p=><option value={p.id} key={p.id}>{p.title}</option>)}</select></label>}<BlocksComposer blocks={form.blocks||[]} onChange={v=>field('blocks',v)} targets={targets} currentId={form.id}/></>}
+ {form.kind==='material'&&<><div className="gm-two-col"><Input label="Simbolo" value={form.symbol} onChange={v=>field('symbol',v)}/><label className="gm-input"><span>Categoria</span><select value={form.group} onChange={e=>field('group',e.target.value)}>{['Elementi','Metalli Planetari','Metalli Pesanti','Materia Vitale','Compositi'].map(g=><option key={g}>{g}</option>)}</select></label></div><Input label="Bonus di Purezza" value={form.bonus} onChange={v=>field('bonus',v)}/><Input label="Prerequisiti" value={form.requirementsText} onChange={v=>field('requirementsText',v)} as="textarea" rows={3}/><Input label="Identità nel mondo di gioco" value={form.profile?.theme} onChange={v=>profile('theme',v)} as="textarea" rows={5}/><Input label="Riferimento alchemico reale" value={form.profile?.history} onChange={v=>profile('history',v)} as="textarea" rows={4}/>
+ <div className="gm-section-heading"><h3>Capacità</h3><button type="button" className="gm-secondary" onClick={()=>field('abilities',[...(form.abilities||[]),{id:bid(),name:'Nuova capacità',level:1,html:'<p></p>'}])}><Plus size={15}/> Aggiungi</button></div>{(form.abilities||[]).map((a,i)=><div className="gm-block-editor" key={a.id||i}><div className="gm-block-title"><strong>Capacità {i+1}</strong><Controls up={()=>field('abilities',move(form.abilities,i,-1))} down={()=>field('abilities',move(form.abilities,i,1))} remove={()=>field('abilities',form.abilities.filter((_,j)=>j!==i))}/></div><div className="gm-two-col"><Input label="Nome" value={a.name} onChange={v=>field('abilities',patched(form.abilities,i,{name:v}))}/><Input label="Grado" type="number" min="1" value={a.level} onChange={v=>field('abilities',patched(form.abilities,i,{level:Number(v)}))}/></div><RichEditor key={`${entry.id}-${a.id||i}`} label="Regole della capacità" value={a.html} onChange={v=>field('abilities',patched(form.abilities,i,{html:v}))} targets={targets} currentId={form.id}/></div>)}</>}
+ {form.kind==='genesis'&&<RichEditor label="Descrizione del processo" value={form.html} onChange={v=>field('html',v)} targets={targets} currentId={form.id}/>}
+ <div className="gm-image-fields"><h3>Immagine introduttiva · solo URL</h3><Input label="URL HTTPS" value={form.imageUrl} onChange={v=>field('imageUrl',v)} placeholder="https://…"/><Input label="Descrizione" value={form.imageAlt} onChange={v=>field('imageAlt',v)}/>{validatedImageUrl(form.imageUrl)&&<img className="gm-image-preview" src={validatedImageUrl(form.imageUrl)} alt={form.imageAlt||'Anteprima'} referrerPolicy="no-referrer"/>}</div>
+ <div className="gm-history"><button type="button" onClick={()=>run(async()=>{setRevisions(await loadHistory(entry.id));setShowHistory(true);},'')}><Clock3 size={16}/> Cronologia pubblicazioni</button>{showHistory&&<div>{revisions.length===0?<p>Nessuna revisione.</p>:revisions.map(rev=><button type="button" key={rev.id} onClick={()=>{setForm(rev.content);setMessage('Revisione caricata. Salva o pubblica per ripristinarla.');}}>{rev.at?.toDate?.().toLocaleString('it-IT')||'Revisione precedente'} · Carica</button>)}</div>}</div></div>
+ <footer className="gm-drawer-footer"><div className="gm-status" role="status">{message|| (isDraft(entry.id)?'Bozza non pubblicata.':'I lettori vedono soltanto la versione pubblicata.')}</div><div className="gm-footer-actions">{!['alchimia','alchimia-materiali','alchimia-genesi'].includes(entry.id)&&<button className="gm-danger" type="button" disabled={busy} onClick={del}><Trash2 size={15}/> Elimina</button>}<button className="gm-secondary" type="button" disabled={busy} onClick={()=>run(()=>saveDraft(form),'Bozza salvata.')}><Save size={16}/> Salva bozza</button><button className="gm-primary" type="button" disabled={busy} onClick={()=>run(async()=>{await publish(form);onClose();},'Pubblicato.')}><Send size={16}/> Pubblica</button></div></footer>
+ </section></div>,document.body);
+}
+export function EditTrigger({entry,children}){const {gm,seeded,isDraft}=useContent();const[open,setOpen]=useState(false);if(!gm||!seeded||!entry)return null;return <><button type="button" className="gm-edit-trigger" onClick={()=>setOpen(true)}><Edit3 size={15}/>{children||'Modifica pagina'}{isDraft(entry.id)&&<span>Bozza</span>}</button><EntryEditor entry={entry} open={open} onClose={()=>setOpen(false)}/></>;}
+export function GMControls(){
+ const {configured,user,gm,seeded,login,logout,bootstrap,pages,setError,error,saveDraft,syncEditorial}=useContent();
+ const navigate=useNavigate(), [open,setOpen]=useState(false),[add,setAdd]=useState(false),[title,setTitle]=useState(''),[type,setType]=useState('page'),[parent,setParent]=useState('alchimia'),[busy,setBusy]=useState(false),[status,setStatus]=useState('');
+ const parents=pages.filter(p=>p.kind==='chapter'||p.kind==='collection');
+ const create=async(e)=>{e.preventDefault();if(!title.trim())return;setBusy(true);try{const entry=newEntry(type,title.trim(),parent);await saveDraft(entry);setAdd(false);setTitle('');navigate(`/pagina/${entry.id}`);}catch(e){setError(e.message);window.alert(e.message);}finally{setBusy(false);}};
+ const loginAction=async()=>{try{await login();}catch(e){setError(e.message);window.alert(e.message);}};
+ const seed=async()=>{if(!window.confirm('Importare i contenuti iniziali in Firestore? Operazione unica.'))return;setBusy(true);try{await bootstrap();}catch(e){setError(e.message);window.alert(e.message);}finally{setBusy(false);}};
+ const sync=async()=>{if(!window.confirm('Allineare le descrizioni editoriali e le regole aggiornate, senza sovrascrivere i testi modificati dal GM? Le modifiche GM non corrispondenti ai vecchi testi saranno conservate.'))return;setBusy(true);try{const result=await syncEditorial();setStatus(`Allineamento: ${result.updated} aggiornati, ${result.skipped} lasciati invariati.`);}catch(e){setError(e.message);window.alert(e.message);}finally{setBusy(false);}};
+ return <><div className="gm-header-area"><button type="button" className="icon-button gm-account-trigger" onClick={()=>setOpen(!open)} title="Accesso GM" aria-label="Accesso GM"><LockKeyhole size={18}/>{gm&&<span className="gm-live-dot"/>}</button>{open&&<div className="gm-account-menu">{!configured?<p>Firebase non configurato. Inserisci le variabili VITE_FIREBASE_*.</p>:!user?<><strong>Game Master</strong><p>Accedi con Google; il tuo UID deve essere abilitato nella raccolta admins.</p><button className="gm-primary" type="button" onClick={loginAction}><LogIn size={16}/> Accedi con Google</button></>:<><strong>{gm?'Game Master':'Account non abilitato'}</strong><small>{user.email}</small><button type="button" title="Copia UID" className="gm-uid gm-uid-button" onClick={()=>navigator.clipboard?.writeText(user.uid)}>UID: {user.uid} · Copia</button>{error&&<small className="gm-error">{error}</small>}{status&&<small>{status}</small>}{gm&&<>{seeded&&<><button type="button" className="gm-primary" onClick={()=>{setAdd(true);setOpen(false);}}><FilePlus2 size={15}/> Nuova raccolta / pagina</button><button type="button" className="gm-secondary" disabled={busy} onClick={sync}><ShieldCheck size={15}/> Allinea testi iniziali</button></>}{!seeded&&<button type="button" disabled={busy} className="gm-secondary" onClick={seed}>Importa compendio iniziale</button>}</>}<button type="button" className="gm-secondary" onClick={()=>logout().then(()=>setOpen(false))}><LogOut size={15}/> Esci</button></>}</div>}</div>
+ {add&&createPortal(<div className="gm-overlay" onMouseDown={e=>e.target===e.currentTarget&&setAdd(false)}><form onSubmit={create} className="gm-create-modal" role="dialog" aria-modal="true" aria-label="Nuovo contenuto"><div className="gm-create-top"><h2>Nuovo contenuto</h2><button type="button" className="icon-button" onClick={()=>setAdd(false)}><X/></button></div><label className="gm-input"><span>Tipo</span><select value={type} onChange={e=>setType(e.target.value)}><option value="page">Pagina</option><option value="collection">Raccolta</option></select></label><Input label="Titolo" value={title} onChange={setTitle} required placeholder="Titolo"/><label className="gm-input"><span>Inserisci in</span><select value={parent} onChange={e=>setParent(e.target.value)}><option value="root">Compendio · Home</option>{parents.map(p=><option key={p.id} value={p.id}>{p.title}</option>)}</select></label><p className="gm-hint">Le raccolte possono contenere altre raccolte e pagine. I materiali e i processi esistenti restano disponibili nelle loro raccolte.</p><div className="gm-footer-actions"><button className="gm-secondary" type="button" onClick={()=>setAdd(false)}>Annulla</button><button className="gm-primary" type="submit" disabled={busy}><Plus size={15}/> Crea bozza</button></div></form></div>,document.body)}</>;
+}
+function PublicLink({url,text}){const safe=safeUrl(url,true);if(!safe)return null;return <a className="gm-content-link" href={safe} target={safe.startsWith('#/')?undefined:'_blank'} rel={safe.startsWith('#/')?undefined:'noopener noreferrer'}>{text||safe}<ExternalLink size={16}/></a>;}
+export function GenericBlocks({entry}){
+ return <>{validatedImageUrl(entry.imageUrl)&&<figure className="gm-content-image"><img src={validatedImageUrl(entry.imageUrl)} alt={entry.imageAlt||entry.title} loading="lazy" referrerPolicy="no-referrer"/></figure>}{(entry.blocks||[]).map((block,i)=><div key={block.id||i} className={`gm-content-block gm-content-${block.type}`}>
+ {block.type==='rich'&&<div className="rules" dangerouslySetInnerHTML={{__html:sanitizeHtml(block.html)}}/>}
+ {block.type==='heading'&&(block.level===3?<h3>{block.text}</h3>:<h2>{block.text}</h2>)}
+ {block.type==='divider'&&<hr className="gm-content-divider"/>}
+ {block.type==='image'&&validatedImageUrl(block.url)&&<figure className="gm-content-image"><img src={validatedImageUrl(block.url)} alt={block.alt||''} loading="lazy" referrerPolicy="no-referrer"/>{block.caption&&<figcaption>{block.caption}</figcaption>}</figure>}
+ {block.type==='gallery'&&<div className="gm-content-gallery">{(block.images||[]).map((img,j)=>validatedImageUrl(img.url)&&<img key={j} src={validatedImageUrl(img.url)} alt={img.alt||''} loading="lazy" referrerPolicy="no-referrer"/>)}</div>}
+ {block.type==='quote'&&<blockquote>{block.text}{block.attribution&&<cite>{block.attribution}</cite>}</blockquote>}
+ {block.type==='callout'&&<aside className={`gm-content-callout gm-callout-${['lore','warning'].includes(block.tone)?block.tone:'note'}`}>{block.text}</aside>}
+ {block.type==='list'&&(block.ordered?<ol>{(block.items||[]).filter(Boolean).map((x,j)=><li key={j}>{x}</li>)}</ol>:<ul>{(block.items||[]).filter(Boolean).map((x,j)=><li key={j}>{x}</li>)}</ul>)}
+ {block.type==='link'&&<PublicLink url={block.url} text={block.text}/>}
+ {block.type==='links'&&<nav className="gm-content-linklist">{(block.links||[]).map((l,j)=><PublicLink key={j} url={l.url} text={l.text}/>)}</nav>}
+ {block.type==='table'&&<div className="gm-content-table"><table><thead><tr>{(block.columns||[]).map((c,j)=><th key={j}>{c}</th>)}</tr></thead><tbody>{(block.rows||[]).map((r,i)=><tr key={i}>{r.map((c,j)=><td key={j}>{c}</td>)}</tr>)}</tbody></table></div>}
+ </div>)}</>;
 }

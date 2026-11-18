@@ -1,6 +1,6 @@
 {
-  "version": "0.7.36",
-  "source": "Suite BTE v0.7.36 · Exalt Core 0.7.28",
+  "version": "0.7.38",
+  "source": "Suite BTE v0.7.38 · Argentovivo +1 CA e nuova capienza di Amalgama",
   "dcFormula": "6 + Competenza + Purezza effettiva del singolo materiale + modificatore di Intelligenza",
   "materials": [
     {
@@ -36,8 +36,7 @@
       "requirementsText": "Nessuno.",
       "profile": {
         "theme": "L'Acqua è l'arte di sopravvivere cambiando forma. Nell'Exalt il corpo diventa una corrente, alternando impeto, adattamento e controllo dei fluidi vitali. Può travolgere ciò che incontra, resistere ai colpi materiali e sottrarre umidità alle creature, senza perdere la propria natura mutevole.",
-        "history": "Nella tradizione dei quattro elementi, l'acqua rappresentava il freddo e l'umido: una qualità della materia, non il moderno elemento chimico. Il suo scorrere e il suo assumere la forma del recipiente spiegano la relazione, qui fantastica, fra malleabilità e trasformazione.",
-        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+        "history": "Nella dottrina dei quattro elementi, l'acqua era associata alle qualità del freddo e dell'umido. La sua capacità di scorrere e assumere la forma del recipiente ne faceva un'immagine di mutamento e adattabilità."
       }
     },
     {
@@ -67,9 +66,8 @@
       ],
       "requirementsText": "Saggezza 16+ e un altro materiale con Purezza almeno pari a quella di Arsenico +3.",
       "profile": {
-        "theme": "Alkahest non cerca di spezzare un'armatura: vuole dimostrare che ogni difesa può essere dissolta. Il materiale separa le protezioni dalla sostanza che dovrebbero custodire, fino a lasciare esposta l'essenza del bersaglio. Il suo potere ha però anche un versante opposto: rendere temporaneamente inalterabile ciò che normalmente muterebbe.",
-        "history": "L'alkahest fu immaginato da alcuni alchimisti come un solvente universale, capace di riportare le sostanze a una condizione fondamentale. Non era un composto identificabile della chimica moderna: era un ideale teorico discusso anche nell'ambito della preparazione dei rimedi.",
-        "historicalUrl": "https://pubmed.ncbi.nlm.nih.gov/11875242/"
+        "theme": "L’Alkahest è il solvente impossibile, cercato dagli alchimisti come sostanza capace di dissolvere ogni altra sostanza. Nell’Exalt questa idea si rovescia in una volontà di separazione assoluta: non si consuma soltanto la materia, ma il vincolo che la protegge, la sostiene e le permette di opporre resistenza. La stessa padronanza può arrestare per un istante ciò che dovrebbe mutare.",
+        "history": "L'alkahest era il solvente universale immaginato da alcuni alchimisti, capace in teoria di dissolvere le sostanze fino ai loro principi fondamentali. Rimase una nozione alchemica, non una sostanza identificata dalla chimica moderna."
       }
     },
     {
@@ -104,9 +102,8 @@
       ],
       "requirementsText": "Nessuno.",
       "profile": {
-        "theme": "Aria governa le distanze. Nell'Exalt non è soltanto volo, ma un sistema di correnti che solleva, devia, trascina e respinge: dal vortice concentrato fino a una tempesta di cicloni. Chi ne padroneggia la Purezza non occupa semplicemente lo spazio, ma ne ridisegna continuamente i percorsi.",
-        "history": "Per la fisica aristotelica ripresa dagli alchimisti l'aria era uno dei quattro elementi, associato al caldo e all'umido. Il vento non veniva considerato una sostanza distinta: la lettura dei movimenti atmosferici diventa qui una disciplina alchemica autonoma.",
-        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+        "theme": "Inafferrabile per natura, l’Aria dà forma a ciò che normalmente sfugge alla presa. Il corpo dell’Exalt diventa parte delle correnti: può ascendere, deviare, precipitare e trascinare altri con sé. A Purezza maggiore non si limita a cavalcare il vento, ma lo organizza in un cielo di vortici ostili.",
+        "history": "La filosofia naturale aristotelica, ripresa dagli alchimisti, considerava l'aria uno dei quattro elementi, associato al caldo e all'umido. I fenomeni atmosferici erano interpretati nell'ambito delle trasformazioni e dei movimenti della materia."
       }
     },
     {
@@ -141,9 +138,8 @@
       ],
       "requirementsText": "Nessuno.",
       "profile": {
-        "theme": "Fuoco converte l'esistenza dell'Exalt in combustibile. Le faville si moltiplicano, le scie incandescenti segnano il terreno e la fiamma cresce fino all'esplosione di una stella. Il suo tratto distintivo è il prezzo della potenza: più energia viene liberata, più difficile diventa impedire che divori chi la genera.",
-        "history": "Il fuoco era uno dei quattro elementi della filosofia naturale, associato al caldo e al secco. La combustione e la calcinazione erano operazioni essenziali nei laboratori alchemici, benché il fuoco, nella chimica moderna, non sia un elemento materiale.",
-        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+        "theme": "Il Fuoco è trasformazione attraverso il consumo. Da una prima combustione che si alimenta del corpo dell’Exalt sorgono scie, esplosioni e fiamme che chiedono altra materia da divorare. Il suo potere cresce insieme al rischio: la forza che distrugge gli avversari non distingue sempre tra il combustibile e chi lo accende.",
+        "history": "Nella filosofia naturale il fuoco era uno dei quattro elementi, associato al caldo e al secco. Nei laboratori alchemici la combustione e la calcinazione erano operazioni fondamentali per trasformare le sostanze."
       }
     },
     {
@@ -178,9 +174,8 @@
       ],
       "requirementsText": "Nessuno.",
       "profile": {
-        "theme": "Terra è la persistenza della materia organizzata. L’Exalt innalza corazze minerali, fa germogliare piattaforme nella pietra e interpone menhir fra gli alleati e il pericolo. Quando la struttura cede, la stessa forza che la teneva salda può propagarsi nel sottosuolo e trasformarsi in una frattura primordiale.",
-        "history": "La terra, nella tradizione dei quattro elementi, era fredda e secca: immagine della stabilità, del peso e della consistenza. In alchimia il lavoro sui minerali era anche un lavoro sulle trasformazioni della materia; qui la metafora diventa costruzione e difesa tangibili.",
-        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+        "theme": "La Terra custodisce la continuità delle cose: ciò che è sepolto, ciò che regge e ciò che resiste. L’Exalt può rivestirsi di minerale, far sollevare il suolo e frapporre la propria creazione ai colpi destinati agli alleati. Ma nessuna struttura è eterna; la sua rottura lascia emergere la violenza trattenuta nelle profondità.",
+        "history": "La terra era uno dei quattro elementi, associata al freddo e al secco. Simboleggiava il peso, la stabilità e la consistenza della materia, mentre minerali e metalli occupavano un posto centrale nelle pratiche alchemiche."
       }
     },
     {
@@ -211,8 +206,7 @@
       "requirementsText": "Livello Exalt 3+; nessun altro Elemento posseduto (incompatibilità reciproca).",
       "profile": {
         "theme": "Zero rappresenta ciò che resta prima che una forma si distingua dalle altre. Non manipola soltanto l'assenza: sottrae proprietà, altera i rapporti fra corpi ed energie e mette in discussione le condizioni che sembravano inevitabili. È un materiale di eccezione, che usa il vuoto come possibilità di riscrittura.",
-        "history": "Zero non è una sostanza storica dell'alchimia. La sua idea si avvicina, per libera interpretazione, alla ricerca della materia prima: uno stato originario da cui le forme particolari dovrebbero emergere. Nel compendio questa nozione è tradotta in una forza fantastica autonoma.",
-        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+        "history": "Zero non corrisponde a una sostanza riconosciuta nell'alchimia storica. Un possibile parallelo filosofico è la materia prima, intesa in alcune tradizioni come stato originario e indeterminato da cui derivano le forme della materia."
       }
     },
     {
@@ -247,9 +241,8 @@
       ],
       "requirementsText": "Zero o Alkahest 1+ insieme a Ossigeno 1+; oppure un materiale della Materia Vitale 1+ e Ferro/Argentovivo/Rame con Purezza superiore di 1 a quella di Argento; oppure Arsenico 3+ e un Elemento 2+. Verificato a ogni aumento.",
       "profile": {
-        "theme": "Argento custodisce il potere del riflesso: riproduce volti e gesti, restituisce il colpo ricevuto e permette alle azioni di lasciare un'eco. La sua perfezione non consiste nell'essere immobile, ma nel diventare specchio di ciò che lo circonda; a livelli più profondi, anche il ricordo può essere rimodellato.",
-        "history": "Nell'alchimia planetaria l'argento era associato alla Luna e al suo simbolo. Il nesso con la luce riflessa e con la mutevolezza lunare è un'elaborazione tematica del compendio, non una proprietà attribuita alla metallurgia storica.",
-        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+        "theme": "All’Argento appartengono lo specchio e la memoria della luce. L’Exalt ne trae una materia capace di registrare e restituire: volti replicati, colpi riflessi, azioni che ritornano come un’eco. Il riflesso, a Purezza crescente, non è più una semplice immagine dell’originale, ma una possibilità di correggerlo.",
+        "history": "L'argento era uno dei sette metalli planetari e corrispondeva alla Luna. Il suo simbolismo richiamava la luce riflessa, i cicli lunari e la mutevolezza."
       }
     },
     {
@@ -269,7 +262,7 @@
         {
           "level": 2,
           "name": "Memoria Vitale",
-          "html": "<section class=\"exalt-prose\"><p>Con un'<strong>azione</strong>, scegli una creatura entro <strong>12 metri</strong>: se fallisce un tiro salvezza su Costituzione, consuma fino a <strong>la tua Purezza effettiva di Argentovivo divisa per 2, arrotondata per eccesso</strong> Dadi Vita disponibili e subisce danni necrotici pari al loro risultato. Recuperi metà dei danni effettivi. Con un successo non consuma risorse. Puoi utilizzare <em>Memoria Vitale</em> un numero di volte al giorno pari a <strong>1 ogni 3 gradi di Purezza effettiva di Argentovivo (minimo 1)</strong>.</p><p><strong>Gemme di Azoth:</strong> Se il bersaglio fallisce senza avere Dadi Vita, non subisce danni e puoi creare una Gemma, scegliendone l'effetto:</p><ul><li><strong>Scudo di Azoth:</strong> bonus alla CA per <strong>1 minuto</strong>.</li><li><strong>Memoria del Coraggio:</strong> <strong>+1d4</strong> al prossimo tiro salvezza entro <strong>1 minuto</strong>.</li><li><strong>Custodia Vitale:</strong> <strong>1d6, più 1 per ogni grado di Purezza effettiva di Argentovivo</strong> PF temporanei.</li><li><strong>Ristoro dell'Etere:</strong> recuperi <strong>1d6, più 1 per ogni grado di Purezza effettiva di Argentovivo</strong> PF.</li><li><strong>Mira del Riflesso:</strong> <strong>+1d4</strong> al prossimo tiro per colpire entro <strong>1 minuto</strong>.</li><li><strong>Lama d'Azoth:</strong> <strong>+1d6, più 1 per ogni grado di Purezza effettiva di Argentovivo</strong> danni da forza al prossimo attacco riuscito entro <strong>1 minuto</strong>.</li></ul><p>Puoi mantenere una Gemma per ciascun tipo; quando viene consumata o scade, puoi crearne un'altra. Qualunque creatura può consumarla con un'<strong>azione bonus</strong>. Le Gemme scompaiono al tuo prossimo riposo lungo.</p></section>"
+          "html": "<section class=\"exalt-prose\"><p>Con un'<strong>azione</strong>, scegli una creatura entro <strong>12 metri</strong>: se fallisce un tiro salvezza su Costituzione, consuma fino a <strong>la tua Purezza effettiva di Argentovivo divisa per 2, arrotondata per eccesso</strong> Dadi Vita disponibili e subisce danni necrotici pari al loro risultato. Recuperi metà dei danni effettivi. Con un successo non consuma risorse. Puoi utilizzare <em>Memoria Vitale</em> un numero di volte al giorno pari a <strong>1 ogni 3 gradi di Purezza effettiva di Argentovivo (minimo 1)</strong>.</p><p><strong>Gemme di Azoth:</strong> Se il bersaglio fallisce senza avere Dadi Vita, non subisce danni e puoi creare una Gemma, scegliendone l'effetto:</p><ul><li><strong>Scudo di Azoth:</strong> <strong>+1 alla CA per 1 minuto</strong>.</li><li><strong>Memoria del Coraggio:</strong> <strong>+1d4</strong> al prossimo tiro salvezza entro <strong>1 minuto</strong>.</li><li><strong>Custodia Vitale:</strong> <strong>1d6, più 1 per ogni grado di Purezza effettiva di Argentovivo</strong> PF temporanei.</li><li><strong>Ristoro dell'Etere:</strong> recuperi <strong>1d6, più 1 per ogni grado di Purezza effettiva di Argentovivo</strong> PF.</li><li><strong>Mira del Riflesso:</strong> <strong>+1d4</strong> al prossimo tiro per colpire entro <strong>1 minuto</strong>.</li><li><strong>Lama d'Azoth:</strong> <strong>+1d6, più 1 per ogni grado di Purezza effettiva di Argentovivo</strong> danni da forza al prossimo attacco riuscito entro <strong>1 minuto</strong>.</li></ul><p>Puoi mantenere una Gemma per ciascun tipo; quando viene consumata o scade, puoi crearne un'altra. Qualunque creatura può consumarla con un'<strong>azione bonus</strong>. Le Gemme scompaiono al tuo prossimo riposo lungo.</p></section>"
         },
         {
           "level": 6,
@@ -284,9 +277,8 @@
       ],
       "requirementsText": "Nessuno.",
       "profile": {
-        "theme": "Argentovivo è un metallo che non accetta il confine fra solido e fluido. L'Exalt ne assume la mobilità e la dispersione, creando nebbie, riflessi e manifestazioni che attingono al vigore delle creature. La sua opera più grande tende a una presenza quasi incorporea, più difficile da afferrare che da vedere.",
-        "history": "Argentovivo è un nome storico del mercurio, metallo liquido a temperatura ambiente e uno dei protagonisti delle pratiche alchemiche. Nella simbologia tradizionale era collegato al pianeta Mercurio e, in varie dottrine, al principio della volatilità e della trasformazione.",
-        "historicalUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9214491/"
+        "theme": "L’Argentovivo sfugge a ogni forma definitiva: metallo e liquido si confondono in una sostanza mobile, fredda e riflettente. Nell’Exalt diventa respiro, nebbia e memoria vitale sottratta agli avversari. Dai Dadi Vita consumati nascono Gemme e Riflessi, finché la materia stessa sembra cercare una condizione più vicina allo spirito che al corpo.",
+        "history": "Argentovivo è il nome tradizionale del mercurio, metallo liquido a temperatura ambiente. Nell'alchimia planetaria era legato al pianeta Mercurio e, in varie dottrine, alla volatilità e alla trasformazione."
       }
     },
     {
@@ -321,9 +313,8 @@
       ],
       "requirementsText": "Nessuno.",
       "profile": {
-        "theme": "Ferro raccoglie la forza del conflitto. Catene e lance impongono la distanza, le ferite alimentano la pressione e la conquista diventa una regola che grava su tutto il campo di battaglia. Nella sua forma estrema, l'Exalt continua a combattere pagando di persona il costo di ogni istante di resistenza.",
-        "history": "Fra i sette metalli planetari, il ferro corrispondeva a Marte. La sua associazione con le armi e la guerra nasce anche dagli usi storici del metallo; le capacità del compendio traducono questa relazione simbolica in una disciplina marziale.",
-        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+        "theme": "Nel Ferro risuonano la guerra e il peso delle armi. Lance, catene e ferite trasformano la presenza dell’Exalt in un territorio da conquistare o difendere. Il conflitto non è soltanto violenza: è volontà che continua a imporsi anche quando la carne non dovrebbe più reggerla.",
+        "history": "Fra i sette metalli planetari, il ferro era associato a Marte. Il legame simbolico con le armi e la guerra rifletteva anche l'impiego storico del metallo nella fabbricazione di utensili e armamenti."
       }
     },
     {
@@ -359,8 +350,7 @@
       "requirementsText": "Nessuno.",
       "profile": {
         "theme": "Rame combina attrazione e scarica. Può dirigere l'energia verso il proprio corpo per proteggere altri, generare campi elettrici e legare le creature attraverso un fascino che diventa dipendenza. L'amore evocato da questo materiale non è soltanto benevolenza: è anche una forza capace di trattenere e deviare.",
-        "history": "Nella corrispondenza alchemica dei metalli planetari il rame apparteneva a Venere. Il suo ruolo nella metallurgia è reale; i legami con affinità, desiderio ed elettricità sono invece interpretazioni ludiche costruite attorno al materiale e alla sua figura planetaria.",
-        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+        "history": "Nelle corrispondenze alchemiche dei sette metalli planetari, il rame apparteneva a Venere. Era largamente utilizzato nella metallurgia e nella produzione di leghe."
       }
     },
     {
@@ -390,9 +380,8 @@
       ],
       "requirementsText": "Zero o Alkahest 1+ insieme a Flogisto 1+; oppure un Elemento 1+ e Piombo/Stagno/Rame con Purezza superiore di 1 a quella di Oro; oppure Platino 3+ e un materiale della Materia Vitale 2+. Verificato a ogni aumento.",
       "profile": {
-        "theme": "Oro è la ricerca della forma perfetta. Il suo splendore illumina e purifica, ma la perfezione può irrigidirsi fino a trasformarsi in stasi: ciò che non deve più cambiare finisce per essere immobilizzato. L'Exalt ne trae luce, simmetria e un ideale di compimento che non sempre lascia spazio alla vita.",
-        "history": "L'oro, tradizionalmente associato al Sole, rappresentava uno dei risultati più ambiti della trasmutazione alchemica. La crisopoeia era proprio la produzione dell'oro da altri metalli: il compendio ne fa anche un principio di proporzione e fissità.",
-        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+        "theme": "L’Oro è il metallo della perfezione ricercata, della luce che non si corrompe e della forma destinata a durare. L’Exalt ne manifesta splendore, guarigione e ordine; ma la perfezione assoluta può diventare una prigione, dove ciò che viene preservato smette anche di vivere e mutare.",
+        "history": "L'oro corrispondeva al Sole ed era uno dei traguardi più ambiti della trasmutazione alchemica. La crisopoeia designava il tentativo di ottenere oro a partire da altri metalli."
       }
     },
     {
@@ -422,9 +411,8 @@
       ],
       "requirementsText": "Nessuno.",
       "profile": {
-        "theme": "Piombo esercita il peso del tempo sulle cose. Cerchi difensivi e falci simboliche rallentano l'avversario, mentre l'Exalt guadagna lo spazio necessario ad agire dove gli altri restano intrappolati. È una difesa che non respinge soltanto: consuma l'occasione del nemico e conserva la propria.",
-        "history": "Il piombo era associato a Saturno, figura legata anche alla vecchiaia, alla lentezza e al tempo nelle letture simboliche posteriori. È un metallo denso e malleabile; i poteri temporali del compendio sono un'estensione fantastica della corrispondenza planetaria.",
-        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+        "theme": "Il Piombo conserva la gravità di Saturno, il pianeta del limite e del tempo. Dove il suo potere si manifesta, ogni gesto avversario diventa pesante, ogni occasione tarda a compiersi. Gli anelli che proteggono l’Exalt non fermano soltanto i colpi: separano il suo ritmo da quello del mondo circostante.",
+        "history": "Nell'alchimia planetaria il piombo era associato a Saturno. A questa corrispondenza si legavano immagini di lentezza, vecchiaia e tempo; sul piano materiale, il piombo era noto per densità e malleabilità."
       }
     },
     {
@@ -460,8 +448,7 @@
       "requirementsText": "Nessuno.",
       "profile": {
         "theme": "Stagno incarna l'espansione del corpo oltre la misura umana. La presenza dell'Exalt si fa titanica, sostenuta da una vitalità che richiama l'ichor e la memoria degli dèi antichi. La forza è qui sovrabbondanza: statura, vigore e un'eredità che sembra più grande dell'individuo.",
-        "history": "Nella serie dei sette metalli planetari lo stagno era associato a Giove. Il richiamo a sovranità, abbondanza e figure mitiche deriva dal simbolismo del pianeta; non va confuso con le proprietà chimiche dello stagno.",
-        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+        "history": "Lo stagno apparteneva ai sette metalli planetari e corrispondeva a Giove. Il simbolismo del pianeta richiamava sovranità e abbondanza, distintamente dalle proprietà chimiche del metallo."
       }
     },
     {
@@ -501,9 +488,8 @@
       ],
       "requirementsText": "Nessuno.",
       "profile": {
-        "theme": "Antimonio vive fra metamorfosi e separazione. Le sue capacità attraversano l'oscuramento, la dissoluzione della forma e la ricomposizione degli opposti: Nigredo, Caput Mortuum, Sublimatio e Rebis non indicano colpi isolati, ma tappe di un processo che cambia la natura stessa del corpo.",
-        "history": "I composti di antimonio erano lavorati nella chimica antica e moderna, soprattutto in pratiche metallurgiche e medicinali. Termini come nigredo e rebis appartengono invece al lessico simbolico più ampio dell'alchimia; il compendio li unisce in una progressione fantastica.",
-        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+        "theme": "L’Antimonio attraversa gli stati dell’Opera senza appartenere a uno soltanto. La Nigredo dissolve le certezze della forma, il Caput Mortuum ne lascia il residuo, la Sublimatio la eleva e il Rebis tenta di riunire gli opposti. Ogni trasformazione conserva il segno della precedente, come se il corpo fosse un crogiolo mai del tutto spento.",
+        "history": "I composti dell'antimonio furono impiegati in pratiche metallurgiche e medicinali. La nigredo e il rebis appartengono al lessico simbolico della trasformazione alchemica, pur non identificando proprietà specifiche di questo metalloide."
       }
     },
     {
@@ -533,9 +519,8 @@
       ],
       "requirementsText": "Costituzione 16+ e un altro materiale con Purezza almeno 4; il Catalizzatore d’Essenza può ignorare questi requisiti.",
       "profile": {
-        "theme": "Arsenico offre forza contaminata. Ogni vantaggio sembra lasciarsi dietro una frattura: il vigore può diventare tossicità, il riflesso trasformarsi in inganno e il giudizio finale assomigliare a una sentenza già scritta. È un materiale costruito sul sospetto e sul prezzo nascosto del potere.",
-        "history": "L'arsenico e diversi suoi composti erano noti nella lavorazione di minerali e pigmenti. La loro tossicità ha contribuito alla reputazione sinistra della sostanza; il compendio usa quella reputazione come linguaggio narrativo, senza riprodurre reazioni chimiche reali.",
-        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+        "theme": "L’Arsenico promette ciò che avvelena. I suoi doni sono rapidi, intensi e raramente gratuiti: forza, deformazione e inganno si confondono con la contaminazione che li rende possibili. L’Exalt ne trae potere a prezzo di una materia sempre meno innocente.",
+        "history": "L'arsenico e i suoi composti erano conosciuti nella lavorazione di minerali e pigmenti. La loro tossicità contribuì alla reputazione pericolosa della sostanza."
       }
     },
     {
@@ -570,9 +555,8 @@
       ],
       "requirementsText": "Nessuno.",
       "profile": {
-        "theme": "Bismuto è la geometria che rifiuta di restare regolare. L'Exalt distorce urti e direzioni, costruisce forme inaspettate e usa le irregolarità come risorsa. Non cancella il difetto: lo moltiplica finché diventa una nuova architettura, sorprendente e difficile da prevedere.",
-        "history": "Il bismuto è noto per le forme geometriche a gradini dei cristalli ottenuti durante la solidificazione e per le iridescenze superficiali di alcuni campioni. La tradizione alchemica non gli assegnava universalmente un pianeta fra i sette metalli classici; il compendio valorizza soprattutto l'aspetto materiale moderno.",
-        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+        "theme": "Nelle forme irregolari del Bismuto, la frattura non è difetto ma principio d’ordine. Cristalli e superfici mutevoli deviano ciò che li attraversa; l’Exalt traduce questa geometria in urti impossibili, strutture inattese e direzioni che il nemico non riesce più a prevedere.",
+        "history": "Il bismuto può formare cristalli a gradini e presentare iridescenze superficiali. Non possedeva una corrispondenza planetaria universalmente riconosciuta fra i sette metalli tradizionali."
       }
     },
     {
@@ -607,9 +591,8 @@
       ],
       "requirementsText": "Nessuno.",
       "profile": {
-        "theme": "Manganese governa i doppi. L'identità può rispecchiarsi, separarsi e ricomporsi in configurazioni che sembrano contraddirsi. Dove un nemico vede un'unica presenza, l'Exalt introduce una falsa unione e costringe a distinguere l'originale dalle sue immagini.",
-        "history": "Il manganese fu impiegato storicamente in minerali usati anche per colorare o decolorare il vetro. I doppi e gli specchi del compendio sono un'estensione immaginativa della trasformazione visiva, non una dottrina alchemica storicamente associata al metallo.",
-        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+        "theme": "Il Manganese rende incerto il confine fra una sostanza e la propria immagine. Reagenti distinti possono apparire uniti, mentre ciò che sembra indivisibile rivela componenti inconciliabili. L’Exalt usa questo equivoco come arma: non domina soltanto la copia, ma il momento in cui la materia smette di riconoscere se stessa.",
+        "history": "I minerali di manganese venivano impiegati storicamente anche per colorare o decolorare il vetro. Le sue proprietà furono studiate progressivamente con lo sviluppo della chimica e della metallurgia."
       }
     },
     {
@@ -639,9 +622,8 @@
       ],
       "requirementsText": "Nessuno.",
       "profile": {
-        "theme": "Nichel è l'arte della somiglianza imperfetta. Copia comportamenti, simula legami e costruisce un falso così preciso da diventare difficile da distinguere dall'originale. Il suo potere non nasce dalla forza della sostanza, ma dall'incertezza che produce in chi la osserva.",
-        "history": "Il nichel compare nella storia della metallurgia e nelle leghe; non appartiene alla serie dei sette metalli planetari tradizionali. Il suo ruolo di 'falso alchemico' è una scelta narrativa del compendio, non un corrispettivo documentato dell'alchimia classica.",
-        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+        "theme": "Il Nichel imita il valore di un’altra materia senza coincidere mai completamente con essa. Nell’Exalt la somiglianza diventa una tecnica di sostituzione: lega poteri distanti, riproduce benefici e rende difficile stabilire dove finisca l’originale e cominci il falso.",
+        "history": "Il nichel entrò nella storia della metallurgia attraverso minerali e leghe, ma non apparteneva ai sette metalli planetari classici. La sua identificazione come elemento distinto risale all'età della chimica moderna."
       }
     },
     {
@@ -677,8 +659,7 @@
       "requirementsText": "Forza 16+ e un altro materiale con Purezza almeno 3; il Catalizzatore d’Essenza può ignorare questi requisiti.",
       "profile": {
         "theme": "Platino tratta l'energia come qualcosa da trasferire fra corpi. Catalisi, scambio, perdita e riconquista diventano aspetti della stessa forza; la materia umana sembra un reagente capace di accelerare o deviare ogni processo. La sua forma finale lascia affiorare una mente intensa e pericolosa.",
-        "history": "Il platino è un metallo prezioso e resistente alla corrosione. Non faceva parte delle sette corrispondenze planetarie della tradizione europea; l'idea di 'catalisi umanoide' nasce dalla rilettura fantastica delle proprietà e degli impieghi dei metalli del gruppo del platino.",
-        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+        "history": "Il platino è un metallo prezioso, particolarmente resistente alla corrosione. Non rientrava nelle corrispondenze dei sette metalli planetari della tradizione alchemica europea."
       }
     },
     {
@@ -713,9 +694,8 @@
       ],
       "requirementsText": "Nessuno.",
       "profile": {
-        "theme": "Zinco parla il linguaggio dell'equilibrio: ogni forza può ricevere un contrappeso, ogni traiettoria una deviazione. L'Exalt sposta vantaggi e svantaggi fra i contendenti e spezza la regolarità degli esiti, come se il combattimento fosse una bilancia da ritarare continuamente.",
-        "history": "Lo zinco era impiegato nelle leghe metalliche prima di essere pienamente distinto come elemento chimico nella tradizione europea. La bilancia del compendio è una metafora alchemica dei rapporti e degli scambi, non un attributo storico esclusivo dello zinco.",
-        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+        "theme": "Lo Zinco è il contrappeso che ristabilisce o spezza una misura. La sua alchimia dispone forze differenti sui piatti della stessa bilancia, scambiando vantaggi, deviando traiettorie e imponendo un ordine temporaneo al disordine del combattimento. Anche l’equilibrio può trasformarsi in dominio.",
+        "history": "Lo zinco era presente nelle leghe prima che fosse generalmente riconosciuto come elemento chimico distinto in Europa. Il suo impiego metallurgico è particolarmente legato alla produzione dell'ottone."
       }
     },
     {
@@ -750,9 +730,8 @@
       ],
       "requirementsText": "Nessuno.",
       "profile": {
-        "theme": "Ossigeno è il confine fra respiro e privazione. Alimenta corpi e reazioni, concede un secondo slancio e può trasformare il vuoto in un'arma. Ciò che per altri è semplice aria diventa, per l'Exalt, una riserva vitale da distribuire o negare.",
-        "history": "L'ossigeno venne riconosciuto come sostanza distinta nello sviluppo della chimica moderna. Non era uno dei quattro elementi dell'alchimia tradizionale; nel compendio assume un ruolo autonomo per le sue relazioni con respirazione e combustione.",
-        "historicalUrl": "https://plato.stanford.edu/entries/chemistry/index.html"
+        "theme": "L’Ossigeno sostiene la combustione e il respiro, ma la sua assenza può diventare altrettanto potente della sua presenza. L’Exalt manipola questa soglia vitale: alimenta gli altri, prolunga lo slancio del corpo e infine usa la privazione come un vuoto che nessuna volontà può respirare.",
+        "history": "L'ossigeno fu identificato nell'ambito dello sviluppo della chimica moderna e contribuì a sostituire le precedenti spiegazioni della combustione. Non rientrava nei quattro elementi della tradizione antica."
       }
     },
     {
@@ -783,8 +762,7 @@
       "requirementsText": "Livello Exalt 7+, un altro materiale con Purezza almeno 3 e verifica manuale del GM dell’accesso alla Fiamma.",
       "profile": {
         "theme": "Flogisto è il carburante segreto dell'esistenza. L'Exalt separa temporaneamente le componenti della propria essenza, le rimette in circolo e spinge la propria Unicità oltre la misura. Il rischio non è soltanto bruciare: è perdere la forma che tiene insieme ciò che si è.",
-        "history": "Il flogisto fu una sostanza ipotetica proposta nella teoria storica della combustione, poi abbandonata con lo sviluppo della chimica dell'ossigeno. Non è un elemento realmente isolato; il compendio lo reinterpreta come energia vitale alchemica.",
-        "historicalUrl": "https://plato.stanford.edu/entries/chemistry/index.html"
+        "history": "Il flogisto era una sostanza ipotetica postulata per spiegare combustione e calcinazione. La teoria venne superata con l'affermarsi della chimica dell'ossigeno; il flogisto non fu mai isolato come elemento reale."
       }
     },
     {
@@ -819,9 +797,8 @@
       ],
       "requirementsText": "Nessuno.",
       "profile": {
-        "theme": "Fosforo Bianco è luce che marca e perseguita. Le sue fiamme lasciano segni sui nemici e ogni marchio diventa un invito alla deflagrazione: una corona cresce attorno all'Exalt finché tutta l'energia accumulata viene proiettata in un astro abbagliante.",
-        "history": "Il fosforo bianco è una forma allotropica del fosforo, molto reattiva e capace di emissione luminosa in determinate condizioni. Il richiamo a stelle, albe e luce inestinguibile è una traduzione fantastica di questa luminosità, non una pratica alchemica storica codificata.",
-        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+        "theme": "Il Fosforo Bianco si rivela in una luce che non vuole estinguersi. Ogni marchio impresso sugli avversari diventa il presagio di una nuova combustione, e ogni deflagrazione lascia dietro di sé altre tracce incandescenti. Alla fine la luce accumulata prende la forma di un astro che cade sul campo di battaglia.",
+        "history": "Il fosforo bianco è una forma allotropica del fosforo, assai reattiva e capace di emettere luce in particolari condizioni. Le sue caratteristiche luminose contribuirono alla fortuna del nome del fosforo."
       }
     },
     {
@@ -851,9 +828,8 @@
       ],
       "requirementsText": "Nessuno.",
       "profile": {
-        "theme": "Fosforo Nero non illumina: sottrae riferimenti. Labirinti percettivi, punti ciechi e un orizzonte deformato impediscono ai nemici di stabilire dove si trovi davvero l'Exalt. La difesa consiste nel sottrarsi alla corretta percezione, facendo dello spazio un alleato mutevole.",
-        "history": "Il fosforo nero è un allotropo reale del fosforo, con proprietà fisiche diverse dal fosforo bianco. La connessione con ombre, duplicazioni e illusioni spaziali è specifica del mondo di Breach the Oblivion.",
-        "historicalUrl": "https://www.sciencehistory.org/stories/magazine/the-secrets-of-alchemy/"
+        "theme": "Il Fosforo Nero è il rovescio di quella luce: non incendia ciò che si vede, ma incrina la certezza del vedere. Il Labirinto nega distanze e direzioni, moltiplica apparizioni e permette all’Exalt di svanire fra ombre che non coincidono più con lo spazio reale.",
+        "history": "Il fosforo nero è un allotropo del fosforo con proprietà fisiche differenti da quelle del fosforo bianco. La sua struttura e il suo comportamento appartengono allo studio moderno dei materiali."
       }
     },
     {
@@ -888,9 +864,8 @@
       ],
       "requirementsText": "Nessuno.",
       "profile": {
-        "theme": "Zolfo è la pressione del giudizio. La Colpa si accumula sulle creature che agiscono contro l'Exalt e i suoi alleati, finché l'aria stessa sembra diventare insufficiente. Fulmini, penitenza e annullamento delle azioni esprimono una giustizia implacabile, che soffoca prima di assolvere.",
-        "history": "Lo zolfo è stato centrale nel pensiero alchemico, spesso come principio legato alla combustibilità, contrapposto o associato al mercurio. L'immagine della condanna divina e del soffocamento appartiene però alla cosmologia fantastica del compendio.",
-        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+        "theme": "Lo Zolfo è il soffio acre del giudizio, la pressione che precede la folgore. Le azioni dei nemici imprimono Colpa nella materia stessa; l’aria si fa scarsa, le pareti sembrano avvicinarsi e la condanna può giungere prima che un gesto venga compiuto. La sua assoluzione ha spesso la violenza di un lampo.",
+        "history": "Lo zolfo era fondamentale nelle teorie alchemiche e veniva spesso associato al principio della combustibilità, in relazione al mercurio. Numerose tradizioni lo impiegavano nella spiegazione della composizione dei metalli."
       }
     },
     {
@@ -925,9 +900,8 @@
       ],
       "requirementsText": "Acqua 2+ e (Fuoco 2+ oppure Alkahest 1+).",
       "profile": {
-        "theme": "Aqua fortis corrode tanto il nemico quanto il suo utilizzatore. L'Exalt accetta ferite inevitabili per convertire il proprio corpo in un reagente aggressivo; ogni esposizione indebolisce le difese e avvicina la materia avversaria alla dissoluzione completa.",
-        "history": "Aqua fortis, 'acqua forte', era un nome storico dell'acido nitrico, impiegato per aggredire numerosi metalli. Il compendio ne trasforma l'azione corrosiva in una disciplina di sacrificio e progressiva decomposizione.",
-        "historicalUrl": "https://newton.dlib.indiana.edu/page/glossary"
+        "theme": "L’Aqua fortis è l’acqua che aggredisce il metallo, un reagente che dissolve invece di nutrire. La corrosione non si arresta alla superficie degli avversari: passa attraverso il corpo dell’Exalt, che offre la propria carne alla reazione pur di accelerarne gli effetti.",
+        "history": "Aqua fortis, o acqua forte, era una denominazione storica dell'acido nitrico. La sostanza era utilizzata per aggredire e sciogliere diversi metalli."
       }
     },
     {
@@ -962,9 +936,8 @@
       ],
       "requirementsText": "Aqua fortis 2+ e (Oro 1+ oppure Alkahest 2+).",
       "profile": {
-        "theme": "Aqua regia è una trasformazione violenta che si manifesta soprattutto quando il nemico agisce. I Petali si accumulano fino a formare la Rosa dei Maestri, simbolo di un potere che interrompe, dissolve e incorona la reazione stessa come arma. Anche il Sangue del Drago Rosso nasce da questa tensione.",
-        "history": "L'aqua regia, o 'acqua regale', è una miscela fortemente corrosiva nota per la capacità di dissolvere anche l'oro, il metallo regale. Il legame fra sovranità e dissoluzione viene qui riletto come offensiva reattiva e trasmutazione forzata.",
-        "historicalUrl": "https://newton.dlib.indiana.edu/page/glossary"
+        "theme": "L’Aqua regia è chiamata regale perché la sua forza osa dissolvere persino ciò che sembra incorruttibile. Nell’Exalt agisce come un giudizio istantaneo sulla materia nemica: a ogni gesto affiorano Petali, le Rose si compongono e il Sangue del Drago Rosso ne rivendica il potere.",
+        "history": "L'aqua regia, o acqua regale, è una miscela fortemente corrosiva nota per la capacità di dissolvere anche l'oro. Il nome richiama proprio il metallo tradizionalmente considerato regale."
       }
     },
     {
@@ -999,9 +972,8 @@
       ],
       "requirementsText": "Acqua 2+ e (Carisma 16+ oppure Flogisto 1+).",
       "profile": {
-        "theme": "Aqua vitae è l'alchimia dell'ebbrezza. Il ritmo di una festa diventa un modo di combattere: passi imprevedibili, brindisi, danze e un baccanale che stravolge le posizioni in campo. L'Exalt cresce con la confusione dei nemici e ne trasforma l'incertezza in libertà di movimento.",
-        "history": "Aqua vitae, 'acqua della vita', indicava storicamente spiriti ottenuti per distillazione, spesso associati a usi medicinali e alla ricerca di essenze. Il compendio ne riprende il linguaggio dell'inebriamento come allegoria fantastica, non come effetto farmacologico realistico.",
-        "historicalUrl": "https://newton.dlib.indiana.edu/page/glossary"
+        "theme": "L’Aqua vitae porta il nome della vita e il disordine dell’ebbrezza. Il passo si fa danza, l’offesa un brindisi involontario e la battaglia un baccanale in cui nessuna posizione rimane sicura. La confusione degli altri alimenta la libertà del corpo dell’Exalt.",
+        "history": "Aqua vitae, o acqua della vita, indicava storicamente distillati alcolici, spesso associati alla preparazione di rimedi e alla ricerca di essenze. L'espressione rifletteva il valore attribuito alla distillazione."
       }
     },
     {
@@ -1016,7 +988,7 @@
         {
           "level": 1,
           "name": "Esistenza Transitoria",
-          "html": "<section class=\"exalt-prose\"><p>Con un'<strong>azione bonus</strong>, per <strong>1 minuto</strong> l'Exalt rende instabile la propria materia. Utilizzi giornalieri: <strong>Competenza</strong>. Ottiene una riserva di <strong>Danni Sospesi</strong> pari a <strong>5 volte la somma della Purezza effettiva di tutti i materiali posseduti</strong>, compreso Amalgama.</p><p>Una volta per turno, quando subisce danni, può sospenderne una quantità a scelta fino alla capienza disponibile, dopo le altre riduzioni. I danni sospesi non sono ancora subiti. All'inizio di ogni proprio turno subisce <strong>un terzo della riserva (arrotondato per eccesso)</strong> come danni da forza non riducibili, direttamente ai Punti Ferita ignorando eventuali punti ferita temporanei; i punti subiti vengono rimossi dalla riserva.</p><p>Ottiene <strong>+1 ai tiri per colpire e ai danni degli attacchi ogni 20 Danni Sospesi</strong>, fino a metà Competenza arrotondata per eccesso. <strong>Una volta per proprio turno</strong>, su un attacco riuscito può consumare <strong>10 Danni Sospesi per 1d8 danni da forza aggiuntivi</strong>, fino a metà Competenza dadi arrotondata per eccesso.</p><p>Quando l'effetto termina, subisce immediatamente tutti i Danni Sospesi residui come danni da forza non riducibili, direttamente ai Punti Ferita ignorando eventuali punti ferita temporanei.</p></section>"
+          "html": "<section class=\"exalt-prose\"><p>Con un'<strong>azione bonus</strong>, per <strong>1 minuto</strong> l'Exalt rende instabile la propria materia. Utilizzi giornalieri: <strong>Competenza</strong>. Ottiene una riserva di <strong>Danni Sospesi</strong> pari a <strong>6 per grado di Purezza effettiva di Amalgama, più 3 per grado di Purezza effettiva degli altri materiali posseduti</strong>, compreso Amalgama.</p><p>Una volta per turno, quando subisce danni, può sospenderne una quantità a scelta fino alla capienza disponibile, dopo le altre riduzioni. I danni sospesi non sono ancora subiti. All'inizio di ogni proprio turno subisce <strong>un terzo della riserva (arrotondato per eccesso)</strong> come danni da forza non riducibili, direttamente ai Punti Ferita ignorando eventuali punti ferita temporanei; i punti subiti vengono rimossi dalla riserva.</p><p>Ottiene <strong>+1 ai tiri per colpire e ai danni degli attacchi ogni 20 Danni Sospesi</strong>, fino a metà Competenza arrotondata per eccesso. <strong>Una volta per proprio turno</strong>, su un attacco riuscito può consumare <strong>10 Danni Sospesi per 1d8 danni da forza aggiuntivi</strong>, fino a metà Competenza dadi arrotondata per eccesso.</p><p>Quando l'effetto termina, subisce immediatamente tutti i Danni Sospesi residui come danni da forza non riducibili, direttamente ai Punti Ferita ignorando eventuali punti ferita temporanei.</p></section>"
         },
         {
           "level": 5,
@@ -1031,9 +1003,8 @@
       ],
       "requirementsText": "Livello Exalt 10+ e una via fra: un materiale per ogni categoria non composita con Purezza superiore di 1 rispetto ad Amalgama; due metalli, Planetario e Pesante, con tutte le capacità sbloccate; oppure due altri Compositi con Purezza superiore di 1. Verificato a ogni aumento.",
       "profile": {
-        "theme": "Amalgama non è ancora una forma compiuta. L'Exalt sospende i danni, li conserva come materia non risolta e tenta di trasformarli prima che si manifestino. Quando sacrifica la Purezza degli altri materiali, abbandona la figura umana e diviene una massa che protegge, ingloba e cresce divorando ciò che incontra.",
-        "history": "Nella chimica e nell'alchimia una amalgama è una lega che contiene mercurio. Il compendio usa il termine in senso più ampio e dichiaratamente fantastico: la materia transitoria come tappa verso una perfezione non ancora raggiunta.",
-        "historicalUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9214491/"
+        "theme": "L’Amalgama è una materia in attesa di compimento. Il suo corpo non respinge immediatamente la ferita: la trattiene come danno irrisolto, disposto a darle una nuova forma. Quando gli altri materiali vengono sacrificati, l’individuo cede il posto a una massa transitoria che ingloba e assimila tutto ciò che riesce a raggiungere.",
+        "history": "In chimica, un'amalgama è una lega contenente mercurio. Le amalgame furono note anche nelle pratiche metallurgiche e alchemiche, dove la combinazione dei metalli aveva un ruolo importante."
       }
     },
     {
@@ -1073,9 +1044,8 @@
       ],
       "requirementsText": "Livello Exalt 10+ e una via fra: Metallo Planetario 2+ e Metallo Pesante 2+; Rame 2+ e Catalizzatore; un metallo 2+ con Aria 2+ o archetipo Studente; oppure archetipo Comandante. Le ultime due vie archetipiche dipendono da altre sottoclassi.",
       "profile": {
-        "theme": "Cinabro è energia rossa che attraversa il mondo come un fulmine. Il movimento alimenta la scarica e la scarica richiama nuovo movimento: il corpo diventa un motore filosofale, capace di lanciare saette e proiettare sulla materia una violenza quasi sovrannaturale.",
-        "history": "Il cinabro è un minerale rosso composto da solfuro di mercurio, importante come pigmento e materia prima nella storia dell'estrazione del mercurio. Nel compendio il rosso del minerale è trasformato in elettricità e velocità, invece che in un processo chimico reale.",
-        "historicalUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9214491/"
+        "theme": "Il Cinabro è rosso come il segno lasciato dal fulmine nella materia. Lo slancio diventa scarica, la scarica suscita un nuovo slancio e l’Exalt si trasforma in un tramite di energia sempre più difficile da contenere. Il suo movimento sembra precedere la propria causa.",
+        "history": "Il cinabro è un minerale rosso composto da solfuro di mercurio. Ebbe grande importanza come pigmento e come materia prima per l'estrazione del mercurio."
       }
     },
     {
@@ -1105,9 +1075,8 @@
       ],
       "requirementsText": "Livello Exalt 10+ e una via fra: Metallo Planetario 2+ e Zero 1+; Metallo Pesante 2+ e Zolfo 1+; un metallo 2+ e Alkahest 2+; Catalizzatore d’Essenza con Arsenico o Platino 2+.",
       "profile": {
-        "theme": "Vitriòlum invita a scendere dentro ciò che appare integro. Il suo marchio è una condanna, la sua opera una visita nelle profondità della materia, e la pietra nascosta è il punto in cui una verità definitiva può emergere. È alchimia di introspezione, rivelazione e giudizio irreversibile.",
-        "history": "Il nome richiama i vetrioli, termine storico per diversi solfati, e l'acrostico V.I.T.R.I.O.L.: 'Visita Interiora Terrae, Rectificando Invenies Occultum Lapidem'. La formula collega la ricerca della pietra nascosta a un percorso di trasformazione; gli effetti del gioco sono una rilettura fantastica.",
-        "historicalUrl": "https://cultura.cervantes.es/milan/it/V.I.T.R.I.O.L.-Visita-Interiora-Terrae%2C-Rectificando-Invenies-Occultum-Lapidem/159831"
+        "theme": "Vitriòlum è un invito a scendere nelle profondità della materia e di se stessi. Il marchio apre una via verso ciò che è nascosto, la discesa separa l’apparenza dall’essenza e la pietra ritrovata diventa un verdetto. Non ogni rivelazione concede il tempo di comprenderla.",
+        "history": "Vitriolum richiama i vetrioli, nome storico di diversi solfati, e la formula alchemica V.I.T.R.I.O.L., tradizionalmente associata alla ricerca della pietra nascosta attraverso un percorso di trasformazione."
       }
     },
     {
@@ -1142,9 +1111,8 @@
       ],
       "requirementsText": "Livello Exalt 10+ e una via fra: Connessione Demoniaca (tag su Quirk, Controcorpo od oggetto posseduto); un Elemento 10+; oppure un Metallo Planetario e uno Pesante entrambi con Purezza superiore di 1 a Zolfo Nero. Verificato a ogni aumento.",
       "profile": {
-        "theme": "Zolfo Nero è la ribellione elevata a patto. Ogni creatura può scegliere di accettare un Debito Infernale e ottenere un vantaggio, oppure rifiutare e concedere all'Exalt un'altra forma di potere. La sua connessione demoniaca alimenta esalazioni, immunità conquistate e il dominio del Trono dell'Esule.",
-        "history": "Lo zolfo esiste realmente e ha una lunga storia alchemica, ma uno 'Zolfo Nero' inteso come sostanza dei patti demoniaci non appartiene a un catalogo storico di reagenti. La figura luciferina e il sistema dei Debiti appartengono alla lore di Breach the Oblivion.",
-        "historicalUrl": "https://www.getty.edu/research/exhibitions_events/exhibitions/alchemy/AoA_symbols.pdf"
+        "theme": "Lo Zolfo Nero nasce dalla Connessione Demoniaca e dalla volontà di sottrarsi a ogni legge imposta. Il suo patto offre sempre una scelta, mai una concessione innocente: accettare significa contrarre un Debito, rifiutare significa alimentare comunque l’Avversario. La ribellione che protegge l’Exalt può diventare il dominio altrui.",
+        "history": "Lo zolfo è una sostanza reale con una lunga storia alchemica. Lo «Zolfo Nero» inteso come materia dei patti demoniaci non è invece una sostanza identificata nella tradizione chimica o alchemica storica."
       }
     }
   ],

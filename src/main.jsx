@@ -18,6 +18,7 @@ import './premium.css';
 import './atlas-home.css';
 import './refinement.css';
 import './motion.css';
+import './editor-modular.css';
 
 const ALCHEMY = '/alchimia';
 const MATERIALS = '/alchimia/materiali';
@@ -27,17 +28,17 @@ const abilityLabel = { int: 'Intelligenza', wis: 'Saggezza', cha: 'Carisma', str
 const groupStyle = { 'Elementi': 'elements', 'Metalli Planetari': 'planetary', 'Metalli Pesanti': 'heavy', 'Materia Vitale': 'vital', 'Compositi': 'composite' };
 const groupIcons = { 'Elementi': Droplets, 'Metalli Planetari': Orbit, 'Metalli Pesanti': Shield, 'Materia Vitale': Flame, 'Compositi': FlaskConical };
 const clean = (html) => String(html ?? '').replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
-const entryUrl = entry => entry.kind === 'material' ? `${MATERIALS}/${entry.materialId}` : entry.kind === 'genesis' ? GENESIS : entry.id === 'alchimia' ? ALCHEMY : `/pagina/${entry.id}`;
+const entryUrl = entry => entry.kind === 'material' ? `${MATERIALS}/${entry.materialId}` : entry.kind === 'genesis' ? GENESIS : entry.id === 'alchimia' ? ALCHEMY : entry.id === 'alchimia-materiali' ? MATERIALS : entry.id === 'alchimia-genesi' ? GENESIS : `/pagina/${entry.id}`;
 function useCatalog() {
   const {materials, processes, pages} = useContent();
   const groups = [...new Set(materials.map(m=>m.group))];
   const byName = [...materials].sort((a,b)=>a.title.localeCompare(b.title,'it'));
   const matSearch = new Map(materials.map(m=>[m.id,normalize([m.title,m.group,m.bonus,m.requirementsText,m.profile?.theme,m.profile?.history,...(m.abilities||[]).map(a=>`${a.name} ${clean(a.html)}`)].join(' '))]));
   const searchItems = [
-    ...materials.map(m=>({key:m.id,type:'Materiale',title:m.title,subtitle:m.group,url:entryUrl(m),index:[m.title,m.group,m.bonus,m.requirementsText,m.profile?.theme,m.profile?.history].join(' '),featured:true})),
-    ...materials.flatMap(m=>(m.abilities||[]).map(a=>({key:`${m.id}-${a.name}`,type:'Capacità',title:a.name,subtitle:`${m.title} · Grado ${a.level}`,url:`${entryUrl(m)}?abilita=${encodeURIComponent(a.name)}`,index:`${a.name} ${m.title} ${clean(a.html)}`}))),
+    ...materials.map(m=>({key:m.id,type:'Materiale',title:m.title,subtitle:m.group,url:entryUrl(m),tone:groupStyle[m.group],index:[m.title,m.group,m.bonus,m.requirementsText,m.profile?.theme,m.profile?.history].join(' '),featured:true})),
+    ...materials.flatMap(m=>(m.abilities||[]).map(a=>({key:`${m.id}-${a.name}`,type:'Capacità',title:a.name,subtitle:`${m.title} · Grado ${a.level}`,tone:groupStyle[m.group],url:`${entryUrl(m)}?abilita=${encodeURIComponent(a.name)}`,index:`${a.name} ${m.title} ${clean(a.html)}`}))),
     ...processes.map((g,i)=>({key:g.id,type:'Processo',title:g.title,subtitle:'Processo alchemico',url:`${GENESIS}?abilita=${i}`,index:`${g.title} ${clean(g.html)}`})),
-    ...pages.filter(p=>p.id!=='alchimia').map(p=>({key:p.id,type:p.kind==='chapter'?'Sezione':'Pagina',title:p.title,subtitle:p.description||'Compendio',url:entryUrl(p),index:[p.title,p.description,...(p.blocks||[]).map(b=>`${b.html||''} ${b.text||''}`)].join(' ')}))
+    ...pages.filter(p=>!['alchimia','alchimia-materiali','alchimia-genesi'].includes(p.id)).map(p=>({key:p.id,type:p.kind==='chapter'?'Sezione':p.kind==='collection'?'Raccolta':'Pagina',title:p.title,subtitle:p.description||'Compendio',url:entryUrl(p),index:[p.title,p.description,...(p.blocks||[]).map(b=>`${b.html||''} ${b.text||''}`)].join(' ')}))
   ].map(item=>({...item,search:normalize(item.index),nameIndex:normalize(item.title)}));
   return {materials, processes, pages, groups, byName, matSearch, searchItems};
 }
@@ -126,7 +127,7 @@ function GlobalSearch({ open, close }) {
     <section role="dialog" aria-modal="true" aria-label="Ricerca nel compendio" className="search-dialog">
       <div className="search-dialog-head"><Search size={20}/><input ref={input} aria-label="Cerca nel compendio" value={term} onChange={e => setTerm(e.target.value)} placeholder="Materiali, capacità, processi…"/><button type="button" className="icon-button" onClick={close} aria-label="Chiudi ricerca"><X size={20}/></button></div>
       <div className="search-dialog-results">
-        {term.trim().length < 2 ? <div className="search-prompt"><span>Ricerca in tutto il compendio</span><p>{materials.length} materiali, {materials.reduce((n,m)=>n+(m.abilities?.length||0),0)} capacità e {processes.length} processi.</p></div> : hits.length ? hits.map(hit => <button className="search-result" type="button" key={hit.key} onClick={() => { close(); navigate(hit.url); }}>
+        {term.trim().length < 2 ? <div className="search-prompt"><span>Ricerca in tutto il compendio</span><p>{materials.length} materiali, {materials.reduce((n,m)=>n+(m.abilities?.length||0),0)} capacità e {processes.length} processi.</p></div> : hits.length ? hits.map(hit => <button className={`search-result ${hit.tone?`tone-${hit.tone}`:''}`} type="button" key={hit.key} onClick={() => { close(); navigate(hit.url); }}>
           <span className="search-result-icon"><BookOpen size={17}/></span><span className="search-result-copy"><strong>{hit.title}</strong><small>{hit.subtitle}</small></span><span className="search-result-type">{hit.type}</span><ArrowUpRight size={16}/>
         </button>) : <div className="search-prompt"><span>Nessun risultato</span><p>Prova un'altra parola.</p></div>}
       </div>
@@ -147,7 +148,7 @@ function Layout({ theme, toggleTheme }) {
     return () => document.removeEventListener('keydown', key);
   }, []);
   useEffect(() => { document.body.classList.toggle('prevent-scroll', mobileOpen || searchOpen); return () => document.body.classList.remove('prevent-scroll'); }, [mobileOpen, searchOpen]);
-  const navigation = [ ['/', 'HOME'], [ALCHEMY, 'ALCHIMIA'], ...pages.filter(p=>p.kind==='chapter'&&p.parentId==='root'&&p.id!=='alchimia').map(p=>[entryUrl(p),p.title.toLocaleUpperCase('it')]) ];
+  const navigation = [ ['/', 'HOME'], [ALCHEMY, 'ALCHIMIA'], ...pages.filter(p=>['chapter','collection'].includes(p.kind)&&p.parentId==='root'&&p.id!=='alchimia').map(p=>[entryUrl(p),p.title.toLocaleUpperCase('it')]) ];
   useEffect(() => {
     document.documentElement.dataset.section = location.pathname.startsWith(RELATIONS) ? 'connessioni' : location.pathname.startsWith(MATERIALS) ? 'materiali' : location.pathname.startsWith(GENESIS) ? 'processi' : location.pathname.startsWith(ALCHEMY) ? 'alchimia' : 'home';
   },[location.pathname]);
@@ -216,9 +217,9 @@ function Home({theme}) {
 function AlchemyHome() {
   const {pages,materials,processes}=useCatalog();
   const current=pages.find(p=>p.id==='alchimia');
-  const extra=pages.filter(p=>p.parentId==='alchimia'&&p.id!=='alchimia').map((p,i)=>({title:p.title,subtitle:p.description||'Pagina del compendio',to:entryUrl(p),tone:'planetary',number:String(i+4).padStart(2,'0'),icon:BookOpen,cta:'Apri'}));
+  const extra=pages.filter(p=>p.parentId==='alchimia'&&!['alchimia','alchimia-materiali','alchimia-genesi'].includes(p.id)).map((p,i)=>({title:p.title,subtitle:p.description||'Pagina del compendio',to:entryUrl(p),tone:'planetary',number:String(i+4).padStart(2,'0'),icon:BookOpen,cta:'Apri'}));
   const cards=[{...alchemyCards[0],subtitle:`${materials.length} materiali · ${materials.reduce((n,m)=>n+(m.abilities||[]).length,0)} capacità`},{...alchemyCards[1],subtitle:`${processes.length} processi`},...extra];
-  return <div className="section-landing page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/>Alchimia</div><PageHeading eyebrow="BREACH THE OBLIVION" title={current?.title||"Alchimia"} text={current?.description?.replaceAll('Processi di Genesi','processi alchemici')||"Materiali e processi alchemici."} trailing={<EditTrigger entry={current}/>}/><div className="section-landing-cards"><SectionCards cards={cards}/></div></div>;
+  return <div className="section-landing page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/>Alchimia</div><PageHeading eyebrow="BREACH THE OBLIVION" title={current?.title||"Alchimia"} text={current?.description?.replaceAll('Processi di Genesi','processi alchemici')||"Materiali e processi alchemici."} trailing={<EditTrigger entry={current}/>}/><div className="section-landing-cards"><SectionCards cards={cards}/></div>{current?.blocks?.length>0&&<div className="gm-collection-body"><GenericBlocks entry={current}/></div>}</div>;
 }
 function LegacyRedirect({ path }) { const loc = useLocation(); return <Navigate to={`${path}${loc.search}`} replace/>; }
 function LegacyMaterialRedirect() { const {id} = useParams(); const loc=useLocation(); return <Navigate to={`${MATERIALS}/${id}${loc.search}`} replace/>; }
@@ -234,23 +235,24 @@ function MaterialCard({material}) {
   </Link>;
 }
 function Materials() {
-  const {materials,groups,matSearch}=useCatalog();
+  const {materials,groups,matSearch,pages}=useCatalog();
   const location = useLocation();
   const startingCategory = new URLSearchParams(location.search).get('categoria');
   const [query,setQuery]=useState('');
   const [category,setCategory]=useState(startingCategory && groups.includes(startingCategory) ? startingCategory : 'Tutti');
   useEffect(()=>{setCategory(startingCategory && groups.includes(startingCategory) ? startingCategory : 'Tutti');},[startingCategory,groups.join('|')]);
   const [order,setOrder]=useState('group');
+  const nested=pages.filter(p=>p.parentId==='alchimia-materiali'&&p.id!=='alchimia-materiali');
   const filtered=useMemo(()=>{
     const tokens=normalize(query).trim().split(/\s+/).filter(Boolean);
     const arr=materials.filter(m=>(category==='Tutti'||m.group===category)&&tokens.every(t=>matSearch.get(m.id).includes(t)));
     return order==='alpha'? [...arr].sort((a,b)=>a.title.localeCompare(b.title,'it')) : arr;
   },[query,category,order,materials,matSearch]);
-  return <div className="catalog-page page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/><Link to={ALCHEMY}>Alchimia</Link><ChevronRight size={15}/>Materiali</div><PageHeading eyebrow="L’ARTE ALCHEMICA" title="Materiali alchemici" text={`${groups.length} categorie. ${materials.length} materiali. Capacità per grado.`} trailing={<div className="page-heading-count"><strong>{materials.length}</strong><span>MATERIALI</span></div>}/>
+  return <div className="catalog-page page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/><Link to={ALCHEMY}>Alchimia</Link><ChevronRight size={15}/>Materiali</div><PageHeading eyebrow="L’ARTE ALCHEMICA" title="Materiali alchemici" text={`${groups.length} categorie. ${materials.length} materiali. Capacità per grado.`} trailing={<div className="page-heading-count"><strong>{materials.length}</strong><span>MATERIALI</span><EditTrigger entry={pages.find(p=>p.id==='alchimia-materiali')}/></div>}/>
     <div className="catalog-toolbar"><div className="catalog-search"><Search size={18}/><input aria-label="Cerca nei materiali e nelle capacità" type="search" placeholder="Cerca materiale o capacità..." value={query} onChange={e=>setQuery(e.target.value)}/>{query&&<button onClick={()=>setQuery('')} aria-label="Cancella ricerca" type="button"><X size={17}/></button>}</div><label className="catalog-order"><SlidersHorizontal size={17}/><select value={order} onChange={e=>setOrder(e.target.value)} aria-label="Ordina materiali"><option value="group">Per categoria</option><option value="alpha">A–Z</option></select></label></div>
     <div className="category-tabs" aria-label="Filtra per categoria">{['Tutti',...groups].map(g=><button type="button" key={g} className={category===g?'category-tab active':'category-tab'} onClick={()=>setCategory(g)} aria-pressed={category===g}>{g}<span>{g==='Tutti'?materials.length:materials.filter(m=>m.group===g).length}</span></button>)}</div>
     <div className="catalog-scroll" tabIndex={0} aria-label="Elenco materiali"><div className="catalog-result-line"><span>{filtered.length} {filtered.length===1?'materiale':'materiali'}{query?' trovati':''}</span>{(query||category!=='Tutti')&&<button type="button" onClick={()=>{setQuery('');setCategory('Tutti');}}>Azzera filtri</button>}</div>
-    {filtered.length? <div className="materials-grid">{filtered.map(m=><MaterialCard key={m.id} material={m}/>)}</div> : <div className="empty-results"><FlaskConical size={34}/><h2>Nessun materiale trovato</h2><p>Prova con un altro termine o cambia categoria.</p><button type="button" className="secondary-button" onClick={()=>{setQuery('');setCategory('Tutti');}}>Mostra tutti</button></div>}</div>
+    {filtered.length? <div className="materials-grid">{filtered.map(m=><MaterialCard key={m.id} material={m}/>)}</div> : <div className="empty-results"><FlaskConical size={34}/><h2>Nessun materiale trovato</h2><p>Prova con un altro termine o cambia categoria.</p><button type="button" className="secondary-button" onClick={()=>{setQuery('');setCategory('Tutti');}}>Mostra tutti</button></div>}{pages.find(p=>p.id==='alchimia-materiali')?.blocks?.length>0&&<div className="gm-collection-extra"><GenericBlocks entry={pages.find(p=>p.id==='alchimia-materiali')}/></div>}{nested.length>0&&<div className="generic-children"><h2>Altri contenuti</h2><SectionCards cards={nested.map((p,i)=>({title:p.title,subtitle:p.description||'Contenuto',to:entryUrl(p),tone:'heavy',number:String(i+1).padStart(2,'0'),icon:BookOpen,cta:'Apri'}))}/></div>}</div>
   </div>;
 }
 function Rule({ html, currentId }) {
@@ -297,15 +299,14 @@ function MaterialDetail(){
   const currentSelected=new URLSearchParams(loc.search).get('abilita');
   const related=relationsFor(graph,`material:${mat.materialId}`);
   const suggestions=[...related.outgoing,...related.incoming.filter(n=>!related.outgoing.some(x=>x.id===n.id))];
-  return <div className="detail-page page-width">
+  return <div className={`detail-page page-width tone-${groupStyle[mat.group]||'elements'}`}>
     <div className="breadcrumb"><Link to={ALCHEMY}>Alchimia</Link><ChevronRight size={15}/><Link to={MATERIALS}>Materiali</Link><ChevronRight size={15}/><Link to={`${MATERIALS}?categoria=${encodeURIComponent(mat.group)}`}>{mat.group}</Link><ChevronRight size={15}/><span>{mat.title}</span></div>
     <div className="detail-layout"><aside className="detail-sidebar"><div className="sidebar-head">INDICE DEI MATERIALI</div><div className="sidebar-groups">{groups.map(g=><div key={g}><div className="sidebar-group-label">{g}</div>{byName.filter(m=>m.group===g).map(m=><Link key={m.id} className={`sidebar-item ${m.materialId===id?'selected':''}`} to={`${MATERIALS}/${m.materialId}`}><span>{m.symbol || '◇'}</span>{m.title}</Link>)}</div>)}</div></aside>
       <article className="detail-main" tabIndex={0} aria-label={`Scheda di ${mat.title}`}><div className="material-overview"><div className={`detail-hero tone-${groupStyle[mat.group]}`}><div className="detail-hero-top"><span><GroupIcon group={mat.group}/>{mat.group}</span><div className="detail-actions"><EditTrigger entry={mat}/><button type="button" className="share-button" onClick={share}>{copied?<Check size={17}/>:<Copy size={17}/>}<span>{copied?'Copiato':'Copia link'}</span></button></div></div><div className="detail-hero-title"><div><span className="detail-kicker">MATERIALE ALCHEMICO</span><h1>{mat.title}</h1></div><div className="detail-symbol" aria-hidden="true">{mat.symbol || '◇'}</div></div><p className="detail-hero-bottom">{mat.abilities.length} capacità <span>·</span> Gradi {mat.abilities.map(a=>a.level).join(', ')}</p></div>
         {validatedImageUrl(mat.imageUrl)&&<div className="material-image"><img src={validatedImageUrl(mat.imageUrl)} alt={mat.imageAlt||mat.title} loading="lazy" referrerPolicy="no-referrer"/></div>}
         <div className="material-portrait">
           <LinkedText text={mat.profile?.theme} currentId={`material:${mat.materialId}`} className="material-portrait-theme"/>
-          <LinkedText text={mat.profile?.history} currentId={`material:${mat.materialId}`} className="material-portrait-history"/>
-          {mat.profile?.historicalUrl?.startsWith('https://') && <a className="material-reference" href={mat.profile.historicalUrl} target="_blank" rel="noopener noreferrer">Riferimento storico <ArrowUpRight size={14}/></a>}
+          <p className="material-portrait-history">{mat.profile?.history}</p>
         </div>
         <div className="material-facts"><div><span>BONUS DI PUREZZA</span><strong>{mat.bonus}</strong></div><div><span>CARATTERISTICA</span><strong>{abilityLabel[mat.ability] || '—'}</strong></div></div>
         <Prerequisites material={mat}/>
@@ -319,7 +320,7 @@ function MaterialDetail(){
     </div>
   </div>;
 }
-function GenesisPage(){const {processes}=useCatalog();const featureList=useMemo(()=>processes.map(p=>({...p,name:p.title})),[processes]);return <div className="reading-page page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/><Link to={ALCHEMY}>Alchimia</Link><ChevronRight size={15}/> Processi</div><PageHeading eyebrow="ALCHIMIA" title="Processi alchemici" text={`${processes.length} processi.`} trailing={<Link className="material-reference" to={RELATIONS}>Mappa generale <ArrowUpRight size={16}/></Link>}/><div className="reading-layout"><div className="reading-side"><span className="reading-side-label">PROCESSI</span><Layers3 size={55} strokeWidth={1}/><span>{processes.length} processi</span></div><div className="reading-body"><AbilityList kind="process" features={featureList}/></div></div></div>}
+function GenesisPage(){const {processes,pages}=useCatalog();const nested=pages.filter(p=>p.parentId==='alchimia-genesi'&&p.id!=='alchimia-genesi');const featureList=useMemo(()=>processes.map(p=>({...p,name:p.title})),[processes]);return <div className="reading-page page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/><Link to={ALCHEMY}>Alchimia</Link><ChevronRight size={15}/> Processi</div><PageHeading eyebrow="ALCHIMIA" title="Processi alchemici" text={`${processes.length} processi.`} trailing={<div className="gm-section-title-actions"><Link className="material-reference" to={RELATIONS}>Mappa generale <ArrowUpRight size={16}/></Link><EditTrigger entry={pages.find(p=>p.id==='alchimia-genesi')}/></div>}/><div className="reading-layout"><div className="reading-side"><span className="reading-side-label">PROCESSI</span><Layers3 size={55} strokeWidth={1}/><span>{processes.length} processi</span></div><div className="reading-body"><AbilityList kind="process" features={featureList}/>{pages.find(p=>p.id==='alchimia-genesi')?.blocks?.length>0&&<GenericBlocks entry={pages.find(p=>p.id==='alchimia-genesi')}/>} {nested.length>0&&<div className="generic-children"><h2>Altri contenuti</h2><SectionCards cards={nested.map((p,i)=>({title:p.title,subtitle:p.description||'Contenuto',to:entryUrl(p),tone:'heavy',number:String(i+1).padStart(2,'0'),icon:BookOpen,cta:'Apri'}))}/></div>}</div></div></div>}
 function GenericPage(){
   const {id}=useParams();
   const {pages}=useCatalog();
@@ -328,8 +329,8 @@ function GenericPage(){
   const children=pages.filter(p=>p.parentId===entry.id&&p.id!==entry.id);
   const parent=pages.find(p=>p.id===entry.parentId);
   return <div className="reading-page page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/>{parent&&<><Link to={entryUrl(parent)}>{parent.title}</Link><ChevronRight size={15}/></>}{entry.title}</div>
-    <PageHeading eyebrow={entry.kind==='chapter'?'SEZIONE':'COMPENDIO'} title={entry.title} text={entry.description} trailing={<EditTrigger entry={entry}/>}/>
-    <div className="reading-layout generic-reading"><aside className="reading-side"><BookOpen size={52} strokeWidth={1}/><span>{entry.kind==='chapter'?'SEZIONE':'PAGINA'}</span></aside><article className="reading-body" tabIndex={0}><GenericBlocks entry={entry}/>{children.length>0&&<div className="generic-children"><h2>Contenuti</h2><SectionCards cards={children.map((p,i)=>({title:p.title,subtitle:p.description||'Compendio',to:entryUrl(p),tone:'elements',number:String(i+1).padStart(2,'0'),icon:BookOpen,cta:'Apri'}))}/></div>}</article></div>
+    <PageHeading eyebrow={entry.kind==='chapter'?'SEZIONE':entry.kind==='collection'?'RACCOLTA':'COMPENDIO'} title={entry.title} text={entry.description} trailing={<EditTrigger entry={entry}/>}/>
+    <div className="reading-layout generic-reading"><aside className="reading-side"><BookOpen size={52} strokeWidth={1}/><span>{entry.kind==='chapter'?'SEZIONE':entry.kind==='collection'?'RACCOLTA':'PAGINA'}</span></aside><article className="reading-body" tabIndex={0}><GenericBlocks entry={entry}/>{children.length>0&&<div className="generic-children"><h2>Contenuti</h2><SectionCards cards={children.map((p,i)=>({title:p.title,subtitle:p.description||'Compendio',to:entryUrl(p),tone:'elements',number:String(i+1).padStart(2,'0'),icon:BookOpen,cta:'Apri'}))}/></div>}</article></div>
   </div>;
 }
 function MissingPage(){return <div className="missing-page page-width"><span className="eyebrow">PAGINA NON TROVATA</span><h1>Questa pagina non esiste.</h1><Link className="primary-button" to="/">Torna all’inizio <ArrowRight size={18}/></Link></div>}

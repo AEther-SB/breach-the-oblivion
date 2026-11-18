@@ -1,0 +1,233 @@
+{
+  "materials": [
+    {
+      "id": "acqua",
+      "profile": {
+        "theme": "L'Acqua è l'arte di sopravvivere cambiando forma. Nell'Exalt il corpo diventa una corrente, alternando impeto, adattamento e controllo dei fluidi vitali. Può travolgere ciò che incontra, resistere ai colpi materiali e sottrarre umidità alle creature, senza perdere la propria natura mutevole."
+      },
+      "abilities": []
+    },
+    {
+      "id": "alkahest",
+      "profile": {
+        "theme": "Alkahest non cerca di spezzare un'armatura: vuole dimostrare che ogni difesa può essere dissolta. Il materiale separa le protezioni dalla sostanza che dovrebbero custodire, fino a lasciare esposta l'essenza del bersaglio. Il suo potere ha però anche un versante opposto: rendere temporaneamente inalterabile ciò che normalmente muterebbe."
+      },
+      "abilities": []
+    },
+    {
+      "id": "aria",
+      "profile": {
+        "theme": "Aria governa le distanze. Nell'Exalt non è soltanto volo, ma un sistema di correnti che solleva, devia, trascina e respinge: dal vortice concentrato fino a una tempesta di cicloni. Chi ne padroneggia la Purezza non occupa semplicemente lo spazio, ma ne ridisegna continuamente i percorsi."
+      },
+      "abilities": []
+    },
+    {
+      "id": "fuoco",
+      "profile": {
+        "theme": "Fuoco converte l'esistenza dell'Exalt in combustibile. Le faville si moltiplicano, le scie incandescenti segnano il terreno e la fiamma cresce fino all'esplosione di una stella. Il suo tratto distintivo è il prezzo della potenza: più energia viene liberata, più difficile diventa impedire che divori chi la genera."
+      },
+      "abilities": []
+    },
+    {
+      "id": "terra",
+      "profile": {
+        "theme": "Terra è la persistenza della materia organizzata. L’Exalt innalza corazze minerali, fa germogliare piattaforme nella pietra e interpone menhir fra gli alleati e il pericolo. Quando la struttura cede, la stessa forza che la teneva salda può propagarsi nel sottosuolo e trasformarsi in una frattura primordiale."
+      },
+      "abilities": []
+    },
+    {
+      "id": "zero",
+      "profile": {
+        "theme": "Zero rappresenta ciò che resta prima che una forma si distingua dalle altre. Non manipola soltanto l'assenza: sottrae proprietà, altera i rapporti fra corpi ed energie e mette in discussione le condizioni che sembravano inevitabili. È un materiale di eccezione, che usa il vuoto come possibilità di riscrittura."
+      },
+      "abilities": []
+    },
+    {
+      "id": "argento",
+      "profile": {
+        "theme": "Argento custodisce il potere del riflesso: riproduce volti e gesti, restituisce il colpo ricevuto e permette alle azioni di lasciare un'eco. La sua perfezione non consiste nell'essere immobile, ma nel diventare specchio di ciò che lo circonda; a livelli più profondi, anche il ricordo può essere rimodellato."
+      },
+      "abilities": []
+    },
+    {
+      "id": "argentovivo",
+      "profile": {
+        "theme": "Argentovivo è un metallo che non accetta il confine fra solido e fluido. L'Exalt ne assume la mobilità e la dispersione, creando nebbie, riflessi e manifestazioni che attingono al vigore delle creature. La sua opera più grande tende a una presenza quasi incorporea, più difficile da afferrare che da vedere."
+      },
+      "abilities": [
+        {
+          "name": "Memoria Vitale",
+          "html": "<section class=\"exalt-prose\"><p>Con un'<strong>azione</strong>, scegli una creatura entro <strong>12 metri</strong>: se fallisce un tiro salvezza su Costituzione, consuma fino a <strong>la tua Purezza effettiva di Argentovivo divisa per 2, arrotondata per eccesso</strong> Dadi Vita disponibili e subisce danni necrotici pari al loro risultato. Recuperi metà dei danni effettivi. Con un successo non consuma risorse. Puoi utilizzare <em>Memoria Vitale</em> un numero di volte al giorno pari a <strong>1 ogni 3 gradi di Purezza effettiva di Argentovivo (minimo 1)</strong>.</p><p><strong>Gemme di Azoth:</strong> Se il bersaglio fallisce senza avere Dadi Vita, non subisce danni e puoi creare una Gemma, scegliendone l'effetto:</p><ul><li><strong>Scudo di Azoth:</strong> bonus alla CA per <strong>1 minuto</strong>.</li><li><strong>Memoria del Coraggio:</strong> <strong>+1d4</strong> al prossimo tiro salvezza entro <strong>1 minuto</strong>.</li><li><strong>Custodia Vitale:</strong> <strong>1d6, più 1 per ogni grado di Purezza effettiva di Argentovivo</strong> PF temporanei.</li><li><strong>Ristoro dell'Etere:</strong> recuperi <strong>1d6, più 1 per ogni grado di Purezza effettiva di Argentovivo</strong> PF.</li><li><strong>Mira del Riflesso:</strong> <strong>+1d4</strong> al prossimo tiro per colpire entro <strong>1 minuto</strong>.</li><li><strong>Lama d'Azoth:</strong> <strong>+1d6, più 1 per ogni grado di Purezza effettiva di Argentovivo</strong> danni da forza al prossimo attacco riuscito entro <strong>1 minuto</strong>.</li></ul><p>Puoi mantenere una Gemma per ciascun tipo; quando viene consumata o scade, puoi crearne un'altra. Qualunque creatura può consumarla con un'<strong>azione bonus</strong>. Le Gemme scompaiono al tuo prossimo riposo lungo.</p></section>"
+        }
+      ]
+    },
+    {
+      "id": "ferro",
+      "profile": {
+        "theme": "Ferro raccoglie la forza del conflitto. Catene e lance impongono la distanza, le ferite alimentano la pressione e la conquista diventa una regola che grava su tutto il campo di battaglia. Nella sua forma estrema, l'Exalt continua a combattere pagando di persona il costo di ogni istante di resistenza."
+      },
+      "abilities": []
+    },
+    {
+      "id": "rame",
+      "profile": {
+        "theme": "Rame combina attrazione e scarica. Può dirigere l'energia verso il proprio corpo per proteggere altri, generare campi elettrici e legare le creature attraverso un fascino che diventa dipendenza. L'amore evocato da questo materiale non è soltanto benevolenza: è anche una forza capace di trattenere e deviare."
+      },
+      "abilities": []
+    },
+    {
+      "id": "oro",
+      "profile": {
+        "theme": "Oro è la ricerca della forma perfetta. Il suo splendore illumina e purifica, ma la perfezione può irrigidirsi fino a trasformarsi in stasi: ciò che non deve più cambiare finisce per essere immobilizzato. L'Exalt ne trae luce, simmetria e un ideale di compimento che non sempre lascia spazio alla vita."
+      },
+      "abilities": []
+    },
+    {
+      "id": "piombo",
+      "profile": {
+        "theme": "Piombo esercita il peso del tempo sulle cose. Cerchi difensivi e falci simboliche rallentano l'avversario, mentre l'Exalt guadagna lo spazio necessario ad agire dove gli altri restano intrappolati. È una difesa che non respinge soltanto: consuma l'occasione del nemico e conserva la propria."
+      },
+      "abilities": []
+    },
+    {
+      "id": "stagno",
+      "profile": {
+        "theme": "Stagno incarna l'espansione del corpo oltre la misura umana. La presenza dell'Exalt si fa titanica, sostenuta da una vitalità che richiama l'ichor e la memoria degli dèi antichi. La forza è qui sovrabbondanza: statura, vigore e un'eredità che sembra più grande dell'individuo."
+      },
+      "abilities": []
+    },
+    {
+      "id": "antimonio",
+      "profile": {
+        "theme": "Antimonio vive fra metamorfosi e separazione. Le sue capacità attraversano l'oscuramento, la dissoluzione della forma e la ricomposizione degli opposti: Nigredo, Caput Mortuum, Sublimatio e Rebis non indicano colpi isolati, ma tappe di un processo che cambia la natura stessa del corpo."
+      },
+      "abilities": []
+    },
+    {
+      "id": "arsenico",
+      "profile": {
+        "theme": "Arsenico offre forza contaminata. Ogni vantaggio sembra lasciarsi dietro una frattura: il vigore può diventare tossicità, il riflesso trasformarsi in inganno e il giudizio finale assomigliare a una sentenza già scritta. È un materiale costruito sul sospetto e sul prezzo nascosto del potere."
+      },
+      "abilities": []
+    },
+    {
+      "id": "bismuto",
+      "profile": {
+        "theme": "Bismuto è la geometria che rifiuta di restare regolare. L'Exalt distorce urti e direzioni, costruisce forme inaspettate e usa le irregolarità come risorsa. Non cancella il difetto: lo moltiplica finché diventa una nuova architettura, sorprendente e difficile da prevedere."
+      },
+      "abilities": []
+    },
+    {
+      "id": "manganese",
+      "profile": {
+        "theme": "Manganese governa i doppi. L'identità può rispecchiarsi, separarsi e ricomporsi in configurazioni che sembrano contraddirsi. Dove un nemico vede un'unica presenza, l'Exalt introduce una falsa unione e costringe a distinguere l'originale dalle sue immagini."
+      },
+      "abilities": []
+    },
+    {
+      "id": "nichel",
+      "profile": {
+        "theme": "Nichel è l'arte della somiglianza imperfetta. Copia comportamenti, simula legami e costruisce un falso così preciso da diventare difficile da distinguere dall'originale. Il suo potere non nasce dalla forza della sostanza, ma dall'incertezza che produce in chi la osserva."
+      },
+      "abilities": []
+    },
+    {
+      "id": "platino",
+      "profile": {
+        "theme": "Platino tratta l'energia come qualcosa da trasferire fra corpi. Catalisi, scambio, perdita e riconquista diventano aspetti della stessa forza; la materia umana sembra un reagente capace di accelerare o deviare ogni processo. La sua forma finale lascia affiorare una mente intensa e pericolosa."
+      },
+      "abilities": []
+    },
+    {
+      "id": "zinco",
+      "profile": {
+        "theme": "Zinco parla il linguaggio dell'equilibrio: ogni forza può ricevere un contrappeso, ogni traiettoria una deviazione. L'Exalt sposta vantaggi e svantaggi fra i contendenti e spezza la regolarità degli esiti, come se il combattimento fosse una bilancia da ritarare continuamente."
+      },
+      "abilities": []
+    },
+    {
+      "id": "ossigeno",
+      "profile": {
+        "theme": "Ossigeno è il confine fra respiro e privazione. Alimenta corpi e reazioni, concede un secondo slancio e può trasformare il vuoto in un'arma. Ciò che per altri è semplice aria diventa, per l'Exalt, una riserva vitale da distribuire o negare."
+      },
+      "abilities": []
+    },
+    {
+      "id": "flogisto",
+      "profile": {
+        "theme": "Flogisto è il carburante segreto dell'esistenza. L'Exalt separa temporaneamente le componenti della propria essenza, le rimette in circolo e spinge la propria Unicità oltre la misura. Il rischio non è soltanto bruciare: è perdere la forma che tiene insieme ciò che si è."
+      },
+      "abilities": []
+    },
+    {
+      "id": "fosforo-bianco",
+      "profile": {
+        "theme": "Fosforo Bianco è luce che marca e perseguita. Le sue fiamme lasciano segni sui nemici e ogni marchio diventa un invito alla deflagrazione: una corona cresce attorno all'Exalt finché tutta l'energia accumulata viene proiettata in un astro abbagliante."
+      },
+      "abilities": []
+    },
+    {
+      "id": "fosforo-nero",
+      "profile": {
+        "theme": "Fosforo Nero non illumina: sottrae riferimenti. Labirinti percettivi, punti ciechi e un orizzonte deformato impediscono ai nemici di stabilire dove si trovi davvero l'Exalt. La difesa consiste nel sottrarsi alla corretta percezione, facendo dello spazio un alleato mutevole."
+      },
+      "abilities": []
+    },
+    {
+      "id": "zolfo",
+      "profile": {
+        "theme": "Zolfo è la pressione del giudizio. La Colpa si accumula sulle creature che agiscono contro l'Exalt e i suoi alleati, finché l'aria stessa sembra diventare insufficiente. Fulmini, penitenza e annullamento delle azioni esprimono una giustizia implacabile, che soffoca prima di assolvere."
+      },
+      "abilities": []
+    },
+    {
+      "id": "aqua-fortis",
+      "profile": {
+        "theme": "Aqua fortis corrode tanto il nemico quanto il suo utilizzatore. L'Exalt accetta ferite inevitabili per convertire il proprio corpo in un reagente aggressivo; ogni esposizione indebolisce le difese e avvicina la materia avversaria alla dissoluzione completa."
+      },
+      "abilities": []
+    },
+    {
+      "id": "aqua-regia",
+      "profile": {
+        "theme": "Aqua regia è una trasformazione violenta che si manifesta soprattutto quando il nemico agisce. I Petali si accumulano fino a formare la Rosa dei Maestri, simbolo di un potere che interrompe, dissolve e incorona la reazione stessa come arma. Anche il Sangue del Drago Rosso nasce da questa tensione."
+      },
+      "abilities": []
+    },
+    {
+      "id": "aqua-vitae",
+      "profile": {
+        "theme": "Aqua vitae è l'alchimia dell'ebbrezza. Il ritmo di una festa diventa un modo di combattere: passi imprevedibili, brindisi, danze e un baccanale che stravolge le posizioni in campo. L'Exalt cresce con la confusione dei nemici e ne trasforma l'incertezza in libertà di movimento."
+      },
+      "abilities": []
+    },
+    {
+      "id": "amalgama",
+      "profile": {
+        "theme": "Amalgama non è ancora una forma compiuta. L'Exalt sospende i danni, li conserva come materia non risolta e tenta di trasformarli prima che si manifestino. Quando sacrifica la Purezza degli altri materiali, abbandona la figura umana e diviene una massa che protegge, ingloba e cresce divorando ciò che incontra."
+      },
+      "abilities": []
+    },
+    {
+      "id": "cinabro",
+      "profile": {
+        "theme": "Cinabro è energia rossa che attraversa il mondo come un fulmine. Il movimento alimenta la scarica e la scarica richiama nuovo movimento: il corpo diventa un motore filosofale, capace di lanciare saette e proiettare sulla materia una violenza quasi sovrannaturale."
+      },
+      "abilities": []
+    },
+    {
+      "id": "vitriolum",
+      "profile": {
+        "theme": "Vitriòlum invita a scendere dentro ciò che appare integro. Il suo marchio è una condanna, la sua opera una visita nelle profondità della materia, e la pietra nascosta è il punto in cui una verità definitiva può emergere. È alchimia di introspezione, rivelazione e giudizio irreversibile."
+      },
+      "abilities": []
+    },
+    {
+      "id": "zolfo-nero",
+      "profile": {
+        "theme": "Zolfo Nero è la ribellione elevata a patto. Ogni creatura può scegliere di accettare un Debito Infernale e ottenere un vantaggio, oppure rifiutare e concedere all'Exalt un'altra forma di potere. La sua connessione demoniaca alimenta esalazioni, immunità conquistate e il dominio del Trono dell'Esule."
+      },
+      "abilities": []
+    }
+  ]
+}

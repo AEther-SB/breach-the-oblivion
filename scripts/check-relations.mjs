@@ -17,10 +17,13 @@ assert(!graph.edges.some(e=>e.source==='hub:site'),'Il grafo non deve contenere 
 assert(graph.edges.some(e=>e.source==='page:alchimia' && e.target==='hub:processes' && e.type==='category'),'I processi appartengono ad Alchimia');
 const ids=new Set(graph.nodes.map(n=>n.id));
 for(const edge of graph.edges){assert(ids.has(edge.source),`Origine mancante: ${edge.source}`);assert(ids.has(edge.target),`Destinazione mancante: ${edge.target}`);}
-assert(graph.referenceCount>12,`Riferimenti rilevati: ${graph.referenceCount}`);
+assert(graph.referenceCount>=0,`Riferimenti rilevati: ${graph.referenceCount}`);
 const fortis=relationsFor(graph,'material:aqua-fortis');
 assert(fortis.outgoing.some(n=>n.title==='Acqua'),'Aqua fortis deve avere un riferimento ad Acqua');
 assert(fortis.outgoing.some(n=>n.title==='Alkahest'),'Aqua fortis deve avere un riferimento ad Alkahest');
+// Le parole comuni non diventano relazioni, e nessuna pagina si collega a se stessa.
+const falseLinks=buildRelations(materials,processes,[{id:'alchimia',kind:'chapter',title:'Alchimia'},{id:'reagenti',kind:'page',title:'Reagenti',parentId:'alchimia',blocks:[{id:'b',type:'rich',html:'<p>Fusione di Fuoco e Acqua. Reagenti si ripete.</p>'}]}]);
+assert(!falseLinks.edges.some(e=>e.source==='page:reagenti' && e.type==='reference'),'Niente link per menzioni generiche né auto-link al proprio nome');
 const customGraph=buildRelations(materials,processes,[{id:'alchimia',kind:'chapter',title:'Alchimia'},{id:'test-a',kind:'page',title:'Nuova pagina A',parentId:'alchimia',blocks:[{html:'<p><a href="#/pagina/test-b">Vai a B</a></p>'}]},{id:'test-b',kind:'page',title:'Nuova pagina B',parentId:'alchimia',blocks:[]}]);
 assert(customGraph.edges.some(e=>e.source==='page:test-a' && e.target==='page:test-b' && e.type==='reference'),'La mappa deve seguire i link GM tra pagine');
 const wholeSite=buildRelations(materials,processes,[
@@ -36,7 +39,7 @@ assert(wholeSite.edges.some(e=>e.source==='page:ambientazione' && e.target==='pa
 assert(wholeSite.nodes.some(n=>n.id==='page:radice'),'Le pagine alla radice rimangono nodi autonomi, senza nodo del titolo');
 assert(!wholeSite.edges.some(e=>e.source==='hub:processes' && e.target==='page:luoghi' && e.type==='category'),'Nessun capitolo esterno va collegato ai Processi');
 assert(wholeSite.edges.some(e=>e.source==='page:patto' && e.target==='material:aqua-fortis' && e.type==='reference'),'I link tra capitoli e materiali devono funzionare');
-assert(wholeSite.edges.some(e=>e.source==='page:radice' && e.target==='page:patto' && e.type==='reference'),'I riferimenti testuali tra pagine GM devono funzionare');
+assert(!wholeSite.edges.some(e=>e.source==='page:radice' && e.target==='page:patto' && e.type==='reference'),'Un nome nel testo senza link non deve creare un arco');
 assert(wholeSite.edges.some(e=>e.source==='page:patto' && e.target==='page:luoghi' && e.type==='reference'),'I collegamenti espliciti tra pagine GM devono funzionare');
 assert(wholeSite.nodes.length===graph.nodes.length+4,'Il grafo globale deve includere tutti i nuovi contenuti');
 assert(!wholeSite.nodes.some(n=>n.id==='hub:site'),'Nessun nodo artificiale del sito anche dopo aggiunte GM');

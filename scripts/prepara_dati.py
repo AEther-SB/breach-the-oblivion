@@ -13,13 +13,26 @@ profiles=json.loads((root/'contenuti'/'profili-materiali.json').read_text(encodi
 for m in source['materials']:
     m['requirementsText']=requirements.get(m['id'],'Nessuno.')
     m['profile']=profiles[m['id']]
+    # Correzione successiva all'export v0.7.36: Scudo di Azoth = +1 CA fisso.
+    if m['id']=='argentovivo':
+        for ability in m['abilities']:
+            if ability['name']=='Memoria Vitale':
+                ability['html']=ability['html'].replace('bonus alla CA per <strong>1 minuto</strong>', '<strong>+1 alla CA per 1 minuto</strong>')
+    # Capienza di Amalgama aggiornata nella Suite BTE v0.7.38.
+    if m['id']=='amalgama':
+        for ability in m['abilities']:
+            if ability['name']=='Esistenza Transitoria':
+                ability['html']=ability['html'].replace(
+                    '5 volte la somma della Purezza effettiva di tutti i materiali posseduti',
+                    '6 per grado di Purezza effettiva di Amalgama, più 3 per grado di Purezza effettiva degli altri materiali posseduti'
+                )
     m.pop('features',None)
     m.pop('bonusDescription',None)
     m.pop('completeText',None)
 count=sum(len(m['abilities']) for m in source['materials'])
 output={
-    'version':'0.7.36',
-    'source':'Suite BTE v0.7.36 · Exalt Core 0.7.28',
+    'version':'0.7.38',
+    'source':'Suite BTE v0.7.38 · Argentovivo +1 CA e nuova capienza di Amalgama',
     'dcFormula':'6 + Competenza + Purezza effettiva del singolo materiale + modificatore di Intelligenza',
     'materials':source['materials'],
     'genesisProcesses':source['processes'],

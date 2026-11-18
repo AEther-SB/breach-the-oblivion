@@ -106,3 +106,28 @@
   .home-atlas-detail{min-height:118px}
 }
 @media(prefers-reduced-motion:reduce){.material-card:after{transition:none}}
+
+/* Categoria cromatica delle schede e dei rimandi: azzurro, ametista, acciaio,
+   rosa e rame. Nessun verde; tema chiaro e scuro condividono la stessa logica. */
+.detail-page { --section-accent: var(--tone-color); --link-accent: var(--tone-color); }
+.detail-page .breadcrumb a:hover,
+.detail-page .material-relations-head>a,
+.detail-page .material-relation-links svg,
+.detail-page .rules a,
+.detail-page .ability-level,
+.detail-page .abilities-toc button b { color: var(--link-accent); }
+.detail-page .rules a,
+.detail-page .material-portrait a { text-decoration-color: color-mix(in srgb,var(--link-accent) 48%,transparent); }
+.detail-page .rules a:hover { text-decoration-color: var(--link-accent); }
+.detail-page .req-phrase a.bto-context-link[class*="tone-"] {
+  color: var(--tone-color);
+  border-bottom-color: color-mix(in srgb,var(--tone-color) 58%,transparent);
+}
+.detail-page .req-phrase a.bto-context-link[class*="tone-"]:hover {
+  border-bottom-color: var(--tone-color);
+  filter: brightness(1.2);
+}
+.detail-page .req-phrase a.tone-processes { --tone-color: #bea5e8; }
+:root[data-theme="light"] .detail-page .req-phrase a.tone-processes { --tone-color: #7556a6; }
+.search-result[class*="tone-"]:hover .search-result-icon,
+.search-result[class*="tone-"]:focus-visible .search-result-icon { color:var(--tone-color); }
