@@ -20,3 +20,7 @@ assert(g.edges.some(e=>e.source==='page:three'&&e.target==='page:two'&&e.type===
 assert(!g.edges.some(e=>e.source===e.target),'Self-link da bloccare');
 assert.deepEqual([...getExplicitUrls(docs[2])],[]);
 console.log('OK — editor a blocchi, raccolte annidabili, suggerimenti manuali, migrazione selettiva e link espliciti.');
+
+// La migrazione deve confrontare gli HTML prima di scrivere i processi pubblicati.
+const editorStore = readFileSync(new URL('../src/content-store.jsx', import.meta.url),'utf8');
+assert(editorStore.includes('previousProcessesV27') && editorStore.includes('record.html !== oldProcess.html'), 'Protezione testo GM dei processi non presente');

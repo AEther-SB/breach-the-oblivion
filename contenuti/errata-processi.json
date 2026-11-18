@@ -1,0 +1,75 @@
+{
+  "Fissazione": {
+    "label": "Cogliere l’Attimo",
+    "replacements": [
+      [
+        "bersaglio. bloccandolo",
+        "bersaglio, bloccandolo"
+      ]
+    ]
+  },
+  "Digestione": {
+    "label": "Banchetto del Re",
+    "replacements": [
+      [
+        "essicare",
+        "essiccare"
+      ]
+    ]
+  },
+  "Distillazione": {
+    "label": "Punto di Singolarità",
+    "replacements": [
+      [
+        "oppure di di diminuire",
+        "oppure di diminuire"
+      ]
+    ]
+  },
+  "Cerazione": {
+    "label": "Mito del Forgiato",
+    "replacements": [
+      [
+        "forgando",
+        "forgiando"
+      ]
+    ]
+  },
+  "Proiezione": {
+    "label": "Trasmutazione del Filosofo",
+    "replacements": [
+      [
+        "o se iniziare trasmutare",
+        "o se iniziare a trasmutare"
+      ]
+    ]
+  },
+  "Calcinazione": {
+    "label": "Purificazione dell’Anima",
+    "replacements": []
+  },
+  "Congelamento": {
+    "label": "Palco di Cristallo",
+    "replacements": []
+  },
+  "Dissoluzione": {
+    "label": "Goccia d’Esistenza",
+    "replacements": []
+  },
+  "Sublimazione": {
+    "label": "Estinguere l’Eccesso",
+    "replacements": []
+  },
+  "Separazione": {
+    "label": "Scissione delle Case Celesti",
+    "replacements": []
+  },
+  "Putrefazione": {
+    "label": "Erosione Temporale",
+    "replacements": []
+  },
+  "Moltiplicazione": {
+    "label": "Avidità del Potente",
+    "replacements": []
+  }
+}

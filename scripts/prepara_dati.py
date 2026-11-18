@@ -10,6 +10,7 @@ source_path=Path(sys.argv[1]) if len(sys.argv)>1 else root/'contenuti'/'material
 source=json.loads(source_path.read_text(encoding='utf-8'))
 requirements=json.loads((root/'contenuti'/'prerequisiti.json').read_text(encoding='utf-8'))
 profiles=json.loads((root/'contenuti'/'profili-materiali.json').read_text(encoding='utf-8'))
+process_errata=json.loads((root/'contenuti'/'errata-processi.json').read_text(encoding='utf-8'))
 for m in source['materials']:
     m['requirementsText']=requirements.get(m['id'],'Nessuno.')
     m['profile']=profiles[m['id']]
@@ -29,6 +30,34 @@ for m in source['materials']:
     m.pop('features',None)
     m.pop('bonusDescription',None)
     m.pop('completeText',None)
+# Interventi editoriali localizzati: solo marcatori HTML e refusi certi.
+# L'export originale rimane intatto per consentire confronti e migrazioni conservative.
+import re, html
+for process in source['processes']:
+    spec=process_errata[process['name']]
+    raw=process['html']
+    label=spec['label']
+    options=[label+':',label.replace('’','&#x27;')+':']
+    target=next((x for x in options if raw.count(x)==1),None)
+    assert target,(process['name'],'intestazione non univoca',options)
+    raw=raw.replace(target,'<strong>'+target+'</strong>',1)
+    for old,new in spec.get('replacements',[]):
+        assert raw.count(old)==1,(process['name'],'refuso non univoco',old)
+        raw=raw.replace(old,new,1)
+    if process['name']=='Proiezione':
+        original='<p>*Questo processo non può essere ottenuto tramite altre capacità o altri processi.*</p>'
+        assert original in raw
+        raw=raw.replace(original,'<p><em>Questo processo non può essere ottenuto tramite altre capacità o altri processi.</em></p>',1)
+    if process['name']=='Moltiplicazione':
+        # Le sei opzioni erano paragrafi che iniziavano col simbolo bullet.
+        pattern=r'((?:<p>• [^<]*</p>){6})'
+        match=re.search(pattern,raw)
+        assert match, 'Elenco di Moltiplicazione non trovato'
+        items=re.findall(r'<p>• ([^<]*)</p>',match.group(1))
+        assert len(items)==6
+        raw=raw[:match.start()]+'<ul>'+''.join('<li>'+item+'</li>' for item in items)+'</ul>'+raw[match.end():]
+    process['html']=raw
+
 count=sum(len(m['abilities']) for m in source['materials'])
 output={
     'version':'0.7.38',

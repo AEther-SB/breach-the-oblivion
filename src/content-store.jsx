@@ -5,6 +5,7 @@ import { getFirestore, collection, doc, getDoc, getDocs, onSnapshot, query, wher
 import source from './data/compendium.json';
 import previousSource from './data/editorial-baseline-v242.json';
 import previousV25 from './data/editorial-baseline-v250-history.json';
+import previousProcessesV27 from './data/editorial-baseline-v270-processes.json';
 import {ensureImportEntry} from './import-utils.js';
 
 export const normalize = (value) => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[’‘]/g, "'");
@@ -227,6 +228,28 @@ export function ContentProvider({children}) {
         batch.set(doc(collection(db,'revisions')),{entryId:record.id,content:omitServer(updatedRecord),author:user.uid,at:serverTimestamp()});
         await batch.commit();updated++;
       }
+    }
+    // Correzioni testuali v2.7.1 ai 12 Processi alchemici.
+    // Si aggiorna solo il testo ancora identico alla versione v2.7;
+    // le bozze e ogni contenuto modificato dal GM sono preservati.
+    const previousProcessMap = new Map(previousProcessesV27.map(p => [slug(p.name), p]));
+    for (const nextProcess of source.genesisProcesses) {
+      const id = `genesis-${slug(nextProcess.name)}`;
+      const record = published.find(e => e.id === id);
+      const oldProcess = previousProcessMap.get(slug(nextProcess.name));
+      if (!record || !oldProcess || draftIds.has(id)) { skipped++; continue; }
+      if (record.html === nextProcess.html) continue;
+      if (record.html !== oldProcess.html) { skipped++; continue; }
+      const updatedRecord = { ...record, html: nextProcess.html };
+      const batch = writeBatch(db);
+      batch.update(doc(db, 'entries', id), {
+        html: nextProcess.html, updatedAt: serverTimestamp(), updatedBy: user.uid,
+      });
+      batch.set(doc(collection(db, 'revisions')), {
+        entryId: id, content: omitServer(updatedRecord), author: user.uid, at: serverTimestamp(),
+      });
+      await batch.commit();
+      updated++;
     }
     for(const id of ['alchimia-materiali','alchimia-genesi']) {
       if(!published.some(e=>e.id===id)) {

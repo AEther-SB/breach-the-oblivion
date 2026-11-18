@@ -25,7 +25,26 @@ for(const mat of d.materials){
     }else assert.deepEqual(a,orig.abilities[i],'Descrizione regole alterata: '+mat.id);
   });
 }
-d.genesisProcesses.forEach((a,i)=>assert.deepEqual(a,source.processes[i],'Processo alterato: '+i));
+const processErrata = JSON.parse(fs.readFileSync(new URL('../contenuti/errata-processi.json', import.meta.url), 'utf8'));
+function plainText(value) {
+  return String(value).replace(/<[^>]*>/g, ' ').replace(/&#x27;/g, "'")
+    .replace(/&amp;/g, '&').replace(/[•*]/g, '').replace(/\s+/g, ' ').trim();
+}
+d.genesisProcesses.forEach((a,i) => {
+  const original = source.processes[i];
+  assert.equal(a.name, original.name, 'Nome del processo alterato: '+i);
+  const errata = processErrata[a.name];
+  assert(errata, 'Errata mancante per '+a.name);
+  let expected = plainText(original.html);
+  for (const [before, after] of errata.replacements) {
+    assert(expected.includes(before), 'Refuso non trovato: '+before);
+    expected=expected.replace(before,after);
+  }
+  assert.equal(plainText(a.html), expected, 'Testo o regole alterate: '+a.name);
+  assert(a.html.includes('<strong>'), 'Titolo capacità non formattato: '+a.name);
+  assert(!a.html.includes('<p>•'), 'Elenco non formattato: '+a.name);
+  assert(!a.html.includes('<p>*'), 'Corsivo Markdown non convertito: '+a.name);
+});
 for (const mat of d.materials) {
   assert(!/\b(compendio|qui fantastica|traduzione fantastica|nel gioco|nel mondo di Breach)\b/i.test(mat.profile.history),`Riferimento storico con metatesto: ${mat.id}`);
   assert(!('historicalUrl' in mat.profile),`Fonte esterna ancora esposta: ${mat.id}`);
