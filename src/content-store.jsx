@@ -7,6 +7,7 @@ import previousSource from './data/editorial-baseline-v242.json';
 import previousV25 from './data/editorial-baseline-v250-history.json';
 import previousProcessesV27 from './data/editorial-baseline-v270-processes.json';
 import previousAbilitiesV271 from './data/editorial-baseline-v271-abilities.json';
+import previousAbilitiesV280 from './data/editorial-baseline-v280-abilities.json';
 import {ensureImportEntry} from './import-utils.js';
 
 export const normalize = (value) => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[’‘]/g, "'");
@@ -222,12 +223,15 @@ export function ContentProvider({children}) {
       // testo corrisponde esattamente alla v2.7.1 non personalizzata.
       // Materiali e abilità modificati dal GM, o con bozze, restano intatti.
       const previousAbilityTexts = previousAbilitiesV271[id] || {};
+      const previousV280Texts = previousAbilitiesV280[id] || {};
       let abilitiesChanged = false;
       const candidateAbilities = (changes.abilities ?? record.abilities ?? []).map(ability => {
         const previousHtml = previousAbilityTexts[String(ability.level)];
+        const lastPublishedHtml = previousV280Texts[String(ability.level)];
         const nextAbility = newMaterial.abilities.find(item => String(item.level) === String(ability.level));
-        if (!previousHtml || !nextAbility || nextAbility.html === previousHtml) return ability;
-        if (ability.html !== previousHtml) { skipped++; return ability; }
+        if (!previousHtml || !nextAbility || nextAbility.html === ability.html) return ability;
+        // Accetta soltanto i testi distribuiti dalla v2.7.1 o dalla v2.8.
+        if (ability.html !== previousHtml && ability.html !== lastPublishedHtml) { skipped++; return ability; }
         abilitiesChanged = true;
         return { ...ability, html: nextAbility.html };
       });

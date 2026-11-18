@@ -4,6 +4,7 @@ const d = JSON.parse(fs.readFileSync(new URL('../src/data/compendium.json',impor
 const source = JSON.parse(fs.readFileSync(new URL('../contenuti/materials_v0736.json',import.meta.url),'utf8'));
 const editorial = JSON.parse(fs.readFileSync(new URL('../contenuti/ability-editorial-overrides.json',import.meta.url),'utf8'));
 const baseline271 = JSON.parse(fs.readFileSync(new URL('../src/data/editorial-baseline-v271-abilities.json',import.meta.url),'utf8'));
+const baseline280 = JSON.parse(fs.readFileSync(new URL('../src/data/editorial-baseline-v280-abilities.json',import.meta.url),'utf8'));
 const userAuthored = new Set(['acqua','alkahest','aria','fuoco','terra','zero','argento','argentovivo','ferro','rame','oro','stagno','arsenico','platino','zinco','ossigeno','flogisto','cinabro','vitriolum']);
 const plainTextAbility = value => String(value).replace(/<\/(?:p|li|h4)>/g,' ').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
 const numericValues = value => (String(value).match(/(?<!\w)(?:\d+d\d+|[+−-]?\d+(?:[.,]\d+)?)(?!\w)/g) || []).map(x=>x.replace(/^\+/,''));
@@ -25,6 +26,8 @@ for(const mat of d.materials){
     const expected=editorial[mat.id]?.[String(a.level)];
     assert.equal(a.name, original.name, 'Nome della capacità alterato: '+mat.id);
     assert.equal(a.html, expected, 'Descrizione non sincronizzata con Foundry: '+mat.id+':'+a.level);
+    assert(a.html.includes('<strong>'), 'Grassetti mancanti: '+mat.id+':'+a.level);
+    assert(baseline280[mat.id]?.[String(a.level)], 'Base di migrazione v2.8 mancante: '+mat.id+':'+a.level);
     if (userAuthored.has(mat.id)) {
       // Testi originali: autorizzati esclusivamente cambiamenti di formattazione.
       assert.equal(plainTextAbility(a.html), plainTextAbility(baseline271[mat.id]?.[String(a.level)] ?? original.html), 'Testo originale modificato: '+mat.id+':'+a.level);
