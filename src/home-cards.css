@@ -1,0 +1,19 @@
+/* Card: pittogramma in una propria area, non dietro il titolo. */
+.home-card{isolation:isolate}
+.home-card>.home-card-icon{position:absolute;right:24px;top:23px;display:grid;place-items:center;width:47px;height:47px;z-index:2;flex:none;border:1px solid color-mix(in srgb,var(--tone-color,#83b6ee) 35%,var(--line));background:color-mix(in srgb,var(--tone-color,#83b6ee) 8%,var(--paper));color:var(--tone-color,#83b6ee);pointer-events:none}
+.home-card .home-card-top{padding-right:65px;position:relative;z-index:2}
+.home-card .home-card-content{position:relative;z-index:2;min-width:0}
+.home-card .home-card-bottom{position:relative;z-index:2;color:var(--tone-color,#83b6ee);border-top-color:var(--line)}
+.home-card .home-card-bottom svg{color:inherit}
+.home-card.tone-elements .home-card-bottom,.section-landing .home-card.tone-elements .home-card-bottom{color:#83b6ee}
+:root[data-theme="light"] .home-card.tone-elements .home-card-bottom{color:#3569a2}
+@media(min-width:791px){
+  .home-explore .home-card{grid-template-columns:65px minmax(0,1fr) auto!important;grid-template-rows:auto auto;column-gap:20px;row-gap:5px;align-items:center}
+  .home-explore .home-card>.home-card-icon{position:static;grid-column:1;grid-row:1/3;width:56px;height:56px}
+  .home-explore .home-card>.home-card-top{grid-column:2;grid-row:1;width:auto;padding:0}
+  .home-explore .home-card>.home-card-content{grid-column:2;grid-row:2}
+  .home-explore .home-card>.home-card-bottom{grid-column:3;grid-row:1/3}
+  .section-landing .home-card>.home-card-icon{top:24px;right:26px}
+  .section-landing .home-card h3{padding-right:56px}
+}
+@media(max-width:790px){.home-card>.home-card-icon{width:43px;height:43px;right:17px;top:17px}.home-card .home-card-top{padding-right:59px}.home-card h3{padding-right:50px}}

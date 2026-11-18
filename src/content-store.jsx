@@ -5,6 +5,7 @@ import { getFirestore, collection, doc, getDoc, getDocs, onSnapshot, query, wher
 import source from './data/compendium.json';
 import previousSource from './data/editorial-baseline-v242.json';
 import previousV25 from './data/editorial-baseline-v250-history.json';
+import {ensureImportEntry} from './import-utils.js';
 
 export const normalize = (value) => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[’‘]/g, "'");
 export const slug = (value) => normalize(value).replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -128,6 +129,38 @@ export function ContentProvider({children}) {
     batch.delete(doc(db,'drafts',entryId));
     await batch.commit();
   }
+  async function importEntries(items,{publishNow=false,replaceExisting=false}={}) {
+    requireGM();
+    if (!seeded) throw Error('Importa prima il compendio iniziale.');
+    if (!Array.isArray(items) || !items.length) throw Error('Nessuna voce da importare.');
+    if (items.length>250) throw Error('Massimo 250 voci per operazione.');
+    const occupied=new Set([...published,...drafts].map(e=>e.id));
+    const selected=[];let skipped=0;
+    for (const item of items) {
+      const entry=ensureImportEntry(omitServer(item));
+      if(occupied.has(entry.id)&&!replaceExisting){skipped++;continue;}
+      selected.push(entry);
+    }
+    // Firestore: lotti limitati per evitare il massimo di 500 scritture per batch.
+    // Nessun file del dispositivo viene salvato: solo dati testuali e URL.
+    let imported=0;
+    for(let offset=0;offset<selected.length;offset+=60){
+      const batch=writeBatch(db);
+      const chunk=selected.slice(offset,offset+60);
+      for(const entry of chunk){
+        const content={...entry};delete content.existing;
+        if (publishNow) {
+          batch.set(doc(db,'entries',entry.id),{...content,published:true,updatedAt:serverTimestamp(),updatedBy:user.uid});
+          batch.set(doc(collection(db,'revisions')),{entryId:entry.id,content,author:user.uid,at:serverTimestamp()});
+          batch.delete(doc(db,'drafts',entry.id));
+        } else {
+          batch.set(doc(db,'drafts',entry.id),{...content,updatedAt:serverTimestamp(),updatedBy:user.uid});
+        }
+      }
+      await batch.commit();imported+=chunk.length;
+    }
+    return {imported,skipped,mode:publishNow?'pubblicate':'bozze'};
+  }
   async function loadHistory(entryId) {
     requireGM();
     const snap = await getDocs(query(collection(db,'revisions'), where('entryId','==',entryId)));
@@ -203,7 +236,7 @@ export function ContentProvider({children}) {
     }
     return {updated,skipped};
   }
-  const value = { configured, user, gm, authPending, seeded, loaded, error, setError, entries, materials, processes, pages, isDraft, login, logout, saveDraft, publish, remove, loadHistory, bootstrap, syncEditorial, baseVersion:source.version };
+  const value = { configured, user, gm, authPending, seeded, loaded, error, setError, entries, materials, processes, pages, isDraft, login, logout, saveDraft, publish, remove, loadHistory, bootstrap, syncEditorial, importEntries, baseVersion:source.version };
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 export function useContent() { const value = useContext(context); if(!value) throw Error('ContentProvider mancante'); return value; }
@@ -211,5 +244,5 @@ export const newEntry = (kind, title, parentId='root') => {
   if (!['collection','page'].includes(kind)) throw Error('Per nuovi contenuti utilizza una Raccolta o una Pagina.');
   const unique = `${slug(title)}-${Math.random().toString(36).slice(2,7)}`;
   const id = `${kind}-${unique}`;
-  return {id,kind,title,parentId,order:Date.now(),description:'',imageUrl:'',imageAlt:'',blocks:[]};
+  return {id,kind,title,parentId,order:0,description:'',imageUrl:'',imageAlt:'',blocks:[]};
 };

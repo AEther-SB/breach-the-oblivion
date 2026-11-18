@@ -1,0 +1,55 @@
+import assert from 'node:assert/strict';
+import {readImportFiles,parseJsonImport,markdownToHtml,insertionOrder,ensureImportEntry} from '../src/import-utils.js';
+import {formatLegacyMarkup} from '../src/legacy-format.js';
+import {templatesForKind,applyTemplate} from '../src/templates.js';
+import {readFileSync} from 'node:fs';
+const source = readFileSync(new URL('../src/data/compendium.json',import.meta.url),'utf8');
+const content = JSON.parse(source);
+assert.equal(content.materials.length,32);
+assert.equal(content.genesisProcesses.length,12);
+assert.equal(content.materials.reduce((n,m)=>n+m.abilities.length,0),120);
+const markdown='## Storia\n\n**Un nome** e *un aspetto*.\n\n- Primo\n- Secondo\n\n[Acqua](#/alchimia/materiali/acqua)';
+const html=markdownToHtml(markdown);
+assert.match(html,/<h3>Storia<\/h3>/);
+assert.match(html,/<strong>Un nome<\/strong>/);
+assert.match(html,/<em>un aspetto<\/em>/);
+assert.match(html,/<ul>.*<li>Primo<\/li>/);
+assert.match(html,/<a href="#\/alchimia\/materiali\/acqua">Acqua<\/a>/);
+assert(!markdownToHtml('<script>danger</script>').includes('<script>'));
+const files=[
+ {name:'Elyra.md',webkitRelativePath:'Personaggi/Elyra.md',size:markdown.length,text:async()=>markdown},
+ {name:'Selene.md',webkitRelativePath:'Personaggi/Selene.md',size:45,text:async()=> '# Selene\n\nLa storia.'},
+ {name:'raccolte.json',size:220,text:async()=>JSON.stringify({entries:[{kind:'page',title:'Storia del regno',markdown:'**Rinascita**'}]})}
+];
+const r=await readImportFiles(files,'alchimia',[]);
+assert.deepEqual(r.errors,[]);
+assert.equal(r.records.length,4);
+const folder=r.records.find(e=>e.kind==='collection');
+assert(folder && folder.title==='Personaggi');
+assert(r.records.filter(e=>e.parentId===folder.id).length===2);
+assert(r.records.find(e=>e.title==='Elyra')?.blocks?.[0]?.html?.includes('Storia'));
+const again=await readImportFiles(files,'alchimia',r.records);
+assert.equal(again.records.filter(e=>e.existing).length,r.records.length);
+assert.equal(insertionOrder([{order:1760000000000,title:'Uno'}],1),1760000000001);
+assert.equal(insertionOrder([{order:0,title:'Uno'},{order:10,title:'Due'}],1),5);
+assert.throws(()=>ensureImportEntry({id:'../../bad',kind:'page',title:'Rischio'}));
+const person=applyTemplate({id:'page-x',kind:'page',title:'Scheda',parentId:'root'},'character');
+assert(person.blocks.length>=5&&person.blocks.some(b=>b.type==='image')&&person.blocks.some(b=>b.type==='links'));
+assert(templatesForKind('collection').some(t=>t.id==='characters'));
+assert.deepEqual(parseJsonImport('[{"title":"Prima"},{"title":"Seconda"}]','pagine.json','root').map(p=>p.title),['Prima','Seconda']);
+const sample='<p>Purificazione dell’Anima: recuperi **1d8**.</p><p>*Nota dell’autore.*</p>';
+const presented=formatLegacyMarkup(sample);
+assert(presented.includes('<strong>Purificazione dell’Anima:</strong>'));
+assert(presented.includes('<strong>1d8</strong>'));
+assert(presented.includes('<em>Nota dell’autore.</em>'));
+assert(formatLegacyMarkup('<p>Il processo permette di essicare il materiale.</p>').includes('essiccare'));
+const strip=x=>x.replace(/<[^>]*>/g,'');
+assert.equal(strip(presented),strip(sample).replace(/\*\*/g,'').replace(/\*/g,''),'La formattazione non deve cambiare parole o valori delle regole');
+const editor=readFileSync(new URL('../src/editor.jsx',import.meta.url),'utf8');
+const store=readFileSync(new URL('../src/content-store.jsx',import.meta.url),'utf8');
+const app=readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const css=readFileSync(new URL('../src/home-cards.css',import.meta.url),'utf8');
+assert(editor.includes('ImportDialog')&&editor.includes('Posizione nella raccolta')&&editor.includes('templatesForKind'));
+assert(store.includes('async function importEntries')&&store.includes('requireGM()')&&store.includes('replaceExisting'));
+assert(css.includes('tone-elements')&&css.includes('#83b6ee')&&app.includes('home-card-icon'));
+console.log('OK — importazione multipla e cartelle, duplicati, sicurezza degli ID, modelli, ordine leggibile, tipografia senza modifica alle regole.');

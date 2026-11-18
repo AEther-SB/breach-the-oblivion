@@ -9,6 +9,7 @@ import {
 import compendium from './data/compendium.json';
 import { ContentProvider, useContent, normalize, slug } from './content-store';
 import { sanitizeHtml, validatedImageUrl } from './sanitize';
+import { formatLegacyMarkup } from './legacy-format.js';
 import { EditTrigger, GMControls, GenericBlocks } from './editor';
 import { buildRelations, relationsFor, glossaryEntries, linkedHtml, routes } from './relations';
 import RelationMap, { HomeConnectionPreview } from './RelationMap';
@@ -19,6 +20,7 @@ import './atlas-home.css';
 import './refinement.css';
 import './motion.css';
 import './editor-modular.css';
+import './home-cards.css';
 
 const ALCHEMY = '/alchimia';
 const MATERIALS = '/alchimia/materiali';
@@ -197,7 +199,7 @@ const alchemyCards = [
   { title:'Processi alchemici', subtitle:'Le operazioni della trasformazione', to:GENESIS, tone:'composite', number:'02', icon:Layers3, cta:'Esplora i processi' },
 ];
 function SectionCards({cards}) {
-  return <div className="home-grid">{cards.map(card => {const Icon=card.icon;return <Link className={`home-card ${card.featured ? 'home-card-featured' : ''} tone-${card.tone}`} to={card.to} key={card.to}><div className="home-card-top"><span>{card.number} / SEZIONE</span><Icon size={25} strokeWidth={1.5}/></div><div><h3>{card.title}</h3><p>{card.subtitle}</p></div><span className="home-card-bottom">{card.cta}<ArrowUpRight size={19}/></span></Link>})}</div>;
+  return <div className="home-grid">{cards.map(card => {const Icon=card.icon;return <Link className={`home-card ${card.featured ? 'home-card-featured' : ''} tone-${card.tone}`} to={card.to} key={card.to}><div className="home-card-top"><span>{card.number} / SEZIONE</span></div><div className="home-card-icon" aria-hidden="true"><Icon size={28} strokeWidth={1.4}/></div><div className="home-card-content"><h3>{card.title}</h3><p>{card.subtitle}</p></div><span className="home-card-bottom">{card.cta}<ArrowUpRight size={19}/></span></Link>})}</div>;
 }
 function Home({theme}) {
   const {materials,processes,pages}=useCatalog();
@@ -258,7 +260,7 @@ function Materials() {
 function Rule({ html, currentId }) {
   const {materials,processes} = useContent();
   const glossary = useMemo(()=>glossaryEntries(materials,processes,currentId),[materials,processes,currentId]);
-  const result = useMemo(()=>linkedHtml(sanitizeHtml(html),glossary),[html,glossary]);
+  const result = useMemo(()=>linkedHtml(sanitizeHtml(formatLegacyMarkup(html)),glossary),[html,glossary]);
   return <div className="rules" dangerouslySetInnerHTML={{__html:result}}/>;
 }
 function LinkedText({text,currentId, className}) {

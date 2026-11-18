@@ -1,0 +1,19 @@
+{
+  "entries": [
+    {
+      "id": "collection-archivio-esempio",
+      "kind": "collection",
+      "title": "Archivio dimostrativo",
+      "description": "Raccolta importata da un pacchetto JSON.",
+      "blocks": []
+    },
+    {
+      "id": "page-nota-dimostrativa",
+      "kind": "page",
+      "parentId": "collection-archivio-esempio",
+      "title": "Nota dimostrativa",
+      "description": "Pagina inserita insieme alla sua raccolta.",
+      "markdown": "## Introduzione\n\nQuesto è un **esempio di Markdown**.\n\nPuoi aggiungere [collegamenti interni](#/alchimia)."
+    }
+  ]
+}
