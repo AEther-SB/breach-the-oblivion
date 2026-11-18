@@ -2,6 +2,11 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 const d = JSON.parse(fs.readFileSync(new URL('../src/data/compendium.json',import.meta.url),'utf8'));
 const source = JSON.parse(fs.readFileSync(new URL('../contenuti/materials_v0736.json',import.meta.url),'utf8'));
+const editorial = JSON.parse(fs.readFileSync(new URL('../contenuti/ability-editorial-overrides.json',import.meta.url),'utf8'));
+const baseline271 = JSON.parse(fs.readFileSync(new URL('../src/data/editorial-baseline-v271-abilities.json',import.meta.url),'utf8'));
+const userAuthored = new Set(['acqua','alkahest','aria','fuoco','terra','zero','argento','argentovivo','ferro','rame','oro','stagno','arsenico','platino','zinco','ossigeno','flogisto','cinabro','vitriolum']);
+const plainTextAbility = value => String(value).replace(/<\/(?:p|li|h4)>/g,' ').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
+const numericValues = value => (String(value).match(/(?<!\w)(?:\d+d\d+|[+−-]?\d+(?:[.,]\d+)?)(?!\w)/g) || []).map(x=>x.replace(/^\+/,''));
 const ids = new Set(d.materials.map(m=>m.id));
 const abilities=d.materials.reduce((n,m)=>n+m.abilities.length,0);
 for(const r of ['amalgama','zolfo','zolfo-nero','piombo','oro','aqua-fortis','aqua-regia','aqua-vitae']) {
@@ -16,13 +21,18 @@ for(const mat of d.materials){
   const orig=source.materials.find(m=>m.id===mat.id);
   assert(orig && orig.abilities.length===mat.abilities.length,'Materiale incoerente: '+mat.id);
   mat.abilities.forEach((a,i)=>{
-    if(mat.id==='argentovivo'&&a.name==='Memoria Vitale'){
-      const old=orig.abilities[i].html;
-      assert.equal(a.html,old.replace('bonus alla CA per <strong>1 minuto</strong>','<strong>+1 alla CA per 1 minuto</strong>'),'Scudo di Azoth: solo il bonus CA deve cambiare');
-    }else if(mat.id==='amalgama'&&a.name==='Esistenza Transitoria'){
-      const old=orig.abilities[i].html;
-      assert.equal(a.html,old.replace('5 volte la somma della Purezza effettiva di tutti i materiali posseduti','6 per grado di Purezza effettiva di Amalgama, più 3 per grado di Purezza effettiva degli altri materiali posseduti'),'Amalgama: soltanto la capienza deve cambiare');
-    }else assert.deepEqual(a,orig.abilities[i],'Descrizione regole alterata: '+mat.id);
+    const original=orig.abilities[i];
+    const expected=editorial[mat.id]?.[String(a.level)];
+    assert.equal(a.name, original.name, 'Nome della capacità alterato: '+mat.id);
+    assert.equal(a.html, expected, 'Descrizione non sincronizzata con Foundry: '+mat.id+':'+a.level);
+    if (userAuthored.has(mat.id)) {
+      // Testi originali: autorizzati esclusivamente cambiamenti di formattazione.
+      assert.equal(plainTextAbility(a.html), plainTextAbility(baseline271[mat.id]?.[String(a.level)] ?? original.html), 'Testo originale modificato: '+mat.id+':'+a.level);
+    } else {
+      const before=numericValues(plainTextAbility(baseline271[mat.id]?.[String(a.level)] ?? original.html));
+      const after=numericValues(plainTextAbility(a.html));
+      assert.deepEqual(before.sort(),after.sort(), 'Valore numerico modificato: '+mat.id+':'+a.level);
+    }
   });
 }
 const processErrata = JSON.parse(fs.readFileSync(new URL('../contenuti/errata-processi.json', import.meta.url), 'utf8'));

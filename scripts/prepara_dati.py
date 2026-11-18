@@ -27,6 +27,13 @@ for m in source['materials']:
                     '5 volte la somma della Purezza effettiva di tutti i materiali posseduti',
                     '6 per grado di Purezza effettiva di Amalgama, più 3 per grado di Purezza effettiva degli altri materiali posseduti'
                 )
+    # Testi sincronizzati con Foundry; non aggiungere correzioni meccaniche autonome.
+    revision_path = root/'contenuti'/'ability-editorial-overrides.json'
+    editorial_overrides = json.loads(revision_path.read_text(encoding='utf-8')) if revision_path.exists() else {}
+    for ability in m['abilities']:
+        revised = editorial_overrides.get(m['id'], {}).get(str(ability['level']))
+        if revised is not None:
+            ability['html'] = revised
     m.pop('features',None)
     m.pop('bonusDescription',None)
     m.pop('completeText',None)
@@ -60,8 +67,8 @@ for process in source['processes']:
 
 count=sum(len(m['abilities']) for m in source['materials'])
 output={
-    'version':'0.7.38',
-    'source':'Suite BTE v0.7.38 · Argentovivo +1 CA e nuova capienza di Amalgama',
+    'version':'0.7.39',
+    'source':'Suite BTE v0.7.39 · revisioni editoriali sincronizzate con Foundry',
     'dcFormula':'6 + Competenza + Purezza effettiva del singolo materiale + modificatore di Intelligenza',
     'materials':source['materials'],
     'genesisProcesses':source['processes'],

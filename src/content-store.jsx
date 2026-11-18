@@ -6,6 +6,7 @@ import source from './data/compendium.json';
 import previousSource from './data/editorial-baseline-v242.json';
 import previousV25 from './data/editorial-baseline-v250-history.json';
 import previousProcessesV27 from './data/editorial-baseline-v270-processes.json';
+import previousAbilitiesV271 from './data/editorial-baseline-v271-abilities.json';
 import {ensureImportEntry} from './import-utils.js';
 
 export const normalize = (value) => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[’‘]/g, "'");
@@ -217,6 +218,20 @@ export function ContentProvider({children}) {
         if (previousAbility && nextAbility && currentAbility?.html===previousAbility.html) changes.abilities=record.abilities.map(a=>a.name==='Memoria Vitale'?{...a,html:nextAbility.html}:a);
         else skipped++;
       }
+      // Uniformazione delle 120 descrizioni: si interviene soltanto quando il
+      // testo corrisponde esattamente alla v2.7.1 non personalizzata.
+      // Materiali e abilità modificati dal GM, o con bozze, restano intatti.
+      const previousAbilityTexts = previousAbilitiesV271[id] || {};
+      let abilitiesChanged = false;
+      const candidateAbilities = (changes.abilities ?? record.abilities ?? []).map(ability => {
+        const previousHtml = previousAbilityTexts[String(ability.level)];
+        const nextAbility = newMaterial.abilities.find(item => String(item.level) === String(ability.level));
+        if (!previousHtml || !nextAbility || nextAbility.html === previousHtml) return ability;
+        if (ability.html !== previousHtml) { skipped++; return ability; }
+        abilitiesChanged = true;
+        return { ...ability, html: nextAbility.html };
+      });
+      if (abilitiesChanged) changes.abilities = candidateAbilities;
       if (Object.keys(changes).length) {
         const updatedRecord={...record};
         if(changes['profile.theme'])updatedRecord.profile={...updatedRecord.profile,theme:changes['profile.theme']};
