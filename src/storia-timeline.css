@@ -48,3 +48,32 @@
 @media(max-width:960px){.storia-events,.storia-lore{padding:20px 18px 44px}.storia-event{grid-template-columns:35px minmax(0,1fr)}}
 @media(max-width:790px){.storia-workspace{height:auto;min-height:calc(100dvh - 58px);overflow:visible}.storia-workspace-header{align-items:flex-start;flex-direction:column}.storia-workspace-layout{display:flex;flex-direction:column;overflow:visible}.storia-events,.storia-lore{overflow:visible;height:auto;padding:22px 17px}.storia-events{border-right:0;border-bottom:1px solid var(--line)}.storia-workspace-actions{justify-content:flex-start}.storia-event{grid-template-columns:35px minmax(0,1fr)}}
 @media print{.storia-workspace,.storia-events,.storia-lore{height:auto!important;overflow:visible!important}.storia-workspace-layout{display:block}.storia-workspace-header{padding:20px}}
+
+/* v3.4 — soli avvenimenti nella cronologia, raggruppati per periodo e anno. */
+.storia-chronology{display:flex;flex-direction:column;gap:22px}
+.storia-period{border:1px solid var(--line);background:color-mix(in srgb,var(--paper) 84%,var(--bg));min-width:0}
+.storia-period-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;background:var(--surface);border-bottom:1px solid var(--line);border-left:3px solid var(--gold)}
+.storia-period-heading h3{font:500 clamp(25px,2vw,32px)/1.12 'EB Garamond',Georgia,serif;color:var(--ink-strong);margin:4px 0}
+.storia-period-heading small{display:block;color:var(--muted);font-size:11px}
+.storia-period-heading button{display:flex;align-items:center;gap:5px;padding:7px;border:1px solid var(--line);font-size:11px;color:var(--ink);background:var(--paper)}
+.storia-period-empty{padding:16px 20px;color:var(--muted);font-size:12px}
+.storia-year-group{display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px;position:relative;padding:15px 15px 1px 11px}
+.storia-year-group:not(:last-child){border-bottom:1px solid var(--line)}
+.storia-year-axis{display:flex;flex-direction:column;gap:7px;align-items:flex-start;border-left:2px solid var(--gold);padding:3px 0 0 11px;color:var(--gold)}
+.storia-year-axis span{font-size:12px;font-weight:700;line-height:1.35}
+.storia-year-axis small{color:var(--muted);font-size:10px;line-height:1.35}
+.storia-year-events{display:grid;gap:9px;min-width:0;padding-bottom:14px}
+.storia-year-events .storia-event-card{margin:0;padding:13px 15px;border-left:1px solid var(--line-strong)}
+.storia-year-events .storia-event-link strong{font-size:clamp(20px,1.55vw,26px)}
+.storia-year-events .storia-event-meta{margin-bottom:5px}
+.storia-empty{display:flex;flex-direction:column;align-items:flex-start;gap:9px;line-height:1.6}
+.storia-empty>strong{font:500 25px 'EB Garamond',Georgia,serif;color:var(--ink-strong)}
+.storia-empty>p{font-size:12px;line-height:1.7;margin:0}
+.storia-add-secondary{background:transparent;color:var(--gold)}
+.storia-modal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(max-width:550px){.storia-year-group{grid-template-columns:1fr}.storia-year-axis{border-left:0;border-bottom:1px solid var(--line);padding:0 0 8px;flex-direction:row;align-items:center}.storia-year-axis small{margin-left:auto}.storia-modal-grid{grid-template-columns:1fr}}
+.storia-year-add{align-self:flex-start;display:grid;place-items:center;color:var(--gold);border:1px solid var(--line);background:var(--paper);padding:5px;margin-top:3px;cursor:pointer}
+.storia-year-add:hover{border-color:var(--gold)}
+.storia-period-empty button{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;margin:0 0 0 10px;border:1px solid var(--line);background:var(--surface);color:var(--gold)}
+.storia-modal textarea{width:100%;min-height:65px;resize:vertical;padding:10px 11px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font:inherit}
+@media(min-width:791px) and (max-width:1100px){.storia-workspace-actions .storia-add{padding:8px;font-size:10px}.storia-year-group{grid-template-columns:72px minmax(0,1fr)}}

@@ -26,6 +26,7 @@ import './home-cards.css';
 import './app-overhaul.css';
 import './layout-v32.css';
 import './layout-v33.css';
+import './layout-v34.css';
 
 const ALCHEMY = '/alchimia';
 const MATERIALS = '/alchimia/materiali';
@@ -158,7 +159,7 @@ function ScrollManager() {
       return () => cancelAnimationFrame(raf);
     }
     window.scrollTo({ top: 0, behavior: 'auto' });
-    for (const area of document.querySelectorAll('.detail-main, .detail-sidebar, .catalog-scroll, .reading-body, .lore-scroll, .lore-content-scroll, .section-landing, .lore-article-scroll, .atlas-sidebar')) area.scrollTop = 0;
+    for (const area of document.querySelectorAll('.detail-main, .detail-sidebar, .catalog-scroll, .reading-body, .lore-scroll, .lore-content-scroll, .section-landing, .lore-article-scroll, .lore-editorial-scroll, .atlas-sidebar')) area.scrollTop = 0;
   }, [loc.pathname, loc.search]);
   return null;
 }
@@ -404,20 +405,23 @@ function CategoryExplorer({topics=[],entry}){
 }
 function LoreTOC({entry}){
  const headings=(entry.blocks||[]).flatMap(b=>b.type==='heading'&&b.text?[{id:slug(b.text),label:b.text}]:b.type==='rich'?[...String(b.html||'').matchAll(/<h[234]\s+[^>]*id="([a-z0-9-]+)"[^>]*>([\s\S]*?)<\/h[234]>/gi)].map(m=>({id:m[1],label:m[2].replace(/<[^>]*>/g,'')})):[]);
- if(!headings.length)return null;
- return <nav className="lore-toc" aria-label="Indice della voce"><strong>IN QUESTA PAGINA</strong>{headings.map(h=><a key={h.id} href={`#/pagina/${entry.id}?sezione=${h.id}`}>{h.label}</a>)}</nav>;
+ const visible=entry.layout==='counterbodies'?headings.filter(h=>!(entry.topics||[]).some(t=>(t.anchor||slug(t.name))===h.id)):headings;
+ if(!visible.length)return null;
+ return <nav className="lore-toc" aria-label="Indice della voce"><strong>IN QUESTA PAGINA</strong>{visible.map(h=><a key={h.id} href={`#/pagina/${entry.id}?sezione=${h.id}`}>{h.label}</a>)}</nav>;
 }
 function LoreRelatedRail({entry,children=[],siblings=[]}){
+  const topics=entry.layout==='counterbodies'?(entry.topics||[]):[];
   const entries=children.length?children:siblings;
-  const isNested=children.length>0;
-  if(!entries.length)return <aside className="lore-editorial-related lore-editorial-related-empty" aria-label="Navigazione della raccolta"><span className="eyebrow">NAVIGAZIONE</span><Link to={entry.parentId&&entry.parentId!=='root'?`/pagina/${entry.parentId}`:'/'}><ArrowLeft size={15}/> Torna alla raccolta</Link></aside>;
+  const isNested=children.length>0||topics.length>0;
+  if(!entries.length&&!topics.length)return <aside className="lore-editorial-related lore-editorial-related-empty" aria-label="Navigazione della raccolta"><span className="eyebrow">NAVIGAZIONE</span><Link to={entry.parentId&&entry.parentId!=='root'?`/pagina/${entry.parentId}`:'/'}><ArrowLeft size={15}/> Torna alla raccolta</Link></aside>;
   return <aside className="lore-editorial-related" aria-label={isNested?'Sottosezioni':'Altre voci della raccolta'}>
-    <span className="eyebrow">{isNested?'SOTTOSEZIONI':'NELLA RACCOLTA'}</span>
+    {topics.length>0&&<><span className="eyebrow">SOTTOSEZIONI · CATEGORIE</span><div className="lore-editorial-related-list lore-related-topics">{topics.map((topic,i)=><a className="lore-editorial-related-link" href={`#/pagina/${entry.id}?sezione=${topic.anchor||slug(topic.name)}`} key={topic.anchor||topic.name}><span className="lore-related-symbol"><Shield size={17} strokeWidth={1.5}/></span><span className="lore-related-text"><small>{String(i+1).padStart(2,'0')} · CATEGORIA</small><strong>{topic.name}</strong></span><ArrowUpRight size={14}/></a>)}</div></>}
+    {entries.length>0&&<><span className="eyebrow">{children.length?'SOTTOSEZIONI':'NELLA RACCOLTA'}</span>
     <div className="lore-editorial-related-list">{entries.map((p,i)=>{const Icon=entryIcon(p);return <Link className="lore-editorial-related-link" to={entryUrl(p)} key={p.id}>
       <span className="lore-related-symbol"><Icon size={18} strokeWidth={1.5}/></span>
       <span className="lore-related-text"><small>{String(i+1).padStart(2,'0')} · {p.kind==='page'?'VOCE':'SEZIONE'}</small><strong>{p.title}</strong>{p.description&&<span>{p.description}</span>}</span>
       <ArrowUpRight size={14}/>
-    </Link>})}</div>
+    </Link>})}</div></>}
   </aside>;
 }
 function LoreEditorialSidebar({entry,pages}){
@@ -425,13 +429,47 @@ function LoreEditorialSidebar({entry,pages}){
   return <aside className="lore-editorial-sidebar" aria-label={`Introduzione e indice di ${entry.title}`}>
     <div className="lore-editorial-sidebar-inner"><LoreBreadcrumb entry={entry} pages={pages}/>
       <span className="eyebrow">{entry.kind==='page'?'VOCE ENCICLOPEDICA':'SEZIONE DEL COMPENDIO'}</span>
-      <h1>{entry.title}</h1>
+      <h1 className={entry.title.length>12?'lore-long-title':''}>{entry.title}</h1>
       {entry.description&&<p className="lore-editorial-lead">{entry.description}</p>}
       <div className="lore-editorial-actions">{entry.flameHex&&/^#[a-f0-9]{6}$/i.test(entry.flameHex)&&<span className="bto-flame-label"><i style={{backgroundColor:entry.flameHex}}/>{entry.flameColor}</span>}<EditTrigger entry={entry}/></div>
       <LoreTOC entry={entry}/>
       {parent&&<Link className="lore-editorial-parent" to={entryUrl(parent)}><ArrowLeft size={14}/>{parent.title}</Link>}
     </div>
   </aside>;
+}
+// Le importazioni pregresse contengono spesso tutti i capitoli in un solo blocco HTML.
+// Li separiamo visivamente senza modificare documenti Firestore o collegamenti GM.
+function loreChapters(entry){
+ const result=[{title:'Introduzione',id:'introduzione',intro:true,blocks:[]}];
+ let active=result[0];let index=0;
+ const chapter=(title,id)=>{active={title,id:id||slug(title),intro:false,blocks:[]};result.push(active);};
+ for(const block of (entry.blocks||[])){
+  if(block.type==='heading'&&block.level!==3){chapter(block.text||'Capitolo',slug(block.text));continue;}
+  if(block.type!=='rich'){active.blocks.push(block);continue;}
+  const html=String(block.html||'');
+  // Il convertitore Markdown storico trasforma i titoli «##» in <h3>,
+  // mentre l'editor WYSIWYG usa <h2>. Entrambi vanno trattati come capitoli.
+  const tag=/<h2\b/i.test(html)?'h2':'h3';
+  const re=new RegExp(`<${tag}\\b([^>]*)>([\\s\\S]*?)<\\/${tag}>`,'gi');
+  let cursor=0,match,part=0;
+  while((match=re.exec(html))){
+   const before=html.slice(cursor,match.index);
+   if(before.trim())active.blocks.push({...block,id:`${block.id||'rich'}-part-${index++}`,html:before});
+   const title=match[2].replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').trim()||'Capitolo';
+   const id=match[1].match(/\bid=["']([^"']+)["']/i)?.[1]||slug(title);
+   chapter(title,id);cursor=re.lastIndex;part++;
+  }
+  const after=html.slice(cursor);
+  if(after.trim())active.blocks.push({...block,id:`${block.id||'rich'}-part-${index++}`,html:after});
+ }
+ return result;
+}
+function LoreChapter({entry,chapter,index}){
+ const isIntro=chapter.intro;
+ return <section className={`lore-chapter ${isIntro?'lore-chapter-intro':''}`} id={chapter.id}>
+  {!isIntro&&<div className="lore-chapter-header"><span className="lore-chapter-index">CAPITOLO {String(index).padStart(2,'0')}</span><h2>{chapter.title}</h2></div>}
+  <div className="lore-chapter-body"><GenericBlocks entry={{...entry,blocks:chapter.blocks,imageUrl:isIntro?entry.imageUrl:''}}/></div>
+ </section>;
 }
 function GenericPage(){
   const {id}=useParams();
@@ -445,16 +483,20 @@ function GenericPage(){
   children.sort((a,b)=>a.order-b.order||a.title.localeCompare(b.title,'it'));
   const siblings=pages.filter(p=>p.parentId===entry.parentId&&p.id!==entry.id&&!isOrphanAntagonists(p)).sort((a,b)=>a.order-b.order||a.title.localeCompare(b.title,'it'));
   const Icon=entryIcon(entry);
+  const chapters=loreChapters(entry);
   return <div className={`lore-editorial-page lore-section-${entry.id} lore-section-${entry.parentId} lore-layout-${entry.layout||'lore'}`}>
     <div className="lore-editorial-shell">
       <LoreEditorialSidebar entry={entry} pages={pages}/>
       <div className="lore-editorial-content" tabIndex={0} aria-label={`Contenuto di ${entry.title}`}>
-        <div className="lore-editorial-article-head"><span className="lore-editorial-emblem">{entry.flameHex?<span className="lore-swatch" style={{backgroundColor:entry.flameHex}}/>:<Icon size={21} strokeWidth={1.4}/>}</span><span>{entry.flames?.length?'CATALOGO CROMATICO':entry.kind==='page'?'ARCHIVIO ENCICLOPEDICO':'INTRODUZIONE'}</span></div>
-        {entry.flames?.length>0&&<FlameCatalog flames={entry.flames}/>}
-        <article className="lore-editorial-body">
-          {entry.topics?.length>0&&<CategoryExplorer entry={entry} topics={entry.topics}/>}
-          {entry.blocks?.length>0?<GenericBlocks entry={entry}/>:<p className="lore-empty-copy">Questa sezione non ha ancora un testo introduttivo. Consulta le sottosezioni a destra.</p>}
-        </article>
+        <div className="lore-editorial-article-head"><span className="lore-editorial-emblem">{entry.flameHex?<span className="lore-swatch" style={{backgroundColor:entry.flameHex}}/>:<Icon size={21} strokeWidth={1.4}/>}</span><span>{entry.flames?.length?'CATALOGO CROMATICO':entry.kind==='page'?'INTRODUZIONE':'INTRODUZIONE'}</span></div>
+        <div className="lore-editorial-scroll" tabIndex={0} aria-label={`Lettura di ${entry.title}`}>
+          {entry.flames?.length>0&&<FlameCatalog flames={entry.flames}/>}
+          {entry.topics?.length>0&&entry.layout!=='counterbodies'&&<CategoryExplorer entry={entry} topics={entry.topics}/>}
+          <article className="lore-editorial-body">
+            {chapters.map((chapter,i)=>(chapter.blocks.length>0||(chapter.intro&&entry.imageUrl))?<LoreChapter key={chapter.id+'-'+i} entry={entry} chapter={chapter} index={i}/>:null)}
+            {!entry.blocks?.length&&!entry.topics?.length&&!entry.flames?.length&&<p className="lore-empty-copy">Questa sezione non ha ancora un testo introduttivo. Consulta le sottosezioni a destra.</p>}
+          </article>
+        </div>
       </div>
       <LoreRelatedRail entry={entry} children={children} siblings={siblings}/>
     </div>
