@@ -1,3 +1,4 @@
+import legacyLore from './data/legacy-lore-v30.json';
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
@@ -164,6 +165,23 @@ export function ContentProvider({children}) {
     }
     return {imported,skipped,mode:publishNow?'pubblicate':'bozze'};
   }
+  async function resetLegacyLore(ids){
+    requireGM();
+    if(!seeded) throw Error('Il compendio non è inizializzato.');
+    const permitted=new Set(legacyLore.map(e=>e.id));
+    if(!Array.isArray(ids)||!ids.length)throw Error('Nessuna voce selezionata.');
+    const unique=[...new Set(ids)];
+    if(unique.length>100||unique.some(id=>!permitted.has(id)))throw Error('Selezione non ammessa: puoi ripulire soltanto l’importazione lore v3.0.');
+    const protectedIds=new Set(['alchimia','alchimia-materiali','alchimia-genesi']);
+    if(unique.some(id=>protectedIds.has(id)))throw Error('Le raccolte principali di Alchimia non possono essere cancellate.');
+    if(unique.some(id=>[...published,...drafts].some(e=>e.id===id&&e.packageId==='bto-lore-v3.1')))throw Error('Sono presenti voci della nuova v3.1: la ripulitura serve soltanto per la vecchia importazione.');
+    for(let i=0;i<unique.length;i+=150){
+      const batch=writeBatch(db);
+      unique.slice(i,i+150).forEach(id=>{batch.delete(doc(db,'entries',id));batch.delete(doc(db,'drafts',id));});
+      await batch.commit();
+    }
+    return {deleted:unique.length};
+  }
   async function loadHistory(entryId) {
     requireGM();
     const snap = await getDocs(query(collection(db,'revisions'), where('entryId','==',entryId)));
@@ -278,7 +296,7 @@ export function ContentProvider({children}) {
     }
     return {updated,skipped};
   }
-  const value = { configured, user, gm, authPending, seeded, loaded, error, setError, entries, materials, processes, pages, isDraft, login, logout, saveDraft, publish, remove, loadHistory, bootstrap, syncEditorial, importEntries, baseVersion:source.version };
+  const value = { configured, user, gm, authPending, seeded, loaded, error, setError, entries, publishedEntries:published, draftEntries:gm?drafts:[], materials, processes, pages, isDraft, resetLegacyLore, login, logout, saveDraft, publish, remove, loadHistory, bootstrap, syncEditorial, importEntries, baseVersion:source.version };
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 export function useContent() { const value = useContext(context); if(!value) throw Error('ContentProvider mancante'); return value; }

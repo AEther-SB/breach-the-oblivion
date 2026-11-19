@@ -4,7 +4,7 @@ import { HashRouter, Link, NavLink, Navigate, Route, Routes, useLocation, useNav
 import {
   ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Check, ChevronDown,
   ChevronLeft, ChevronRight, Copy, Droplets, Flame, FlaskConical, Layers3, Menu,
-  Moon, Orbit, Search, Shield, SlidersHorizontal, Sun, X,
+  Moon, Orbit, Search, Shield, SlidersHorizontal, Sun, X, Globe2, Landmark, UsersRound, Dna, Network, History, MapPinned, Fingerprint, Castle, Building2, GraduationCap, ScrollText, Swords, HeartPulse, Microscope, Eye, Brain, Waypoints, Sparkles, Bookmark, ListTree, BookMarked, MapPin, Factory, FlaskRound, CircleDot, GitBranch,
 } from 'lucide-react';
 import compendium from './data/compendium.json';
 import { ContentProvider, useContent, normalize, slug } from './content-store';
@@ -15,6 +15,7 @@ import { buildRelations, relationsFor, glossaryEntries, linkedHtml, routes } fro
 import RelationMap, { HomeConnectionPreview } from './RelationMap';
 import Prerequisites from './Prerequisites';
 import AtlasGeografico from './AtlasGeografico';
+import StoriaTimeline from './StoriaTimeline';
 import './styles.css';
 import './premium.css';
 import './atlas-home.css';
@@ -22,6 +23,7 @@ import './refinement.css';
 import './motion.css';
 import './editor-modular.css';
 import './home-cards.css';
+import './app-overhaul.css';
 
 const ALCHEMY = '/alchimia';
 const MATERIALS = '/alchimia/materiali';
@@ -30,6 +32,49 @@ const RELATIONS = '/connessioni';
 const abilityLabel = { int: 'Intelligenza', wis: 'Saggezza', cha: 'Carisma', str: 'Forza', dex: 'Destrezza', con: 'Costituzione' };
 const groupStyle = { 'Elementi': 'elements', 'Metalli Planetari': 'planetary', 'Metalli Pesanti': 'heavy', 'Materia Vitale': 'vital', 'Compositi': 'composite' };
 const groupIcons = { 'Elementi': Droplets, 'Metalli Planetari': Orbit, 'Metalli Pesanti': Shield, 'Materia Vitale': Flame, 'Compositi': FlaskConical };
+
+// Icone e gerarchia editoriale: funzionano anche con le voci già importate su Firestore.
+const sectionMeta = {
+  alchimia:{icon:FlaskConical,tone:'elements',cta:'Esplora Alchimia'},
+  'fiamme-essenza':{icon:Flame,tone:'vital',cta:'Esplora le Fiamme'},
+  quirk:{icon:Dna,tone:'planetary',cta:'Esplora i Quirk'},
+  controcorpi:{icon:Shield,tone:'heavy',cta:'Esplora i Controcorpi'},
+  'storia-passato':{icon:History,tone:'composite',cta:'Esplora la storia'},
+  organizzazioni:{icon:UsersRound,tone:'planetary',cta:'Esplora le organizzazioni'},
+  'atlas-geografico':{icon:Globe2,tone:'elements',cta:'Apri l’Atlante'},
+};
+const loreIcons = {flame:Flame,dna:Dna,shield:Shield,history:History,globe:Globe2,users:UsersRound,book:BookOpen,landmark:Landmark,network:Network,brain:Brain,scroll:ScrollText,eye:Eye,microscope:Microscope,bookmark:Bookmark,castle:Castle,building:Building2,school:GraduationCap,swords:Swords,heart:HeartPulse,waypoints:Waypoints,map:MapPinned,location:MapPin,factory:Factory,flask:FlaskConical,branch:GitBranch,sparkles:Sparkles};
+function entryIcon(entry){
+  if(entry?.icon && loreIcons[entry.icon])return loreIcons[entry.icon];
+  if(sectionMeta[entry?.id])return sectionMeta[entry.id].icon;
+  const id=entry?.id||'';
+  if(id.startsWith('fiamma-')||id.startsWith('fiamme-'))return Flame;
+  if(id.includes('flogisto')||id.includes('alchimia-'))return FlaskConical;
+  if(id.includes('essenza'))return Sparkles;
+  if(id.includes('traccia'))return Fingerprint;
+  if(id.includes('controcorpo'))return Shield;
+  if(id.startsWith('quirk-')||id.startsWith('teoria-'))return Dna;
+  if(id.startsWith('storia-')||id.includes('era-')||id.includes('anomalie')||id.includes('origine')||id.includes('antich'))return History;
+  if(id.includes('cimeli')||id.includes('artefatti'))return Landmark;
+  if(id.includes('farmaceutiche'))return FlaskRound;
+  if(id.includes('scuole'))return GraduationCap;
+  if(id.includes('industrie'))return Factory;
+  if(id.includes('governi'))return Landmark;
+  if(id.includes('ricerca')||id.includes('catalyst'))return Microscope;
+  if(id.includes('antagonisti')||id.includes('villain')||id.includes('criminali'))return Swords;
+  if(id.includes('organizzazioni'))return UsersRound;
+  if(id.includes('atlas')||id.includes('paesi')||id.includes('luoghi'))return Globe2;
+  return entry?.kind==='page'?Bookmark:BookOpen;
+}
+function entryTone(entry){return sectionMeta[entry?.id]?.tone||((entry?.id||'').startsWith('fiamma')?'vital':(entry?.id||'').startsWith('controcorpo')?'heavy':(entry?.id||'').startsWith('quirk')?'planetary':(entry?.id||'').startsWith('organizzazioni')?'composite':'elements');}
+const coreRootIds=['alchimia','fiamme-essenza','quirk','controcorpi','storia-passato','organizzazioni','atlas-geografico'];
+const isOrphanAntagonists=p=>p.parentId==='root'&&normalize(p.title)==='antagonisti';
+function editorialRoot(pages){
+  const roots=pages.filter(p=>p.parentId==='root'&&(p.kind==='chapter'||p.kind==='collection')&&!isOrphanAntagonists(p));
+  return [...coreRootIds.map(id=>roots.find(p=>p.id===id)).filter(Boolean),...roots.filter(p=>!coreRootIds.includes(p.id))];
+}
+function cardOf(p,i,props={}){return {title:p.title,subtitle:p.description||'',to:entryUrl(p),tone:entryTone(p),number:String(i+1).padStart(2,'0'),icon:entryIcon(p),cta:p.kind==='page'?'Leggi la voce':'Apri la sezione',flameHex:p.flameHex,...props};}
+
 const clean = (html) => String(html ?? '').replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
 const entryUrl = entry => entry.kind === 'material' ? `${MATERIALS}/${entry.materialId}` : entry.kind === 'genesis' ? GENESIS : entry.id === 'alchimia' ? ALCHEMY : entry.id === 'atlas-geografico' ? '/atlante' : entry.id === 'alchimia-materiali' ? MATERIALS : entry.id === 'alchimia-genesi' ? GENESIS : `/pagina/${entry.id}`;
 function useCatalog() {
@@ -99,6 +144,11 @@ function useTheme() {
 function ScrollManager() {
   const loc = useLocation();
   useEffect(() => {
+    const targetSection = new URLSearchParams(loc.search).get('sezione');
+    if (targetSection && /^[a-z0-9-]{1,90}$/i.test(targetSection)) {
+      const raf=requestAnimationFrame(()=>document.getElementById(targetSection)?.scrollIntoView({block:'start',behavior:'smooth'}));
+      return ()=>cancelAnimationFrame(raf);
+    }
     const target = new URLSearchParams(loc.search).get('abilita');
     if (target != null) {
       const id = loc.pathname.startsWith(`${MATERIALS}/`) ? `abilita-${slug(target)}` : `voce-${target}`;
@@ -106,7 +156,7 @@ function ScrollManager() {
       return () => cancelAnimationFrame(raf);
     }
     window.scrollTo({ top: 0, behavior: 'auto' });
-    for (const area of document.querySelectorAll('.detail-main, .detail-sidebar, .catalog-scroll, .reading-body')) area.scrollTop = 0;
+    for (const area of document.querySelectorAll('.detail-main, .detail-sidebar, .catalog-scroll, .reading-body, .lore-scroll, .section-landing, .lore-article-scroll, .atlas-sidebar')) area.scrollTop = 0;
   }, [loc.pathname, loc.search]);
   return null;
 }
@@ -151,11 +201,18 @@ function Layout({ theme, toggleTheme }) {
     return () => document.removeEventListener('keydown', key);
   }, []);
   useEffect(() => { document.body.classList.toggle('prevent-scroll', mobileOpen || searchOpen); return () => document.body.classList.remove('prevent-scroll'); }, [mobileOpen, searchOpen]);
-  const navigation = [ ['/', 'HOME'], [ALCHEMY, 'ALCHIMIA'], ...pages.filter(p=>['chapter','collection'].includes(p.kind)&&p.parentId==='root'&&p.id!=='alchimia').map(p=>[entryUrl(p),p.title.toLocaleUpperCase('it')]) ];
+  const rootSections=editorialRoot(pages);
+  const navigation = [['/', 'HOME'],[ALCHEMY,'ALCHIMIA'],['/pagina/storia-passato','STORIA'],['/atlante','ATLANTE']];
+  const compendiumNavigation=rootSections.filter(p=>!['alchimia','atlas-geografico','storia-passato'].includes(p.id));
   useEffect(() => {
     document.documentElement.dataset.section = location.pathname.startsWith(RELATIONS) ? 'connessioni' : location.pathname.startsWith(MATERIALS) ? 'materiali' : location.pathname.startsWith(GENESIS) ? 'processi' : location.pathname.startsWith(ALCHEMY) ? 'alchimia' : 'home';
   },[location.pathname]);
-  const headerNav = (mobile=false) => navigation.map(([href, text]) => <NavLink key={href} onClick={mobile ? () => setMobileOpen(false) : undefined} className={({ isActive }) => `nav-link ${isActive ? 'nav-link-active' : ''}`} to={href} end={href === '/'}>{text}</NavLink>);
+  const headerNav = (mobile=false) => <>
+    {navigation.slice(0,2).map(([href,text])=><NavLink key={href} onClick={mobile?()=>setMobileOpen(false):undefined} className={({isActive})=>`nav-link ${isActive?'nav-link-active':''}`} to={href} end={href==='/' }>{text}</NavLink>)}
+    {mobile?<><span className="mobile-nav-group-title">COMPENDIO</span>{compendiumNavigation.map(p=><NavLink key={p.id} to={entryUrl(p)} onClick={()=>setMobileOpen(false)} className="nav-link">{p.title}</NavLink>)}</>:
+      <details className="nav-dropdown"><summary className="nav-link">COMPENDIO <ChevronDown size={12}/></summary><div className="nav-dropdown-panel">{compendiumNavigation.map(p=>{const Icon=entryIcon(p);return <Link key={p.id} to={entryUrl(p)} onClick={e=>e.currentTarget.closest('details')?.removeAttribute('open')}><Icon size={17}/>{p.title}</Link>})}</div></details>}
+    {navigation.slice(2).map(([href,text])=><NavLink key={href} onClick={mobile?()=>setMobileOpen(false):undefined} className={({isActive})=>`nav-link ${isActive?'nav-link-active':''}`} to={href}>{text}</NavLink>)}
+  </>;
   return <>
     <ScrollManager/>
     <header className="site-header">
@@ -191,7 +248,7 @@ function Layout({ theme, toggleTheme }) {
       <Route path="/classi/exalt" element={<LegacyRedirect path={ALCHEMY}/>}/>
       <Route path="*" element={<MissingPage/>}/>
     </Routes></main>
-    <footer className="site-footer"><div className="footer-inner"><div className="footer-brand"><SiteMark size={25}/><span>BREACH THE OBLIVION</span></div><span>Alchimia · Fonte: Suite BTE v{compendium.version}</span><Link to={ALCHEMY}>Alchimia <ArrowRight size={14}/></Link></div></footer>
+    <footer className="site-footer"><div className="footer-inner"><div className="footer-brand"><SiteMark size={25}/><span>BREACH THE OBLIVION</span></div><span>Enciclopedia dell’ambientazione · Alchimia, Fiamme, Quirk e storia</span><Link to="/atlante">Atlante <ArrowRight size={14}/></Link></div></footer>
     <GlobalSearch open={searchOpen} close={() => setSearchOpen(false)}/>
   </>;
 }
@@ -201,27 +258,28 @@ const alchemyCards = [
   { title:'Processi alchemici', subtitle:'Le operazioni della trasformazione', to:GENESIS, tone:'composite', number:'02', icon:Layers3, cta:'Esplora i processi' },
 ];
 function SectionCards({cards}) {
-  return <div className="home-grid">{cards.map(card => {const Icon=card.icon;return <Link className={`home-card ${card.featured ? 'home-card-featured' : ''} tone-${card.tone}`} to={card.to} key={card.to}><div className="home-card-top"><span>{card.number} / SEZIONE</span></div><div className="home-card-icon" aria-hidden="true"><Icon size={28} strokeWidth={1.4}/></div><div className="home-card-content"><h3>{card.title}</h3><p>{card.subtitle}</p></div><span className="home-card-bottom">{card.cta}<ArrowUpRight size={19}/></span></Link>})}</div>;
+  return <div className="home-grid">{cards.map(card => {const Icon=card.icon||BookOpen;return <Link className={`home-card ${card.featured ? 'home-card-featured' : ''} tone-${card.tone}`} to={card.to} key={card.to}><div className="home-card-top"><span>{card.number} / SEZIONE</span></div><div className="home-card-icon" aria-hidden="true">{card.flameHex?<span className="lore-swatch" style={{backgroundColor:card.flameHex}}/>:<Icon size={28} strokeWidth={1.4}/>}</div><div className="home-card-content"><h3>{card.title}</h3><p>{card.subtitle}</p></div><span className="home-card-bottom">{card.cta}<ArrowUpRight size={19}/></span></Link>})}</div>;
 }
 function Home({theme}) {
   const {materials,processes,pages}=useCatalog();
-  const homeCards=[{title:'Alchimia',subtitle:'Materiali e processi alchemici',to:ALCHEMY,tone:'composite',number:'01',icon:FlaskConical,featured:true,cta:'Apri Alchimia'}, ...pages.filter(p=>p.parentId==='root'&&p.id!=='alchimia').map((p,i)=>({title:p.title,subtitle:p.description||'Compendio',to:entryUrl(p),tone:'heavy',number:String(i+2).padStart(2,'0'),icon:BookOpen,cta:'Apri pagina'}))];
-  const abilities=materials.reduce((n,m)=>n+(m.abilities||[]).length,0);
+  const roots=editorialRoot(pages);
+  const homeCards=roots.map((p,i)=>cardOf(p,i,{featured:p.id==='alchimia',cta:sectionMeta[p.id]?.cta||'Esplora la sezione'}));
+  if(!homeCards.some(c=>c.to===ALCHEMY))homeCards.unshift({title:'Alchimia',subtitle:'Materiali e processi alchemici',to:ALCHEMY,tone:'elements',number:'01',icon:FlaskConical,featured:true,cta:'Apri Alchimia'});
+  
   return <div className="home-page">
-    <section className="home-hero">
-      <div className="hero-inner page-width">
-        <div className="hero-copy"><div className="eyebrow"><span className="eyebrow-line"/> COMPENDIO</div><h1>Breach<br/><em>the Oblivion.</em></h1><p>Il compendio di Breach the Oblivion, a partire dall’alchimia.</p><div className="hero-cta"><Link className="primary-button" to={ALCHEMY}>Esplora Alchimia <ArrowUpRight size={19}/></Link></div><div className="hero-stats"><div><strong>{materials.length}</strong><span>Materiali</span></div><div><strong>{abilities}</strong><span>Capacità</span></div><div><strong>{processes.length}</strong><span>Processi</span></div></div></div>
-        <HomeConnectionPreview theme={theme}/>
-      </div>
-      <div className="hero-bottom-line page-width"><span>BREACH THE OBLIVION · COMPENDIO</span><span>VERSIONE ALCHIMIA {compendium.version}</span></div>
-    </section>
-    <section className="home-explore page-width"><SectionCards cards={homeCards}/></section>
+    <section className="home-hero"><div className="hero-inner page-width">
+      <div className="hero-copy"><div className="eyebrow"><span className="eyebrow-line"/> ARCHIVIO DELL’AMBIENTAZIONE</div><h1>Breach<br/><em>the Oblivion.</em></h1><p>Fiamme ed Essenza, Quirk, Controcorpi, storia, organizzazioni e alchimia: un unico compendio dell’ambientazione.</p>
+        <div className="hero-cta"><Link className="primary-button" to="/pagina/fiamme-essenza">Esplora il compendio <ArrowUpRight size={19}/></Link><Link className="home-secondary-cta" to="/atlante">Atlante <Globe2 size={17}/></Link></div>
+        <div className="hero-stats"><div><strong>{roots.length||1}</strong><span>Sezioni</span></div><div><strong>{materials.length}</strong><span>Materiali</span></div><div><strong>{pages.filter(p=>p.kind==='page').length}</strong><span>Voci di lore</span></div></div></div>
+      <HomeConnectionPreview theme={theme}/>
+    </div><div className="hero-bottom-line page-width"><span>BREACH THE OBLIVION · COMPENDIO</span><span>STORIA · POTERI · ALCHEMIA</span></div></section>
+    <section className="home-explore page-width"><div className="lore-section-intro"><span className="eyebrow">INDICE GENERALE</span><h2>Esplora l’ambientazione</h2><p>Le sezioni principali sono organizzate per argomento. Sottosezioni e singole voci si trovano all’interno delle rispettive raccolte.</p></div><SectionCards cards={homeCards}/></section>
   </div>;
 }
 function AlchemyHome() {
   const {pages,materials,processes}=useCatalog();
   const current=pages.find(p=>p.id==='alchimia');
-  const extra=pages.filter(p=>p.parentId==='alchimia'&&!['alchimia','alchimia-materiali','alchimia-genesi'].includes(p.id)).map((p,i)=>({title:p.title,subtitle:p.description||'Pagina del compendio',to:entryUrl(p),tone:'planetary',number:String(i+4).padStart(2,'0'),icon:BookOpen,cta:'Apri'}));
+  const extra=pages.filter(p=>p.parentId==='alchimia'&&!['alchimia','alchimia-materiali','alchimia-genesi'].includes(p.id)).map((p,i)=>({title:p.title,subtitle:p.description||'Pagina del compendio',to:entryUrl(p),tone:'planetary',number:String(i+3).padStart(2,'0'),icon:entryIcon(p),cta:'Apri'}));
   const cards=[{...alchemyCards[0],subtitle:`${materials.length} materiali · ${materials.reduce((n,m)=>n+(m.abilities||[]).length,0)} capacità`},{...alchemyCards[1],subtitle:`${processes.length} processi`},...extra];
   return <div className="section-landing page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/>Alchimia</div><PageHeading eyebrow="BREACH THE OBLIVION" title={current?.title||"Alchimia"} text={current?.description?.replaceAll('Processi di Genesi','processi alchemici')||"Materiali e processi alchemici."} trailing={<EditTrigger entry={current}/>}/><div className="section-landing-cards"><SectionCards cards={cards}/></div>{current?.blocks?.length>0&&<div className="gm-collection-body"><GenericBlocks entry={current}/></div>}</div>;
 }
@@ -325,16 +383,67 @@ function MaterialDetail(){
   </div>;
 }
 function GenesisPage(){const {processes,pages}=useCatalog();const nested=pages.filter(p=>p.parentId==='alchimia-genesi'&&p.id!=='alchimia-genesi');const featureList=useMemo(()=>processes.map(p=>({...p,name:p.title})),[processes]);return <div className="reading-page page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/><Link to={ALCHEMY}>Alchimia</Link><ChevronRight size={15}/> Processi</div><PageHeading eyebrow="ALCHIMIA" title="Processi alchemici" text={`${processes.length} processi.`} trailing={<div className="gm-section-title-actions"><Link className="material-reference" to={RELATIONS}>Mappa generale <ArrowUpRight size={16}/></Link><EditTrigger entry={pages.find(p=>p.id==='alchimia-genesi')}/></div>}/><div className="reading-layout"><div className="reading-side"><span className="reading-side-label">PROCESSI</span><Layers3 size={55} strokeWidth={1}/><span>{processes.length} processi</span></div><div className="reading-body"><AbilityList kind="process" features={featureList}/>{pages.find(p=>p.id==='alchimia-genesi')?.blocks?.length>0&&<GenericBlocks entry={pages.find(p=>p.id==='alchimia-genesi')}/>} {nested.length>0&&<div className="generic-children"><h2>Altri contenuti</h2><SectionCards cards={nested.map((p,i)=>({title:p.title,subtitle:p.description||'Contenuto',to:entryUrl(p),tone:'heavy',number:String(i+1).padStart(2,'0'),icon:BookOpen,cta:'Apri'}))}/></div>}</div></div></div>}
+function LoreBreadcrumb({entry,pages}){
+  const ancestors=[];const seen=new Set([entry.id]);let node=pages.find(p=>p.id===entry.parentId);
+  while(node&&!seen.has(node.id)&&ancestors.length<7){ancestors.unshift(node);seen.add(node.id);node=pages.find(p=>p.id===node.parentId);}
+  return <div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/>{ancestors.map(p=><React.Fragment key={p.id}><Link to={entryUrl(p)}>{p.title}</Link><ChevronRight size={15}/></React.Fragment>)}<span>{entry.title}</span></div>;
+}
+function LoreIndex({entries,heading='Approfondimenti'}){
+  if(!entries.length)return null;
+  return <section className="lore-index"><div className="lore-index-heading"><span className="eyebrow">CONSULTA LE VOCI</span><h2>{heading}</h2></div><div className="lore-index-grid">{entries.map(p=>{const Icon=entryIcon(p);return <Link to={entryUrl(p)} key={p.id} className="lore-index-link"><span className="lore-index-icon">{p.flameHex?<span className="lore-swatch" style={{backgroundColor:p.flameHex}}/>:<Icon size={20} strokeWidth={1.5}/>}</span><span><strong>{p.title}</strong><small>{p.description}</small></span><ArrowUpRight size={16}/></Link>})}</div></section>;
+}
+function FlameCatalog({flames=[]}){
+ if(!flames.length)return null;
+ return <div className="flame-catalog" aria-label="Catalogo cromatico delle Fiamme">{flames.map((flame,i)=><a key={flame.anchor} className="flame-tile" href={`#/pagina/fiamme-categorie?sezione=${flame.anchor}`} style={{'--flame-color':flame.hex}}><span className="flame-orb"><Flame size={26} strokeWidth={1.25}/></span><span className="flame-tile-copy"><small>{String(i+1).padStart(2,'0')} · FIAMMA</small><strong>{flame.name}</strong><span>{flame.color}</span></span><ArrowUpRight size={16}/></a>)}</div>;
+}
+function CategoryExplorer({topics=[],entry}){
+ if(!topics.length)return null;
+ const Icon=entry.layout==='counterbodies'?Shield:Dna;
+ return <div className="lore-topic-explorer" aria-label={`Categorie di ${entry.title}`}>{topics.map((topic,index)=><a key={topic.anchor||index} href={`#/pagina/${entry.id}?sezione=${topic.anchor||slug(topic.name)}`} className="lore-topic-tile"><span className="lore-topic-num">{String(index+1).padStart(2,'0')}</span><span className="lore-topic-icon"><Icon size={20} strokeWidth={1.5}/></span><strong>{topic.name}</strong><span className="lore-topic-summary">{topic.summary||'Da approfondire'}</span><ArrowUpRight size={15}/></a>)}</div>;
+}
+function LoreTOC({entry}){
+ const headings=(entry.blocks||[]).flatMap(b=>b.type==='heading'&&b.text?[{id:slug(b.text),label:b.text}]:b.type==='rich'?[...String(b.html||'').matchAll(/<h[234]\s+[^>]*id="([a-z0-9-]+)"[^>]*>([\s\S]*?)<\/h[234]>/gi)].map(m=>({id:m[1],label:m[2].replace(/<[^>]*>/g,'')})):[]);
+ if(headings.length<2)return null;
+ return <nav className="lore-toc" aria-label="Indice della voce"><strong>IN QUESTA PAGINA</strong>{headings.map(h=><a key={h.id} href={`#/pagina/${entry.id}?sezione=${h.id}`}>{h.label}</a>)}</nav>;
+}
 function GenericPage(){
   const {id}=useParams();
   const {pages}=useCatalog();
   const entry=pages.find(p=>p.id===id);
   if(!entry)return <MissingPage/>;
+  if(entry.id==='atlas-geografico')return <Navigate to="/atlante" replace/>;
   const children=pages.filter(p=>p.parentId===entry.id&&p.id!==entry.id);
-  const parent=pages.find(p=>p.id===entry.parentId);
-  return <div className="reading-page page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/>{parent&&<><Link to={entryUrl(parent)}>{parent.title}</Link><ChevronRight size={15}/></>}{entry.title}</div>
-    <PageHeading eyebrow={entry.kind==='chapter'?'SEZIONE':entry.kind==='collection'?'RACCOLTA':'COMPENDIO'} title={entry.title} text={entry.description} trailing={<div className="bto-entry-actions">{entry.flameHex&&/^#[a-f0-9]{6}$/i.test(entry.flameHex)&&<span className="bto-flame-label"><i style={{backgroundColor:entry.flameHex}}/>{entry.flameColor}</span>}<EditTrigger entry={entry}/></div>}/>
-    <div className="reading-layout generic-reading"><aside className="reading-side"><BookOpen size={52} strokeWidth={1}/><span>{entry.kind==='chapter'?'SEZIONE':entry.kind==='collection'?'RACCOLTA':'PAGINA'}</span></aside><article className="reading-body" tabIndex={0}><GenericBlocks entry={entry}/>{children.length>0&&<div className="generic-children"><h2>Contenuti</h2><SectionCards cards={children.map((p,i)=>({title:p.title,subtitle:p.description||'Compendio',to:entryUrl(p),tone:'elements',number:String(i+1).padStart(2,'0'),icon:BookOpen,cta:'Apri'}))}/></div>}</article></div>
+  if(entry.id==='organizzazioni'){
+    const orphan=pages.filter(isOrphanAntagonists);
+    if(!children.some(p=>p.id==='organizzazioni-antagonisti'))children.push(...orphan);
+  }
+  children.sort((a,b)=>a.order-b.order||a.title.localeCompare(b.title,'it'));
+  const isLanding=['chapter','collection'].includes(entry.kind);
+  const Icon=entryIcon(entry);
+  if(isLanding){
+    const isHistory=entry.id==='storia-passato';
+    const major=entry.id==='fiamme-essenza' ? children.filter(p=>['fiamme-categorie'].includes(p.id)) :
+      entry.id==='quirk' ? children.filter(p=>['quirk-ancestrali'].includes(p.id)) :
+      entry.id==='controcorpi' ? children.filter(p=>['controcorpi-fondamenti','controcorpi-categorie'].includes(p.id)) :
+      entry.id==='atlas-geografico' ? children.filter(p=>p.kind==='collection') :
+      children.filter(p=>p.kind==='collection');
+    const featured=major.length?major:children.length<=4?children:[];
+    const remaining=children.filter(p=>!featured.some(m=>m.id===p.id));
+    return <div className={`section-landing lore-landing page-width lore-section-${entry.id} lore-layout-${entry.layout||'lore'}`}><LoreBreadcrumb entry={entry} pages={pages}/><PageHeading eyebrow="BREACH THE OBLIVION · COMPENDIO" title={entry.title} text={entry.description} trailing={<EditTrigger entry={entry}/>}/>
+      {entry.blocks?.length>0&&<div className="lore-section-intro-layout"><LoreTOC entry={entry}/><div className="lore-scroll lore-section-description">{entry.topics?.length>0&&<CategoryExplorer entry={entry} topics={entry.topics}/>}<GenericBlocks entry={entry}/></div></div>}
+      {isHistory&&<StoriaTimeline pages={pages}/>}
+      {!isHistory&&featured.length>0&&<section className="lore-featured"><div className="lore-index-heading"><span className="eyebrow">{entry.kind==='chapter'?'SEZIONI PRINCIPALI':'RACCOLTE'}</span><h2>{isHistory?'Approfondisci gli eventi':'Percorsi di lettura'}</h2></div><div className="section-landing-cards"><SectionCards cards={featured.map((p,i)=>cardOf(p,i))}/></div></section>}
+      {!isHistory&&remaining.length>0&&<LoreIndex entries={remaining} heading={isHistory?'Fonti e voci storiche':(featured.length?'Altre voci':'Contenuti della raccolta')}/>}
+      {children.length===0&&entry.blocks?.length===0&&<div className="lore-empty"><Icon size={29}/><p>Non sono ancora disponibili voci in questa sezione.</p></div>}
+    </div>;
+  }
+  const siblings=pages.filter(p=>p.parentId===entry.parentId&&p.id!==entry.id&&p.kind==='page').slice(0,7);
+  return <div className={`reading-page lore-detail page-width lore-section-${entry.parentId} lore-layout-${entry.layout||'lore'}`}><LoreBreadcrumb entry={entry} pages={pages}/>
+    <PageHeading eyebrow="COMPENDIO · VOCE ENCICLOPEDICA" title={entry.title} text={entry.description} trailing={<div className="bto-entry-actions">{entry.flameHex&&/^#[a-f0-9]{6}$/i.test(entry.flameHex)&&<span className="bto-flame-label"><i style={{backgroundColor:entry.flameHex}}/>{entry.flameColor}</span>}<EditTrigger entry={entry}/></div>}/>
+    <div className="lore-detail-layout"><LoreTOC entry={entry}/><div className="lore-article-scroll"><div className="lore-article-head"><span className="lore-article-emblem">{entry.flameHex?<span className="lore-swatch" style={{backgroundColor:entry.flameHex}}/>:<Icon size={25} strokeWidth={1.4}/>}</span><span>{entry.flames?.length?'CATALOGO CROMATICO':'ARCHIVIO ENCICLOPEDICO'}</span></div>
+    {entry.flames?.length>0&&<FlameCatalog flames={entry.flames}/>}
+    <article className="lore-article"><GenericBlocks entry={entry}/>{!entry.blocks?.length&&<p className="lore-empty-copy">Contenuti ancora da definire.</p>}</article>
+    {siblings.length>0&&<LoreIndex entries={siblings} heading="Nella stessa raccolta"/>}</div></div>
   </div>;
 }
 function MissingPage(){return <div className="missing-page page-width"><span className="eyebrow">PAGINA NON TROVATA</span><h1>Questa pagina non esiste.</h1><Link className="primary-button" to="/">Torna all’inizio <ArrowRight size={18}/></Link></div>}

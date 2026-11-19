@@ -4,7 +4,7 @@ DOMPurify.addHook('uponSanitizeAttribute',(node,data)=>{if(node.nodeName?.toLowe
 export function sanitizeHtml(markup) {
   return DOMPurify.sanitize(String(markup || ''), {
     ALLOWED_TAGS: ['p','div','span','section','strong','b','em','i','u','s','h2','h3','h4','ul','ol','li','blockquote','a','br','hr','table','thead','tbody','tr','th','td','code','pre','sub','sup','img'],
-    ALLOWED_ATTR: ['href','title','target','rel','class','src','alt'],
+    ALLOWED_ATTR: ['href','title','target','rel','class','src','alt','id'],
     ALLOW_DATA_ATTR: false,
   });
 }

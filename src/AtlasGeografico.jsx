@@ -6,7 +6,11 @@ import world from './data/atlas-world.json';
 import {EditTrigger, GenericBlocks} from './editor';
 import './atlas-geografico.css';
 
-const FULL={x:0,y:0,w:1000,h:476};
+const MAP_HEIGHT=600;
+const VERTICAL_SCALE=MAP_HEIGHT/476;
+const FULL={x:0,y:0,w:1000,h:MAP_HEIGHT};
+const wrapX=(x)=>((x%1000)+1000)%1000;
+const nearestCopy=(x,center)=>x+Math.round((center-x)/1000)*1000;
 const markerTypes=[
  {id:'city',name:'Città',color:'#d6bd87'},
  {id:'poi',name:'Punto di interesse',color:'#a0c9d6'},
@@ -18,13 +22,13 @@ const countryById = new Map(world.countries.map(c=>[c.id,c]));
 let itCountry;
 try {itCountry=new Intl.DisplayNames(['it'],{type:'region'});}catch{/* Resta il nome della fonte. */}
 const countryName=c=>c?.nome||((c?.iso2&&itCountry?.of(c.iso2))||c?.name||'Paese');
-const pointXY=(lat,lon)=>({x:(lon+180)*1000/360,y:(85-lat)*1000/360});
-const pointLL=(x,y)=>({lon:Math.max(-180,Math.min(180,(x*360/1000)-180)),lat:Math.max(-85,Math.min(85,85-(y*360/1000)))});
+const pointXY=(lat,lon)=>({x:(lon+180)*1000/360,y:(85-lat)*1000/360*VERTICAL_SCALE});
+const pointLL=(x,y)=>({lon:(wrapX(x)*360/1000)-180,lat:Math.max(-85,Math.min(85,85-(y/VERTICAL_SCALE*360/1000)))});
 const clamp=(n,min,max)=>Math.min(max,Math.max(min,n));
-const fixed=(n)=>Number(n).toFixed(4);
+
 const markerName=id=>markerTypes.find(t=>t.id===id)?.name||'Luogo';
 const markerColor=id=>markerTypes.find(t=>t.id===id)?.color||'#d6bd87';
-function fitView(x,y,scale){const w=FULL.w/scale,h=FULL.h/scale;return {w,h,x:clamp(x-w/2,0,FULL.w-w),y:clamp(y-h/2,0,FULL.h-h)};}
+function fitView(x,y,scale){const w=FULL.w/scale,h=FULL.h/scale;return {w,h,x:x-w/2,y:clamp(y-h/2,0,FULL.h-h)};}
 function entryCountry(entry){return countryById.get(entry?.atlas?.countryId);}
 
 export default function AtlasGeografico(){
@@ -57,6 +61,8 @@ export default function AtlasGeografico(){
  const visibleMarkers=markerEntries.filter(m=>filter==='all'||m.atlas.category===filter);
  const countryMarkers=markerEntries.filter(m=>m.atlas.countryId===activeCountry);
  const hasChanges=Object.keys(pendingPositions).length>0;
+ // Disegna sempre più copie del mondo, anche con zoom minimo: il pan è continuo.
+ const tiles=Array.from({length:Math.ceil(view.w/1000)+4},(_,i)=>Math.floor(view.x/1000)+i-1);
 
  function localPoint(e){
   const svg=svgRef.current;if(!svg)return null;
@@ -68,12 +74,12 @@ export default function AtlasGeografico(){
  function focusCountry(country){
   if(!country)return;
   setActiveCountry(country.id);setActiveMarker(null);
-  if(country.center){const center=pointXY(country.center[0],country.center[1]);setView(fitView(center.x,center.y,2.0));}
+  if(country.center){const center=pointXY(country.center[0],country.center[1]);setView(v=>fitView(nearestCopy(center.x,v.x+v.w/2),center.y,2.0));}
  }
  function focusMarker(marker){
   setActiveMarker(marker.id);setActiveCountry(marker.atlas.countryId||null);
   const p=pendingPositions[marker.id]||marker.atlas;
-  const center=pointXY(Number(p.lat),Number(p.lon));setView(fitView(center.x,center.y,3.25));
+  const center=pointXY(Number(p.lat),Number(p.lon));setView(v=>fitView(nearestCopy(center.x,v.x+v.w/2),center.y,3.25));
  }
  function zoom(factor){setView(v=>{const z=clamp(FULL.w/(v.w*factor),1,8);return fitView(v.x+v.w/2,v.y+v.h/2,z);});}
  function editMarker(marker,override=null){
@@ -132,13 +138,14 @@ export default function AtlasGeografico(){
   }
   if(panRef.current?.pointerId===e.pointerId){
    const pan=panRef.current;
-   const dx=(e.clientX-pan.lastX)*view.w/(svgRef.current?.getBoundingClientRect().width||1);
-   const dy=(e.clientY-pan.lastY)*view.h/(svgRef.current?.getBoundingClientRect().height||1);
+   const matrix=svgRef.current?.getScreenCTM();
+   const dx=(e.clientX-pan.lastX)/Math.max(Math.abs(matrix?.a||1),1e-7);
+   const dy=(e.clientY-pan.lastY)/Math.max(Math.abs(matrix?.d||1),1e-7);
    pan.lastX=e.clientX;pan.lastY=e.clientY;
    if(Math.abs(e.clientX-pan.startX)>3||Math.abs(e.clientY-pan.startY)>3)pan.moved=true;
    if(pan.moved){
     if(!pan.captured){try{svgRef.current?.setPointerCapture(e.pointerId);pan.captured=true;}catch{}}
-    setView(v=>({...v,x:clamp(v.x-dx,0,FULL.w-v.w),y:clamp(v.y-dy,0,FULL.h-v.h)}));
+    setView(v=>({...v,x:v.x-dx,y:clamp(v.y-dy,0,FULL.h-v.h)}));
    }
   }
  }
@@ -169,7 +176,7 @@ export default function AtlasGeografico(){
   }
  function onMapPointerDown(e){if(e.button!==0||dragRef.current||placement)return;panRef.current={pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,lastX:e.clientX,lastY:e.clientY,moved:false};}
  function onMapDrop(e){e.preventDefault();if(!canEdit)return;const type=e.dataTransfer.getData('application/x-bto-marker');if(!markerTypes.some(t=>t.id===type))return;const point=localPoint(e);if(point)createMarker(point,type,activeCountry||'');}
- function onWheel(e){if(!e.ctrlKey&&!e.shiftKey)return; e.preventDefault();zoom(e.deltaY<0?1.18:(1/1.18));}
+ function onWheel(e){e.preventDefault();zoom(e.deltaY<0?1.18:(1/1.18));}
  const markerHover=markerMap.get(hover);
  return <div className="atlas-geografico page-width">
   <div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/>Atlante</div>
@@ -182,18 +189,20 @@ export default function AtlasGeografico(){
    <section className="atlas-map-column" aria-label="Mappa geografica">
     <div className="atlas-toolbar"><div className="atlas-toolbar-label"><Globe2 size={18}/><span>MONDO · ATLANTE GEOGRAFICO</span></div><div className="atlas-toolbar-actions"><button type="button" onClick={()=>zoom(1/1.65)} title="Riduci zoom" aria-label="Riduci zoom"><Minus size={17}/></button><button type="button" onClick={()=>setView(FULL)} title="Reimposta mappa" aria-label="Reimposta mappa"><Crosshair size={16}/></button><button type="button" onClick={()=>zoom(1.65)} title="Aumenta zoom" aria-label="Aumenta zoom"><Plus size={17}/></button></div></div>
     <div className="atlas-stage">
-     <svg ref={svgRef} viewBox={`${view.x} ${view.y} ${view.w} ${view.h}`} className={`atlas-map ${placement?'atlas-placing':''}`} xmlns="http://www.w3.org/2000/svg" aria-label="Mappa interattiva dei Paesi" onPointerDown={onMapPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onClick={e=>mapClick(e)} onDragOver={e=>e.preventDefault()} onDrop={onMapDrop} onWheel={onWheel}>
-      <rect x="0" y="0" width="1000" height="476" fill="var(--atlas-sea)"/>
-      {Array.from({length:11},(_,i)=>i+1).map(i=><line key={'vx'+i} x1={i*1000/12} y1="0" x2={i*1000/12} y2="476" className="atlas-grid-line"/>)}
-      {Array.from({length:7},(_,i)=>i+1).map(i=><line key={'hy'+i} x1="0" y1={i*476/8} x2="1000" y2={i*476/8} className="atlas-grid-line"/>)}
-      {world.countries.map(c=><path key={c.id} d={c.path} fillRule="evenodd" className={`atlas-country ${activeCountry===c.id?'is-active':''}`} onMouseEnter={()=>setHover(c.id)} onMouseLeave={()=>setHover('')} onClick={e=>countryClick(e,c)}><title>{countryName(c)}</title></path>)}
-      {visibleMarkers.map(m=>{const loc=pendingPositions[m.id]||m.atlas;const xy=pointXY(Number(loc.lat),Number(loc.lon));const radius=5.6*view.w/1000;return <g key={m.id} className={`atlas-marker ${activeMarker===m.id?'is-active':''}`} data-marker="true" transform={`translate(${xy.x} ${xy.y})`} onPointerDown={e=>startMarkerDrag(e,m)} onClick={e=>{e.stopPropagation();if(suppressClick.current)return;if(placement)return;focusMarker(m);}} onMouseEnter={()=>setHover(m.id)} onMouseLeave={()=>setHover('')}>
+     <svg ref={svgRef} viewBox={`${view.x} ${view.y} ${view.w} ${view.h}`} className={`atlas-map ${placement?'atlas-placing':''}`} xmlns="http://www.w3.org/2000/svg" aria-label="Mappa interattiva dei Paesi" onPointerDown={onMapPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onClick={e=>mapClick(e)} onDragOver={e=>e.preventDefault()} onDrop={onMapDrop} onWheel={onWheel} preserveAspectRatio="xMidYMid meet">
+      <rect x={view.x-1000} y="0" width={view.w+2000} height={MAP_HEIGHT} fill="var(--atlas-sea)"/>
+      {tiles.map(tile=><g key={'world-'+tile} transform={`translate(${tile*1000} 0) scale(1 ${VERTICAL_SCALE})`}>
+        {Array.from({length:11},(_,i)=>i+1).map(i=><line key={'vx'+i} x1={i*1000/12} y1="0" x2={i*1000/12} y2="476" className="atlas-grid-line"/>)}
+        {Array.from({length:7},(_,i)=>i+1).map(i=><line key={'hy'+i} x1="0" y1={i*476/8} x2="1000" y2={i*476/8} className="atlas-grid-line"/>)}
+        {world.countries.filter(c=>Boolean(c.path)).map(c=><path key={c.id} d={c.path} fillRule="evenodd" className={`atlas-country ${activeCountry===c.id?'is-active':''}`} onMouseEnter={()=>setHover(c.id)} onMouseLeave={()=>setHover('')} onClick={e=>countryClick(e,c)}><title>{countryName(c)}</title></path>)}
+       </g>)}
+      {tiles.map(tile=><g key={'pins-'+tile} transform={`translate(${tile*1000} 0)`}>{visibleMarkers.map(m=>{const loc=pendingPositions[m.id]||m.atlas;const xy=pointXY(Number(loc.lat),Number(loc.lon));const radius=5.6*view.w/1000;return <g key={m.id} className={`atlas-marker ${activeMarker===m.id?'is-active':''}`} data-marker="true" transform={`translate(${xy.x} ${xy.y})`} onPointerDown={e=>startMarkerDrag(e,m)} onClick={e=>{e.stopPropagation();if(suppressClick.current)return;if(placement)return;focusMarker(m);}} onMouseEnter={()=>setHover(m.id)} onMouseLeave={()=>setHover('')}>
        <circle r={radius*2.5} fill="transparent"/><circle className="atlas-marker-halo" r={radius*1.48} stroke={markerColor(m.atlas.category)} strokeWidth={1.3*view.w/1000}/><circle r={radius} fill={markerColor(m.atlas.category)} stroke="var(--atlas-pin-stroke)" strokeWidth={1.8*view.w/1000}/><title>{m.title} · {markerName(m.atlas.category)}{isDraft(m.id)?' (bozza)':''}</title>
-      </g>;})}
+      </g>;})}</g>)}
      </svg>
      {(countryById.get(hover)||markerHover)&&<div className="atlas-hover" role="status">{markerHover?<><MapPin size={13}/>{markerHover.title} · {markerName(markerHover.atlas.category)}</>:<><Globe2 size={13}/>{countryName(countryById.get(hover))}</>}</div>}
      {placement&&<div className="atlas-placement-hint">Fai clic sulla mappa per posizionare: <strong>{markerName(placement)}</strong> <button type="button" onClick={()=>setPlacement(null)}>Annulla</button></div>}
-     <div className="atlas-map-hint">Trascina per spostarti · +/− per zoom · CTRL + rotellina</div>
+     <div className="atlas-map-hint">Trascina anche a zoom minimo · il mondo si ripete · rotellina per zoom</div>
     </div>
     <div className="atlas-legend">{markerTypes.map(t=><span key={t.id}><i style={{background:t.color}}/>{t.name}</span>)}</div>
     <p className="atlas-credit">Base cartografica semplificata: Natural Earth (dominio pubblico). Elenco integrato con i codici ISO 3166-1; alcuni territori non hanno un contorno in questa scala. I confini non sono rappresentazioni ufficiali o necessariamente aggiornate.</p>

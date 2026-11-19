@@ -1,0 +1,486 @@
+{
+  "metadata": {
+    "title": "BTO · Compendio lore riorganizzato v3.1",
+    "version": "3.1.0",
+    "source": "Materiale dell’autore + categorie nel modulo Foundry",
+    "instructions": "Per installare senza duplicati: GM → Ripulisci importazione lore v3.0 (prima esporta backup); quindi importa questo JSON in Home · Compendio con Pubblica subito. Non azzera le pagine alchemiche originali.",
+    "entryCount": 29
+  },
+  "entries": [
+    {
+      "id": "fiamme-essenza",
+      "kind": "chapter",
+      "parentId": "root",
+      "title": "Fiamme ed Essenza",
+      "description": "Natura, manifestazioni e trasformazioni dell’Essenza.",
+      "icon": "flame",
+      "order": 10,
+      "markdown": "## Natura delle Fiamme\n\nLe **Fiamme** sono manifestazioni dell’**Essenza**. Ogni persona possiede una Fiamma, anche quando questa non è visibile, e la sua natura riflette l’indole dell’individuo e, in parte, la sua discendenza. È possibile controllarla direttamente oppure agendo sull’Essenza.\n\nLe Fiamme e i **Quirk** sono strettamente connessi, ma la direzione del rapporto non è accertata: la Fiamma può rappresentare un riflesso del potere, una fonte energetica o un fenomeno reciproco. Un colore non determina necessariamente le capacità del possessore. Una Fiamma particolarmente potente, tuttavia, può influenzare un potere o rendere accessibili capacità specifiche, come nel caso dell’**Antico**.\n\n## Essenza\n\nL’**Essenza** è il principio di cui le Fiamme sono manifestazioni. Attraverso il suo controllo è possibile agire indirettamente sulla Fiamma. Alcuni poteri possono manipolare l’Essenza e alterare le informazioni associate ai poteri stessi. Il rapporto preciso tra Essenza individuale e Flussi Alchemici non è ancora definito.\n\n## Flogisto e Flogistone\n\nIl **Flogisto**, detto anche **Flogistone**, è l’elemento alchemico che costituisce la componente elementare della Fiamma. Non rappresenta però la sua intera composizione: la Fiamma comprende anche informazioni sul possessore, sul retaggio e sul potere. Le sue proprietà al di fuori delle Fiamme e gli eventuali metodi per isolarlo non sono ancora specificati.\n\n## Traccia Quirk\n\nLa **Traccia Quirk** è la denominazione comune, non rigorosamente scientifica, dell’impronta peculiare che caratterizza un potere e la Fiamma a esso legata. Attraverso il Flogisto, questa traccia viene depositata. Non costituisce un identificatore infallibile: può essere alterata, falsificata o simulata da poteri capaci di manipolare l’Essenza.\n\n## Percezione, forme e colori\n\nLa Fiamma conserva informazioni sul suo possessore. Chi dispone della capacità di percepirla può interpretarla attraverso la propria Fiamma; osservatori differenti possono dunque percepire diversamente lo stesso individuo. Non tutte le Fiamme hanno l’aspetto del fuoco: la forma può variare, e il colore può essere uniforme o cangiante anche quando la Fiamma è troppo debole per essere percepita.\n\n## Consolidamento e mutamento\n\nQuando un potere matura fino a rendere la Fiamma percepibile a chi dispone della capacità di vederla, questa tende a stabilizzarsi rapidamente. Sebbene l’indole possa cambiare, alimentare un potere già consolidato vincola la Fiamma a mantenere una forma coerente con quel potere. Se la Fiamma si spegne, anche temporaneamente, oppure viene perduta, può tornare cangiante o cambiare colore; anche il potere può mutare, indipendentemente dalla sua origine.\n\n## Origini e testimonianze\n\nLe testimonianze relative a cimeli antichi suggeriscono che le Fiamme precedano i poteri moderni. Il rapporto tra questi oggetti, le anomalie cronologiche e i Quirk Ancestrali rimane oggetto di ricerca. [Approfondisci la storia](#/pagina/storia-passato) e i [Quirk Ancestrali](#/pagina/quirk-ancestrali).\n\n## Collegamenti\n\n- [Le undici categorie cromatiche](#/pagina/fiamme-categorie)\n- [Fondamenti e tipologie di Quirk](#/pagina/quirk)\n- [Alchimia: Flussi e Flogisto](#/pagina/alchimia-flussi)\n",
+      "packageId": "bto-lore-v3.1",
+      "layout": "lore"
+    },
+    {
+      "id": "fiamme-categorie",
+      "kind": "page",
+      "parentId": "fiamme-essenza",
+      "title": "Categorie delle Fiamme",
+      "description": "Le undici Fiamme conosciute, raggruppate per nome e colore.",
+      "icon": "flame",
+      "order": 1,
+      "markdown": "Le **categorie cromatiche** sono una classificazione delle Fiamme. Il colore non implica necessariamente una capacità o un tipo di potere. L’aspetto e il colore di una Fiamma possono cambiare; il loro significato per il singolo individuo va distinto dalla semplice appartenenza a una categoria.\n\n## Guerriero\n\n**Colore:** Rosso. Non sono ancora disponibili altre proprietà canoniche per questa categoria.\n\n## Antico\n\n**Colore:** Bianco. La Fiamma dell’Antico è associata a poteri in grado di interagire direttamente con altre Fiamme e con l’Essenza. Non è accertato se sia il potere a rendere accessibile la Fiamma o viceversa.\n\n## Eremita\n\n**Colore:** Verde. Non sono ancora disponibili altre proprietà canoniche per questa categoria.\n\n## Guaritore\n\n**Colore:** Giallo. Non sono ancora disponibili altre proprietà canoniche per questa categoria.\n\n## Martire\n\n**Colore:** Nero. Non sono ancora disponibili altre proprietà canoniche per questa categoria.\n\n## Sentinella\n\n**Colore:** Arancione. Non sono ancora disponibili altre proprietà canoniche per questa categoria.\n\n## Cacciatore\n\n**Colore:** Viola. Non sono ancora disponibili altre proprietà canoniche per questa categoria.\n\n## Saggio\n\n**Colore:** Blu. Non sono ancora disponibili altre proprietà canoniche per questa categoria.\n\n## La Tomba\n\n**Colore:** Ciano. Non sono ancora disponibili altre proprietà canoniche per questa categoria.\n\n## La Moglie\n\n**Colore:** Pesca. Non sono ancora disponibili altre proprietà canoniche per questa categoria.\n\n## La Libertà\n\n**Colore:** Grigio. Non sono ancora disponibili altre proprietà canoniche per questa categoria.\n\n",
+      "packageId": "bto-lore-v3.1",
+      "flames": [
+        {
+          "name": "Guerriero",
+          "color": "Rosso",
+          "hex": "#e5252a",
+          "anchor": "guerriero"
+        },
+        {
+          "name": "Antico",
+          "color": "Bianco",
+          "hex": "#f4f6f8",
+          "anchor": "antico"
+        },
+        {
+          "name": "Eremita",
+          "color": "Verde",
+          "hex": "#16a05e",
+          "anchor": "eremita"
+        },
+        {
+          "name": "Guaritore",
+          "color": "Giallo",
+          "hex": "#ecc11a",
+          "anchor": "guaritore"
+        },
+        {
+          "name": "Martire",
+          "color": "Nero",
+          "hex": "#131a2b",
+          "anchor": "martire"
+        },
+        {
+          "name": "Sentinella",
+          "color": "Arancione",
+          "hex": "#ff7915",
+          "anchor": "sentinella"
+        },
+        {
+          "name": "Cacciatore",
+          "color": "Viola",
+          "hex": "#9137e7",
+          "anchor": "cacciatore"
+        },
+        {
+          "name": "Saggio",
+          "color": "Blu",
+          "hex": "#2768df",
+          "anchor": "saggio"
+        },
+        {
+          "name": "La Tomba",
+          "color": "Ciano",
+          "hex": "#12b4c9",
+          "anchor": "la-tomba"
+        },
+        {
+          "name": "La Moglie",
+          "color": "Pesca",
+          "hex": "#ffb87a",
+          "anchor": "la-moglie"
+        },
+        {
+          "name": "La Libertà",
+          "color": "Grigio",
+          "hex": "#777d88",
+          "anchor": "la-liberta"
+        }
+      ],
+      "layout": "flames"
+    },
+    {
+      "id": "quirk",
+      "kind": "chapter",
+      "parentId": "root",
+      "title": "Quirk",
+      "description": "Poteri individuali, classificazioni e legame con le Fiamme.",
+      "icon": "dna",
+      "order": 20,
+      "markdown": "## Fondamenti dei Quirk\n\nI **Quirk** sono capacità peculiari dell’individuo. Sono strettamente collegati alle Fiamme, che potrebbero rifletterli, alimentarli o esserne a loro volta influenzate. La relazione causale tra i due fenomeni non è stabilita. Le loro impronte possono essere riconosciute attraverso la [Traccia Quirk](#/pagina/fiamme-essenza?sezione=traccia-quirk), sebbene questa possa essere falsificata.\n\n## Classificazione\n\nLe tipologie usate dal sistema Foundry sono **Mutant**, **Transformation**, **Emitter** e **Hybrid**. Questa classificazione indica la categoria del potere, non il colore della Fiamma. Le definizioni enciclopediche specifiche di Mutant, Transformation ed Emitter non sono ancora state fornite.\n\n## Mutant\n\n*Definizione da approfondire.*\n\n## Transformation\n\n*Definizione da approfondire.*\n\n## Emitter\n\n*Definizione da approfondire.*\n\n## Hybrid\n\nCategoria di Quirk che può combinare più tipologie. Altri dettagli narrativi non sono ancora definiti.\n\n## Quirk Ancestrali\n\nI Quirk **Ancestrali**, detti anche **Primordiali**, hanno un’origine più antica dell’Era dei Poteri e meritano un approfondimento dedicato. [Origine, ipotesi e possessori conosciuti](#/pagina/quirk-ancestrali).\n",
+      "packageId": "bto-lore-v3.1",
+      "layout": "quirk",
+      "topics": [
+        {
+          "name": "Mutant",
+          "anchor": "mutant",
+          "summary": "Categoria del potere; definizione da approfondire."
+        },
+        {
+          "name": "Transformation",
+          "anchor": "transformation",
+          "summary": "Categoria del potere; definizione da approfondire."
+        },
+        {
+          "name": "Emitter",
+          "anchor": "emitter",
+          "summary": "Categoria del potere; definizione da approfondire."
+        },
+        {
+          "name": "Hybrid",
+          "anchor": "hybrid",
+          "summary": "Categoria che combina più tipologie."
+        }
+      ]
+    },
+    {
+      "id": "quirk-ancestrali",
+      "kind": "page",
+      "parentId": "quirk",
+      "title": "Quirk Ancestrali",
+      "description": "Origini, teorie scientifiche e figure conosciute.",
+      "icon": "history",
+      "order": 1,
+      "markdown": "I **Quirk Ancestrali**, detti anche **Primordiali**, erano in antico poco più che leggende: favori ritenuti divini, trasmessi nelle tradizioni di sciamani e religiosi. Le testimonianze più antiche li descrivono come lievi alterazioni della fortuna, innaturali ma di scarsa incidenza pratica.\n\nCon l’Era dei Poteri le capacità e la versatilità degli Ancestrali sono aumentate enormemente. Quando espressi al massimo del dominio, questi poteri sembrano trovare rivali soltanto fra altri Quirk Ancestrali.\n\nLe loro origini sono associate, secondo alcune tradizioni e ipotesi, ai cimeli antichi e alle anomalie cronologiche. La natura di questo legame non è dimostrata.\n\n## Ipotesi di ricerca\n\nLa Catalyst discute diverse spiegazioni: collegamento atemporale con i predecessori, accumulo di energia in artefatti e relazione diretta con i Flussi Alchemici. Sono teorie concorrenti, non fatti accertati.\n\n## Limiti della ricerca\n\nSecondo le informazioni fornite, nessun possessore noto di Quirk Ancestrali è associato alla Catalyst. Ivory Covenant è considerato un possibile interlocutore, ma la sua lealtà verso il proprio Re limita la disponibilità di informazioni.\n\nFra le potenze mondiali, **Italia, Giappone e America** sono indicate come sicuramente in possesso di informazioni; **Egitto, Israele, Turchia, Corea, Germania e Sudafrica** vengono menzionati come possibili detentori. Questa distinzione riflette il grado di certezza della fonte e non una verifica indipendente.\n## Ipotesi della Catalyst\n\n**Collegamento atemporale.** Una corrente di ricerca ipotizza che i possessori contemporanei attingano alla vita, alla morte e alla memoria di antenati o controparti preesistenti.\n\n**Accumulo negli artefatti.** Un’altra interpretazione ritiene che parte dell’energia sia stata conservata in cimeli antichi, fornendo a un singolo possessore una riserva quasi inesauribile nell’arco della sua vita.\n\n**Frammentazione e Flussi Alchemici.** Secondo ulteriori ipotesi gli oggetti potrebbero essersi divisi, fusi con i Flussi Alchemici oppure non costituire alcun intermediario necessario. Nessuna di queste teorie è considerata dimostrata.\n\n## Ricerca e possessori\n\nLa **Catalyst** indaga sulle Fiamme e sul potenziale umano, ma non possiede direttamente utilizzatori noti di Quirk Ancestrali. **Ivory Covenant** è considerato un possibile interlocutore, benché il suo legame di lealtà verso il proprio Re impedisca attualmente di ottenere informazioni. [Scheda di Ivory Covenant](#/pagina/personaggio-ivory-covenant) · [Catalyst](#/pagina/organizzazione-catalyst).\n\nLa ricerca cita Italia, Giappone e America come Paesi sicuramente in possesso di informazioni rilevanti; altre nazioni sono considerate possibilità, non conferme. Questi riferimenti non indicano l’ubicazione di artefatti o individui specifici.\n",
+      "packageId": "bto-lore-v3.1",
+      "layout": "lore"
+    },
+    {
+      "id": "personaggio-ivory-covenant",
+      "kind": "page",
+      "parentId": "quirk-ancestrali",
+      "title": "Ivory Covenant",
+      "description": "Possessore di un Quirk Ancestrale; leale al proprio Re.",
+      "icon": "bookmark",
+      "order": 1,
+      "markdown": "**Ivory Covenant** è un individuo legato ai Quirk Ancestrali e un potenziale interlocutore per la Catalyst. Il suo legame di lealtà verso il proprio Re lo porta tuttavia a non condividere informazioni sui poteri ancestrali.\n\n**Identità, Quirk e storia personale:** da approfondire.\n\n**Il Re:** figura menzionata, la cui identità non è ancora definita. Non si tratta di una nazione o organizzazione stabilita sulla base delle informazioni disponibili.",
+      "packageId": "bto-lore-v3.1",
+      "templateId": "character"
+    },
+    {
+      "id": "controcorpi",
+      "kind": "chapter",
+      "parentId": "root",
+      "title": "Controcorpi",
+      "description": "Sistema di capacità distinto dai Quirk e relative categorie.",
+      "icon": "shield",
+      "order": 30,
+      "markdown": "## Fondamenti dei Controcorpi\n\nI **Controcorpi** costituiscono un sistema di capacità distinto dai **Quirk**. Un individuo può possedere entrambi: nel modulo Foundry vengono configurati e gestiti separatamente. Non sono ancora state specificate le loro origini o le relazioni ontologiche con l’Essenza e le Fiamme.\n\n## Classificazione\n\nIl modulo Foundry distingue sette categorie: **Vessel**, **Sentinel**, **Tether**, **Warrior**, **Container**, **Special** e **Hybrid**. Le definizioni narrative delle prime sei categorie rimangono da sviluppare.\n\n## Vessel\n\n*Definizione enciclopedica non ancora fornita.*\n\n## Sentinel\n\n*Definizione enciclopedica non ancora fornita.*\n\n## Tether\n\n*Definizione enciclopedica non ancora fornita.*\n\n## Warrior\n\n*Definizione enciclopedica non ancora fornita.*\n\n## Container\n\n*Definizione enciclopedica non ancora fornita.*\n\n## Special\n\n*Definizione enciclopedica non ancora fornita.*\n\n## Hybrid\n\nCategoria che può combinare più tipologie di Controcorpo. Ulteriori dettagli da approfondire.\n",
+      "packageId": "bto-lore-v3.1",
+      "layout": "counterbodies",
+      "topics": [
+        {
+          "name": "Vessel",
+          "anchor": "vessel",
+          "summary": "Categoria di Controcorpo; definizione da approfondire."
+        },
+        {
+          "name": "Sentinel",
+          "anchor": "sentinel",
+          "summary": "Categoria di Controcorpo; definizione da approfondire."
+        },
+        {
+          "name": "Tether",
+          "anchor": "tether",
+          "summary": "Categoria di Controcorpo; definizione da approfondire."
+        },
+        {
+          "name": "Warrior",
+          "anchor": "warrior",
+          "summary": "Categoria di Controcorpo; definizione da approfondire."
+        },
+        {
+          "name": "Container",
+          "anchor": "container",
+          "summary": "Categoria di Controcorpo; definizione da approfondire."
+        },
+        {
+          "name": "Special",
+          "anchor": "special",
+          "summary": "Categoria di Controcorpo; definizione da approfondire."
+        },
+        {
+          "name": "Hybrid",
+          "anchor": "hybrid",
+          "summary": "Categoria che combina più tipologie."
+        }
+      ]
+    },
+    {
+      "id": "storia-passato",
+      "kind": "chapter",
+      "parentId": "root",
+      "title": "Storia e Passato",
+      "description": "Testimonianze, anomalie, nascita ed evoluzione dei poteri.",
+      "icon": "history",
+      "order": 40,
+      "markdown": "## Dalle testimonianze antiche ai poteri moderni\n\nAlcuni cimeli e oggetti antichi contengono manifestazioni di Essenza e Fiamme. Si ritiene che le Fiamme precedano i poteri moderni, ma **non sono note con certezza le circostanze e le epoche esatte** in cui particolari cimeli presero fuoco.\n\nLe anomalie cronologiche antiche vengono associate a tali fenomeni. Le testimonianze religiose e storiche non provano tuttavia che gli dèi o gli esseri descritti dagli antichi siano realmente esistiti nei termini tramandati.\n\n## I primi Quirk\n\nSecondo la ricostruzione riportata dalla ricerca, i primi Quirk Ancestrali potrebbero essere sorti dagli oggetti anomali, dalle anomalie stesse o dall'esposizione a essi. Per lungo tempo sarebbero stati percepiti come favori soprannaturali, leggende e lievi alterazioni della fortuna.\n\n## Era dei Poteri\n\nCon l'avvento dell'Era dei Poteri, i Quirk Ancestrali avrebbero sviluppato un livello di forza e versatilità assai maggiore rispetto alle manifestazioni attribuite all'antichità. La spiegazione di tale accrescimento resta oggetto di teorie contrastanti.\n\n## Albero degli eventi\n\nLa mappa sottostante visualizza filoni narrativi e ricostruzioni. **I collegamenti indicano una relazione o un'ipotesi**, non una cronologia datata accertata. Il GM può aggiungere eventi, diramazioni e legami.\n",
+      "packageId": "bto-lore-v3.1",
+      "layout": "history"
+    },
+    {
+      "id": "testimonianze-antiche",
+      "kind": "page",
+      "parentId": "storia-passato",
+      "title": "Testimonianze e culti antichi",
+      "description": "Riferimenti storici, archeologici e religiosi alle prime manifestazioni dei poteri",
+      "icon": "scroll",
+      "order": 1,
+      "markdown": "Le testimonianze dei fenomeni antichi provengono da tradizioni religiose, pratiche sciamaniche, scritti storici e scavi archeologici.\n\nI primi [Quirk Ancestrali](#/pagina/quirk-ancestrali) sarebbero stati interpretati come favori apparentemente divini. Non viene tuttavia considerata attendibile l’identificazione letterale delle figure divine descritte dagli antichi con esseri realmente esistiti come narrati.",
+      "packageId": "bto-lore-v3.1",
+      "templateId": "event"
+    },
+    {
+      "id": "cimeli-artefatti",
+      "kind": "page",
+      "parentId": "storia-passato",
+      "title": "Cimeli e artefatti antichi",
+      "description": "Oggetti associati alla presenza antica delle Fiamme e delle anomalie cronologiche",
+      "icon": "scroll",
+      "order": 2,
+      "markdown": "In alcuni **cimeli e artefatti** sono state riconosciute tracce delle [Fiamme](#/pagina/fiamme-essenza), circostanza che sostiene l’ipotesi di una loro esistenza antecedente all’[Era dei Poteri](#/pagina/era-dei-poteri).\n\nSecondo alcune ricostruzioni, l’[Essenza](#/pagina/fiamme-essenza?sezione=essenza) di determinati oggetti avrebbe preso fuoco, dando origine ad [anomalie cronologiche antiche](#/pagina/anomalie-cronologiche).\n\nIl ruolo di questi oggetti nell’attuale alimentazione dei [Quirk Ancestrali](#/pagina/quirk-ancestrali) è discusso e non dimostrato.",
+      "packageId": "bto-lore-v3.1",
+      "templateId": "event"
+    },
+    {
+      "id": "anomalie-cronologiche",
+      "kind": "page",
+      "parentId": "storia-passato",
+      "title": "Anomalie cronologiche antiche",
+      "description": "Fenomeni antichi associati a oggetti la cui Essenza avrebbe preso fuoco",
+      "icon": "scroll",
+      "order": 3,
+      "markdown": "Le **anomalie cronologiche antiche** vengono ricondotte a episodi in cui l’[Essenza](#/pagina/fiamme-essenza?sezione=essenza) di determinati [cimeli](#/pagina/cimeli-artefatti) avrebbe preso fuoco in epoche remote.\n\nSecondo alcune ricostruzioni, dai fenomeni, dagli oggetti o dall’esposizione ad essi potrebbero essere derivati i primi [Quirk Ancestrali](#/pagina/quirk-ancestrali).\n\nL’origine, la datazione e il funzionamento di queste anomalie non sono noti con precisione.",
+      "packageId": "bto-lore-v3.1",
+      "templateId": "event"
+    },
+    {
+      "id": "origine-poteri",
+      "kind": "page",
+      "parentId": "storia-passato",
+      "title": "Origine dei poteri",
+      "description": "Tradizioni e ipotesi riguardanti la comparsa dei primi poteri",
+      "icon": "scroll",
+      "order": 4,
+      "markdown": "Non si conoscono il momento e le condizioni esatte della nascita dei primi poteri.\n\nAlcune testimonianze collegano i primi [Quirk Ancestrali](#/pagina/quirk-ancestrali) ai [cimeli antichi](#/pagina/cimeli-artefatti) e alle [anomalie cronologiche](#/pagina/anomalie-cronologiche). In origine i poteri sarebbero stati interpretati come favori divini, tramandati da sciamani e religiosi.\n\nL’ipotesi non comporta che gli dèi descritti nelle tradizioni antiche siano realmente esistiti nelle forme tramandate. Le informazioni disponibili escludono questa interpretazione letterale.",
+      "packageId": "bto-lore-v3.1",
+      "templateId": "event"
+    },
+    {
+      "id": "era-dei-poteri",
+      "kind": "page",
+      "parentId": "storia-passato",
+      "title": "Era dei Poteri",
+      "description": "Periodo nel quale i poteri hanno assunto capacità e diffusione moderne",
+      "icon": "scroll",
+      "order": 5,
+      "markdown": "Con l’avvento dell’**Era dei Poteri**, i [Quirk Ancestrali](#/pagina/quirk-ancestrali), in precedenza descritti soprattutto come leggende o minime alterazioni della fortuna, hanno accresciuto notevolmente capacità e versatilità.\n\nNon sono indicati una data d’inizio, una cronologia dettagliata o una spiegazione definitiva di questa trasformazione.",
+      "packageId": "bto-lore-v3.1",
+      "templateId": "event"
+    },
+    {
+      "id": "organizzazioni",
+      "kind": "chapter",
+      "parentId": "root",
+      "title": "Organizzazioni",
+      "description": "Istituzioni, gruppi, aziende e strutture dell’ambientazione.",
+      "icon": "users",
+      "order": 50,
+      "markdown": "Il compendio raccoglie qui le principali **organizzazioni e affiliazioni** dell’ambientazione. Le categorie permettono di organizzare gruppi e personaggi senza attribuire relazioni o ruoli non ancora definiti.\n\nPer l’Atlante geografico le sedi possono essere collocate tramite marker GM associati alle relative pagine.\n\nLa **Catalyst** è un’organizzazione scientifica che mira a massimizzare il potenziale delle Fiamme nell’umanità. [Consulta la scheda](#/pagina/organizzazione-catalyst).",
+      "packageId": "bto-lore-v3.1",
+      "layout": "organizations"
+    },
+    {
+      "id": "organizzazioni-eroi",
+      "kind": "collection",
+      "parentId": "organizzazioni",
+      "title": "Eroi",
+      "description": "Archivio di eroi.",
+      "icon": "shield",
+      "order": 1,
+      "markdown": "",
+      "packageId": "bto-lore-v3.1",
+      "layout": "organizations"
+    },
+    {
+      "id": "organizzazioni-antagonisti",
+      "kind": "collection",
+      "parentId": "organizzazioni",
+      "title": "Antagonisti",
+      "description": "Archivio di antagonisti.",
+      "icon": "swords",
+      "order": 2,
+      "markdown": "",
+      "packageId": "bto-lore-v3.1",
+      "layout": "organizations"
+    },
+    {
+      "id": "organizzazioni-villain",
+      "kind": "collection",
+      "parentId": "organizzazioni-antagonisti",
+      "title": "Villain",
+      "description": "Archivio di villain.",
+      "icon": "swords",
+      "order": 3,
+      "markdown": "",
+      "packageId": "bto-lore-v3.1",
+      "layout": "organizations"
+    },
+    {
+      "id": "organizzazioni-criminali",
+      "kind": "collection",
+      "parentId": "organizzazioni-antagonisti",
+      "title": "Criminali",
+      "description": "Archivio di criminali.",
+      "icon": "swords",
+      "order": 4,
+      "markdown": "",
+      "packageId": "bto-lore-v3.1",
+      "layout": "organizations"
+    },
+    {
+      "id": "organizzazioni-vigilanti",
+      "kind": "collection",
+      "parentId": "organizzazioni",
+      "title": "Vigilanti",
+      "description": "Archivio di vigilanti.",
+      "icon": "eye",
+      "order": 5,
+      "markdown": "",
+      "packageId": "bto-lore-v3.1",
+      "layout": "organizations"
+    },
+    {
+      "id": "organizzazioni-civili",
+      "kind": "collection",
+      "parentId": "organizzazioni",
+      "title": "Civili",
+      "description": "Archivio di civili.",
+      "icon": "users",
+      "order": 6,
+      "markdown": "",
+      "packageId": "bto-lore-v3.1",
+      "layout": "organizations"
+    },
+    {
+      "id": "organizzazioni-governi",
+      "kind": "collection",
+      "parentId": "organizzazioni",
+      "title": "Governi e Strutture Extra Governative",
+      "description": "Archivio di governi e strutture extra governative.",
+      "icon": "landmark",
+      "order": 7,
+      "markdown": "",
+      "packageId": "bto-lore-v3.1",
+      "layout": "organizations"
+    },
+    {
+      "id": "organizzazioni-industrie",
+      "kind": "collection",
+      "parentId": "organizzazioni",
+      "title": "Industrie Multinazionali e Aziende",
+      "description": "Archivio di industrie multinazionali e aziende.",
+      "icon": "factory",
+      "order": 8,
+      "markdown": "",
+      "packageId": "bto-lore-v3.1",
+      "layout": "organizations"
+    },
+    {
+      "id": "organizzazioni-farmaceutiche",
+      "kind": "collection",
+      "parentId": "organizzazioni-industrie",
+      "title": "Case Farmaceutiche",
+      "description": "Archivio di case farmaceutiche.",
+      "icon": "flask",
+      "order": 9,
+      "markdown": "",
+      "packageId": "bto-lore-v3.1",
+      "layout": "organizations"
+    },
+    {
+      "id": "organizzazioni-scuole",
+      "kind": "collection",
+      "parentId": "organizzazioni",
+      "title": "Scuole",
+      "description": "Archivio di scuole.",
+      "icon": "school",
+      "order": 10,
+      "markdown": "",
+      "packageId": "bto-lore-v3.1",
+      "layout": "organizations"
+    },
+    {
+      "id": "organizzazioni-ricerca",
+      "kind": "collection",
+      "parentId": "organizzazioni",
+      "title": "Organizzazioni scientifiche",
+      "description": "Archivio di organizzazioni scientifiche.",
+      "icon": "microscope",
+      "order": 11,
+      "markdown": "",
+      "packageId": "bto-lore-v3.1",
+      "layout": "organizations"
+    },
+    {
+      "id": "organizzazione-catalyst",
+      "kind": "page",
+      "parentId": "organizzazioni-ricerca",
+      "title": "Catalyst",
+      "description": "Organizzazione scientifica dedita al potenziale delle Fiamme.",
+      "icon": "microscope",
+      "order": 1,
+      "markdown": "La **Catalyst** è un’organizzazione scientifica i cui membri mirano a massimizzare il potenziale delle Fiamme nell’umanità.\n\nAll’interno dell’organizzazione si confrontano varie ipotesi sull’accrescimento dei poteri Ancestrali: il legame atemporale con antenati e controparti, la conservazione di energia negli artefatti e i possibili rapporti con i Flussi Alchemici.\n\nLe ricerche risultano difficili. Secondo le informazioni disponibili, nessun possessore noto di Quirk Ancestrali fa parte dell’organizzazione, e Ivory Covenant, pur essendo un possibile interlocutore, non ne condivide le informazioni.\n\n## Indirizzi e sedi\n\nNon sono ancora indicate sedi accertate. Le località potranno essere aggiunte all’Atlante dal GM.",
+      "packageId": "bto-lore-v3.1",
+      "templateId": "organization"
+    },
+    {
+      "id": "atlas-geografico",
+      "kind": "chapter",
+      "parentId": "root",
+      "title": "Atlante",
+      "description": "Paesi, città, sedi e luoghi d’interesse.",
+      "icon": "globe",
+      "order": 60,
+      "markdown": "",
+      "packageId": "bto-lore-v3.1",
+      "layout": "atlas"
+    },
+    {
+      "id": "atlas-paesi",
+      "kind": "collection",
+      "parentId": "atlas-geografico",
+      "title": "Paesi",
+      "description": "Indici geografici e schede dei Paesi.",
+      "icon": "globe",
+      "order": 1,
+      "markdown": "",
+      "packageId": "bto-lore-v3.1",
+      "layout": "atlas"
+    },
+    {
+      "id": "atlas-luoghi",
+      "kind": "collection",
+      "parentId": "atlas-geografico",
+      "title": "Luoghi e marker",
+      "description": "Città, sedi, luoghi storici e punti d’interesse.",
+      "icon": "map",
+      "order": 2,
+      "markdown": "",
+      "packageId": "bto-lore-v3.1",
+      "layout": "atlas"
+    },
+    {
+      "id": "alchimia-flussi",
+      "kind": "page",
+      "parentId": "alchimia",
+      "title": "Flussi Alchemici",
+      "description": "Legami tra Flussi Alchemici, Fiamme ed Essenza.",
+      "icon": "flask",
+      "order": 3,
+      "markdown": "## Flussi Alchemici e Fiamme\n\nI **Flussi Alchemici** vengono citati dalle teorie sul funzionamento e l’origine dei Quirk Ancestrali. Alcune ipotesi prevedono che antichi artefatti si siano fusi con i Flussi oppure che i poteri vi attingano direttamente, senza intermediari materiali. **Sono ipotesi non dimostrate.**\n\n## Flogisto\n\nIl **Flogisto** (o Flogistone) è l'elemento alchemico che costituisce la componente elementare delle Fiamme; non esaurisce però la totalità dell'Essenza e delle informazioni contenute nelle Fiamme.\n\nPer i fondamenti consultare [Fiamme ed Essenza](#/pagina/fiamme-essenza?sezione=flogisto-e-flogistone); per le ipotesi [Quirk Ancestrali](#/pagina/quirk-ancestrali?sezione=ipotesi-della-catalyst).",
+      "packageId": "bto-lore-v3.1",
+      "layout": "alchemy"
+    }
+  ]
+}

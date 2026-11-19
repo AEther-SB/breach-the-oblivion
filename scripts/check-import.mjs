@@ -10,7 +10,7 @@ assert.equal(content.genesisProcesses.length,12);
 assert.equal(content.materials.reduce((n,m)=>n+m.abilities.length,0),120);
 const markdown='## Storia\n\n**Un nome** e *un aspetto*.\n\n- Primo\n- Secondo\n\n[Acqua](#/alchimia/materiali/acqua)';
 const html=markdownToHtml(markdown);
-assert.match(html,/<h3>Storia<\/h3>/);
+assert.match(html,/<h3 id="storia">Storia<\/h3>/);
 assert.match(html,/<strong>Un nome<\/strong>/);
 assert.match(html,/<em>un aspetto<\/em>/);
 assert.match(html,/<ul>.*<li>Primo<\/li>/);

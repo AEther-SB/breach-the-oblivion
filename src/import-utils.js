@@ -5,6 +5,7 @@ const slug = value => String(value||'').normalize('NFD').replace(/[\u0300-\u036f
 const hash = str => {let h=2166136261;for(const c of str){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return (h>>>0).toString(36);};
 const identity = (prefix,str) => `${prefix}-import-${slug(str)}-${hash(str).slice(0,7)}`;
 const rich = html=>({type:'rich',id:`blocco-${hash(html)}`,html});
+const anchorSlug = text => slug(String(text).replace(/<[^>]*>/g,'').replace(/\*\*/g,''));
 const inline = value => {
   let out=escape(value);
   // I link sono intenzionali, mai generati dalla semplice presenza di una parola.
@@ -21,7 +22,7 @@ export function markdownToHtml(markdown) {
   while(i<lines.length){
     const t=lines[i].trim();if(!t){i++;continue;}
     const head=t.match(/^(#{1,4})\s+(.+)$/);
-    if(head){result.push(`<h${Math.min(4,head[1].length+1)}>${inline(head[2])}</h${Math.min(4,head[1].length+1)}>`);i++;continue;}
+    if(head){result.push(`<h${Math.min(4,head[1].length+1)} id="${anchorSlug(head[2])}">${inline(head[2])}</h${Math.min(4,head[1].length+1)}>`);i++;continue;}
     if(/^(-{3,}|\*{3,})$/.test(t)){result.push('<hr/>');i++;continue;}
     if(/^>\s?/.test(t)){let bits=[];while(i<lines.length&&/^>\s?/.test(lines[i].trim()))bits.push(inline(lines[i++].trim().replace(/^>\s?/,'')));result.push(`<blockquote>${bits.join(' ')}</blockquote>`);continue;}
     if(/^(- |\* |\d+\. )/.test(t)){
