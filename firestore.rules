@@ -21,6 +21,27 @@ service cloud.firestore {
       allow list: if gm();
       allow create, update, delete: if gm();
     }
+    // Registro degli account che hanno effettuato accesso al sito dalla v3.10.2.
+    // L'utente registra solo nome ed email del proprio account; i ruoli restano
+    // esclusivamente in contributors e admins, mai nei dati gestiti dal player.
+    function validWikiUser() {
+      return request.resource.data.keys().hasOnly(['displayName','email','createdAt','updatedAt'])
+        && request.resource.data.keys().hasAll(['displayName','email','createdAt','updatedAt'])
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() >= 1
+        && request.resource.data.displayName.size() <= 90
+        && request.resource.data.email is string
+        && request.resource.data.email.size() <= 254
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.updatedAt == request.time;
+    }
+    match /wikiUsers/{uid} {
+      allow get: if gm() || (request.auth != null && request.auth.uid == uid);
+      allow list: if gm();
+      allow create: if request.auth != null && request.auth.uid == uid
+        && validWikiUser() && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+    }
     function validSubmission() {
       return request.resource.data.keys().hasOnly(['authorId','authorName','status','targetId','entry','createdAt','updatedAt'])
         && request.resource.data.authorId == request.auth.uid

@@ -68,6 +68,9 @@ export function ContentProvider({children}) {
   const [gm, setGM] = useState(false);
   const [contributor, setContributor] = useState(false);
   const [submissions, setSubmissions] = useState([]);
+  const [registeredUsers, setRegisteredUsers] = useState([]);
+  const [contributorRecords, setContributorRecords] = useState([]);
+  const [directoryError, setDirectoryError] = useState('');
   const [authPending, setAuthPending] = useState(configured);
   const [seeded, setSeeded] = useState(false);
   const [published, setPublished] = useState([]);
@@ -77,23 +80,41 @@ export function ContentProvider({children}) {
   const [error, setError] = useState('');
   useEffect(() => {
     if (!configured) return;
-    return onAuthStateChanged(auth, async next => {
+    let stopContributor=()=>{};
+    const stopAuth=onAuthStateChanged(auth, async next => {
+      stopContributor();stopContributor=()=>{};
       setUser(next);
       setGM(false);
       setContributor(false);
       setAuthPending(true);
       if (next) {
+        // Registro leggero degli accessi alla wiki. Non espone il catalogo Firebase Auth:
+        // sono registrati solo gli utenti che entrano nel sito da questa versione.
+        try {
+          const profileRef=doc(db,'wikiUsers',next.uid);
+          const profile=await getDoc(profileRef);
+          if (!profile.exists()) await setDoc(profileRef,{
+            displayName:String(next.displayName||'Utente').slice(0,90),
+            email:String(next.email||'').slice(0,254),
+            createdAt:serverTimestamp(),updatedAt:serverTimestamp(),
+          });
+        } catch (e) {
+          // Il vecchio regolamento Firestore può essere ancora attivo durante il deploy.
+          // Il login e la lettura del compendio devono continuare a funzionare.
+          console.warn('Registro utenti non ancora disponibile:',e.message);
+        }
         try {
           const admin = await getDoc(doc(db, 'admins', next.uid));
           setGM(admin.exists() && admin.data().enabled === true);
         } catch (e) { setError(`Verifica del ruolo GM: ${e.message}`); }
-        try {
-          const player = await getDoc(doc(db, 'contributors', next.uid));
-          setContributor(player.exists() && player.data().enabled === true);
-        } catch (e) { setError(`Ruolo Collaboratore: ${e.message}. Verifica di aver pubblicato firestore.rules v3.7.`); }
+        // Un'autorizzazione concessa dal GM diventa attiva senza richiedere il refresh.
+        stopContributor=onSnapshot(doc(db, 'contributors', next.uid), snap=>{
+          setContributor(snap.exists() && snap.data().enabled === true);
+        }, e=>setError(`Ruolo Collaboratore: ${e.message}. Verifica le regole Firestore.`));
       }
       setAuthPending(false);
     }, e => { setError(e.message); setAuthPending(false); });
+    return ()=>{stopContributor();stopAuth();};
   }, []);
   useEffect(() => {
     if (!configured) return;
@@ -111,6 +132,21 @@ export function ContentProvider({children}) {
     return onSnapshot(ref, snap => setSubmissions(snap.docs.map(d=>({...d.data(),id:d.id}))),
       e => setError(`Lettura delle proposte: ${e.message}`));
   }, [user?.uid,gm,contributor]);
+  useEffect(() => {
+    if (!configured || !gm) {
+      setRegisteredUsers([]);setContributorRecords([]);setDirectoryError('');return;
+    }
+    // Gli account autenticati si registrano in wikiUsers; il GM vede anche gli UID
+    // abilitati prima di questa versione, anche se non hanno ancora effettuato accesso.
+    const offUsers=onSnapshot(collection(db,'wikiUsers'), snap=>{
+      setRegisteredUsers(snap.docs.map(d=>({...d.data(),id:d.id})));
+      setDirectoryError('');
+    }, e=>setDirectoryError(`Elenco utenti: ${e.message}. Pubblica le regole Firestore v3.10.2.`));
+    const offRoles=onSnapshot(collection(db,'contributors'), snap=>{
+      setContributorRecords(snap.docs.map(d=>({...d.data(),id:d.id})));
+    }, e=>setDirectoryError(`Elenco collaboratori: ${e.message}`));
+    return ()=>{offUsers();offRoles();};
+  }, [gm]);
   const entries = useMemo(() => {
     const primary = seeded && loaded ? published : fallback;
     const map = new Map(primary.map(e => [e.id,e]));
@@ -355,7 +391,7 @@ export function ContentProvider({children}) {
     }
     return {updated,skipped};
   }
-  const value = { configured, user, gm, contributor, submissions, authPending, seeded, loaded, ready:!configured||(loaded&&configLoaded), error, setError, entries, publishedEntries:published, draftEntries:gm?drafts:[], materials, processes, pages, isDraft, resetLegacyLore, login, logout, submitProposal, decideProposal, setContributorEnabled, saveDraft, publish, remove, loadHistory, bootstrap, syncEditorial, importEntries, baseVersion:source.version };
+  const value = { configured, user, gm, contributor, submissions, registeredUsers, contributorRecords, directoryError, authPending, seeded, loaded, ready:!configured||(loaded&&configLoaded), error, setError, entries, publishedEntries:published, draftEntries:gm?drafts:[], materials, processes, pages, isDraft, resetLegacyLore, login, logout, submitProposal, decideProposal, setContributorEnabled, saveDraft, publish, remove, loadHistory, bootstrap, syncEditorial, importEntries, baseVersion:source.version };
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 export function useContent() { const value = useContext(context); if(!value) throw Error('ContentProvider mancante'); return value; }
