@@ -47,6 +47,7 @@ function fallbackEntries() {
   }));
   const base = { id: 'alchimia', kind: 'chapter', title: 'Alchimia', description: 'Materiali e processi alchemici.', parentId: 'root', order: 0, blocks: [], imageUrl: '' };
   const collections = [
+    {id:'alchimia-fondamenti',kind:'collection',title:'Fondamenti alchemici',description:'Principi, termini e conoscenze fondamentali dell’Alchimia.',parentId:'alchimia',order:0,layout:'alchemy',icon:'flask',blocks:[]},
     {id:'alchimia-materiali',kind:'collection',title:'Materiali alchemici',description:'Catalogo dei materiali e delle capacità.',parentId:'alchimia',order:1,blocks:[]},
     {id:'alchimia-genesi',kind:'collection',title:'Processi alchemici',description:'I processi dell’Opera.',parentId:'alchimia',order:2,blocks:[]},
   ];
@@ -99,7 +100,7 @@ export function ContentProvider({children}) {
     const primary = seeded && loaded ? published : fallback;
     const map = new Map(primary.map(e => [e.id,e]));
     // Le due raccolte strutturali esistono anche nei database inizializzati prima della v2.5.
-    for (const builtIn of fallback.filter(e => ['alchimia-materiali','alchimia-genesi'].includes(e.id))) if (!map.has(builtIn.id)) map.set(builtIn.id,builtIn);
+    for (const builtIn of fallback.filter(e => ['alchimia-fondamenti','alchimia-materiali','alchimia-genesi'].includes(e.id))) if (!map.has(builtIn.id)) map.set(builtIn.id,builtIn);
     if (gm) for (const draft of drafts) map.set(draft.id,{...draft, _draft:true});
     return [...map.values()];
   }, [seeded, loaded, published, gm, drafts]);

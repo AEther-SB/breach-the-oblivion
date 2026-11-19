@@ -1,0 +1,66 @@
+/* v3.6 — Leggibilità, immagini, Alchimia, anteprima GM. */
+/* Alchimia: nessun limite di larghezza ereditato dalle pagine vecchie. */
+.section-landing .section-landing-cards{max-width:none!important;width:100%;min-width:0;padding-top:22px}
+.section-landing .section-landing-cards>.home-grid{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,1.5vw,22px)}
+.section-landing .section-landing-cards .home-card{width:100%;min-width:0;min-height:185px}
+.section-landing .section-landing-cards .home-card h3{font-size:clamp(26px,2vw,36px);overflow-wrap:normal}
+/* Giustificazione senza sillabazione automatica o interruzioni forzate nel testo. */
+.lore-chapter-body .rules p,.lore-chapter-body .rules li,
+.lore-editorial-body .rules p,.lore-editorial-body .rules li,
+.gm-preview-article .rules p{max-width:none;width:100%;text-align:justify;text-justify:inter-word;hyphens:none!important;word-break:normal!important;overflow-wrap:normal!important}
+.lore-chapter-body .rules a,.lore-editorial-body .rules a{overflow-wrap:anywhere}
+.lore-chapter-body .rules :is(h2,h3,h4),.lore-editorial-body .rules :is(h2,h3,h4){hyphens:none;word-break:normal;overflow-wrap:break-word}
+/* Le introduzioni prive di un titolo di capitolo devono comunque mostrare il bordo superiore. */
+.lore-editorial-page .lore-chapter-intro{border-top:1px solid var(--line)!important}
+.lore-editorial-page .lore-chapter:not(.lore-chapter-intro){border-top:1px solid var(--line)}
+.lore-chapter-body .rules{display:flow-root}
+/* Ritratto nella colonna sinistra: non influenza i titoli né la larghezza del corpo. */
+.lore-sidebar-portrait{margin:0 0 15px;border:1px solid var(--line);background:var(--surface);padding:5px}
+.lore-sidebar-portrait img{display:block;width:100%;height:auto;max-height:min(31vh,280px);object-fit:contain;object-position:center}
+/* Foto laterali e decorative in blocchi e nel testo. */
+.gm-content-image{box-sizing:border-box}
+.gm-content-image.gm-image-left,.gm-content-image.gm-image-right{width:100%;margin:0;clear:none}
+.gm-content-image.gm-image-left{float:none}
+.gm-content-image.gm-image-right{float:none;margin:0}
+.gm-content-image.gm-image-center{max-width:min(76%,660px);margin:12px auto}
+.gm-content-block.gm-content-float-left,.gm-content-block.gm-content-float-right{width:min(44%,320px);margin:5px 20px 12px 0;float:left}
+.gm-content-block.gm-content-float-right{margin:5px 0 12px 20px;float:right}
+.gm-content-block.gm-image-size-small{width:min(28%,235px)}
+.gm-content-block.gm-image-size-large{width:min(62%,480px)}
+.lore-chapter{display:flow-root}
+.gm-content-image.gm-image-full{width:100%}
+.rules .bto-inline-image{display:block;height:auto;max-height:340px;object-fit:contain;max-width:100%;margin:9px auto 14px}
+.rules .bto-image-left,.rules .bto-image-right{max-width:min(43%,330px);margin:4px 19px 11px 0}
+.rules .bto-image-left{float:left}
+.rules .bto-image-right{float:right;margin:4px 0 11px 19px}
+.rules .bto-image-center{margin:12px auto}
+.rules::after{content:'';display:block;clear:both}
+.gm-content-gallery img{object-fit:cover}
+/* Editor a due colonne con anteprima live: nessun salvataggio per visualizzarla. */
+.gm-drawer-with-preview{width:min(1360px,100vw)}
+.gm-drawer-workspace{display:flex;min-height:0;flex:1}
+.gm-drawer-workspace>.gm-drawer-body{flex:1 1 52%;min-width:0}
+.gm-drawer-header-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.gm-live-preview{flex:1 1 48%;min-width:0;display:flex;flex-direction:column;border-left:1px solid var(--line);background:var(--bg);overflow:hidden}
+.gm-live-preview-head{display:flex;gap:10px;align-items:center;flex:0 0 auto;padding:15px 19px;border-bottom:1px solid var(--line);font:700 10px/1.3 'DM Sans',sans-serif;letter-spacing:.12em;color:var(--gold)}
+.gm-live-preview-scroll{min-height:0;overflow:auto;overscroll-behavior:contain;padding:26px clamp(18px,2vw,34px)}
+.gm-live-preview h1{font:500 clamp(31px,3vw,51px)/1.05 'EB Garamond',Georgia,serif;color:var(--ink-strong);margin:10px 0}
+.gm-preview-subtitle{font:20px/1.4 'EB Garamond',Georgia,serif;color:var(--muted)}
+.gm-preview-portrait{margin:16px 0;max-width:320px}
+.gm-preview-portrait img{width:100%;max-height:300px;object-fit:contain}
+.gm-preview-article{border:1px solid var(--line);padding:18px 20px;margin-top:20px;background:var(--paper);display:flow-root}
+.gm-preview-article .rules{font:20px/1.5 'EB Garamond',Georgia,serif}
+.gm-inline-image-tools{display:grid;gap:10px;padding:15px;border:1px solid var(--line-strong);background:var(--surface)}
+.gm-inline-image-actions{display:flex;justify-content:flex-end;gap:8px}
+@media(min-width:791px) and (max-width:1180px){.section-landing .section-landing-cards>.home-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:790px){
+ .section-landing .section-landing-cards>.home-grid{grid-template-columns:1fr}
+ .gm-drawer-with-preview{width:100vw}
+ .gm-drawer-workspace{flex-direction:column;overflow:auto}
+ .gm-drawer-workspace>.gm-drawer-body{flex:0 0 auto;overflow:visible}
+ .gm-live-preview{flex:0 0 auto;min-height:420px;border-left:0;border-top:1px solid var(--line);overflow:visible}
+ .gm-live-preview-scroll{overflow:visible}
+ .gm-content-block.gm-content-float-left,.gm-content-block.gm-content-float-right{float:none;width:100%;margin:12px 0}
+ .rules .bto-image-left,.rules .bto-image-right{float:none;max-width:100%;margin:10px auto}
+ .lore-chapter-body .rules p,.lore-chapter-body .rules li,.gm-preview-article .rules p{text-align:left}
+}

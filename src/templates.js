@@ -11,8 +11,8 @@ export const TEMPLATES = [
   lorePage('historical-lore','Storia · evento','Pagina per un evento e le sue diramazioni.','history','history',['Contesto','Svolgimento','Conseguenze e fonti']),
   lorePage('organization','Organizzazione','Profilo organizzativo e collegamenti geografici.','organizations','users',['Panoramica','Obiettivi e attività','Sedi e relazioni']),
   lorePage('alchemy-lore','Alchimia · approfondimento','Approfondimento narrativo per fenomeni alchemici.','alchemy','flask',['Panoramica','Teorie e conoscenze','Relazioni']),
-  {id:'character',kind:'page',name:'Personaggio',description:'Identità, ritratto, storia e relazioni.',descriptionText:'Scheda narrativa del personaggio.',blocks:[
-    {type:'image',url:'',alt:'Ritratto del personaggio',caption:''},
+  {id:'character',kind:'page',name:'Personaggio',description:'Identità, ritratto, storia e relazioni.',descriptionText:'Scheda narrativa del personaggio.',imagePlacement:'sidebar',blocks:[
+    {type:'image',url:'',alt:'Immagine decorativa della scheda',caption:'',align:'center'},
     heading('Identità'),{type:'table',columns:['Voce','Dettaglio'],rows:[['Nome',''],['Ruolo',''],['Affiliazione',''],['Luogo','']]},
     heading('Storia'),text('<p>Inserisci la storia del personaggio.</p>'),
     heading('Personalità'),text('<p>Tratti, motivazioni e obiettivi.</p>'),
@@ -39,5 +39,5 @@ export const TEMPLATES = [
 export const templatesForKind = kind => TEMPLATES.filter(t=>t.kind===kind);
 export function applyTemplate(entry, templateId) {
   const template=TEMPLATES.find(t=>t.id===templateId&&t.kind===entry.kind)||TEMPLATES.find(t=>t.kind===entry.kind);
-  return {...entry,description:template.descriptionText,layout:template.layout||'lore',icon:template.icon||'book',blocks:(template.blocks||[]).map((b,i)=>({...JSON.parse(JSON.stringify(b)),id:`blocco-${i}-${Math.random().toString(36).slice(2,9)}`})),templateId:template.id};
+  return {...entry,description:template.descriptionText,layout:template.layout||'lore',icon:template.icon||'book',imagePlacement:template.imagePlacement||'body',blocks:(template.blocks||[]).map((b,i)=>({...JSON.parse(JSON.stringify(b)),id:`blocco-${i}-${Math.random().toString(36).slice(2,9)}`})),templateId:template.id};
 }

@@ -29,6 +29,7 @@ import './layout-v32.css';
 import './layout-v33.css';
 import './layout-v34.css';
 import './layout-v35.css';
+import './layout-v36.css';
 
 const ALCHEMY = '/alchimia';
 const MATERIALS = '/alchimia/materiali';
@@ -41,6 +42,7 @@ const groupIcons = { 'Elementi': Droplets, 'Metalli Planetari': Orbit, 'Metalli 
 // Icone e gerarchia editoriale: funzionano anche con le voci già importate su Firestore.
 const sectionMeta = {
   alchimia:{icon:FlaskConical,tone:'elements',cta:'Esplora Alchimia'},
+  'alchimia-fondamenti':{icon:BookOpen,tone:'elements',cta:'Leggi i fondamenti'},
   'fiamme-essenza':{icon:Flame,tone:'vital',cta:'Esplora le Fiamme'},
   quirk:{icon:Dna,tone:'planetary',cta:'Esplora i Quirk'},
   controcorpi:{icon:Shield,tone:'heavy',cta:'Esplora i Controcorpi'},
@@ -197,9 +199,17 @@ function GlobalSearch({ open, close }) {
 function Layout({ theme, toggleTheme }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const compendiumMenuRef = useRef(null);
   const location = useLocation();
   const {pages,gm,error,seeded} = useContent();
-  useEffect(() => setMobileOpen(false), [location.pathname]);
+  useEffect(() => {setMobileOpen(false);compendiumMenuRef.current?.removeAttribute('open');}, [location.pathname]);
+  useEffect(() => {
+    const dismiss = event => {if(compendiumMenuRef.current && !compendiumMenuRef.current.contains(event.target))compendiumMenuRef.current.removeAttribute('open');};
+    const onKey = event => {if(event.key==='Escape')compendiumMenuRef.current?.removeAttribute('open');};
+    document.addEventListener('pointerdown',dismiss);
+    document.addEventListener('keydown',onKey);
+    return () => {document.removeEventListener('pointerdown',dismiss);document.removeEventListener('keydown',onKey);};
+  },[]);
   useEffect(() => {
     const key = e => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setSearchOpen(true); } };
     document.addEventListener('keydown', key);
@@ -215,7 +225,7 @@ function Layout({ theme, toggleTheme }) {
   const headerNav = (mobile=false) => <>
     {navigation.slice(0,1).map(([href,text])=><NavLink key={href} onClick={mobile?()=>setMobileOpen(false):undefined} className={({isActive})=>`nav-link ${isActive?'nav-link-active':''}`} to={href} end={href==='/' }>{text}</NavLink>)}
     {mobile?<><span className="mobile-nav-group-title">COMPENDIO</span>{compendiumNavigation.map(p=><NavLink key={p.id} to={entryUrl(p)} onClick={()=>setMobileOpen(false)} className="nav-link">{p.title}</NavLink>)}</>:
-      <details className="nav-dropdown"><summary className="nav-link">COMPENDIO <ChevronDown size={12}/></summary><div className="nav-dropdown-panel">{compendiumNavigation.map(p=>{const Icon=entryIcon(p);return <Link key={p.id} to={entryUrl(p)} onClick={e=>e.currentTarget.closest('details')?.removeAttribute('open')}><Icon size={17}/>{p.title}</Link>})}</div></details>}
+      <details ref={compendiumMenuRef} className="nav-dropdown"><summary className="nav-link">COMPENDIO <ChevronDown size={12}/></summary><div className="nav-dropdown-panel">{compendiumNavigation.map(p=>{const Icon=entryIcon(p);return <Link key={p.id} to={entryUrl(p)} onClick={e=>e.currentTarget.closest('details')?.removeAttribute('open')}><Icon size={17}/>{p.title}</Link>})}</div></details>}
     {navigation.slice(1).map(([href,text])=><NavLink key={href} onClick={mobile?()=>setMobileOpen(false):undefined} className={({isActive})=>`nav-link ${isActive?'nav-link-active':''}`} to={href}>{text}</NavLink>)}
   </>;
   return <>
@@ -289,7 +299,8 @@ function AlchemyHome() {
   const {pages,materials,processes}=useCatalog();
   const current=pages.find(p=>p.id==='alchimia');
   const extra=pages.filter(p=>p.parentId==='alchimia'&&!['alchimia','alchimia-materiali','alchimia-genesi'].includes(p.id)).map((p,i)=>({title:p.title,subtitle:p.description||'Pagina del compendio',to:entryUrl(p),tone:'planetary',number:String(i+3).padStart(2,'0'),icon:entryIcon(p),cta:'Apri'}));
-  const cards=[{...alchemyCards[0],subtitle:`${materials.length} materiali · ${materials.reduce((n,m)=>n+(m.abilities||[]).length,0)} capacità`},{...alchemyCards[1],subtitle:`${processes.length} processi`},...extra];
+  const foundation=extra.find(card=>card.to==='/pagina/alchimia-fondamenti');
+  const cards=[...(foundation?[foundation]:[]),{...alchemyCards[0],featured:false,subtitle:`${materials.length} materiali · ${materials.reduce((n,m)=>n+(m.abilities||[]).length,0)} capacità`},{...alchemyCards[1],subtitle:`${processes.length} processi`},...extra.filter(card=>card!==foundation)].map((card,i)=>({...card,number:String(i+1).padStart(2,'0')}));
   return <div className="section-landing page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/>Alchimia</div><PageHeading eyebrow="BREACH THE OBLIVION" title={current?.title||"Alchimia"} text={current?.description?.replaceAll('Processi di Genesi','processi alchemici')||"Materiali e processi alchemici."} trailing={<EditTrigger entry={current}/>}/><div className="section-landing-cards"><SectionCards cards={cards}/></div>{current?.blocks?.length>0&&<div className="gm-collection-body"><GenericBlocks entry={current}/></div>}</div>;
 }
 function LegacyRedirect({ path }) { const loc = useLocation(); return <Navigate to={`${path}${loc.search}`} replace/>; }
@@ -438,6 +449,7 @@ function LoreEditorialSidebar({entry,pages}){
       <span className="eyebrow">{entry.kind==='page'?'VOCE ENCICLOPEDICA':'SEZIONE DEL COMPENDIO'}</span>
       <h1 className={entry.title.length>12?'lore-long-title':''}>{entry.title}</h1>
       {entry.description&&<p className="lore-editorial-lead">{entry.description}</p>}
+      {entry.imagePlacement==='sidebar'&&validatedImageUrl(entry.imageUrl)&&<figure className="lore-sidebar-portrait"><img src={validatedImageUrl(entry.imageUrl)} alt={entry.imageAlt||`Ritratto di ${entry.title}`} loading="lazy" referrerPolicy="no-referrer"/></figure>}
       <div className="lore-editorial-actions">{entry.flameHex&&/^#[a-f0-9]{6}$/i.test(entry.flameHex)&&<span className="bto-flame-label"><i style={{backgroundColor:entry.flameHex}}/>{entry.flameColor}</span>}<EditTrigger entry={entry}/></div>
       <LoreTOC entry={entry}/>
       {parent&&<Link className="lore-editorial-parent" to={entryUrl(parent)}><ArrowLeft size={14}/>{parent.title}</Link>}
@@ -475,7 +487,7 @@ function LoreChapter({entry,chapter,index}){
  const isIntro=chapter.intro;
  return <section className={`lore-chapter ${isIntro?'lore-chapter-intro':''}`} id={chapter.id}>
   {!isIntro&&<div className="lore-chapter-header"><span className="lore-chapter-index">CAPITOLO {String(index).padStart(2,'0')}</span><h2>{chapter.title}</h2></div>}
-  <div className="lore-chapter-body"><GenericBlocks entry={{...entry,blocks:chapter.blocks,imageUrl:isIntro?entry.imageUrl:''}}/></div>
+  <div className="lore-chapter-body"><GenericBlocks entry={{...entry,blocks:chapter.blocks,imageUrl:isIntro&&entry.imagePlacement!=='sidebar'?entry.imageUrl:''}}/></div>
  </section>;
 }
 function GenericPage(){
@@ -500,7 +512,7 @@ function GenericPage(){
           {entry.flames?.length>0&&<FlameCatalog flames={entry.flames}/>}
           {entry.topics?.length>0&&entry.layout!=='counterbodies'&&<CategoryExplorer entry={entry} topics={entry.topics}/>}
           <article className="lore-editorial-body">
-            {chapters.map((chapter,i)=>(chapter.blocks.length>0||(chapter.intro&&entry.imageUrl))?<LoreChapter key={chapter.id+'-'+i} entry={entry} chapter={chapter} index={i}/>:null)}
+            {chapters.map((chapter,i)=>(chapter.blocks.length>0||(chapter.intro&&entry.imageUrl&&entry.imagePlacement!=='sidebar'))?<LoreChapter key={chapter.id+'-'+i} entry={entry} chapter={chapter} index={i}/>:null)}
             {!entry.blocks?.length&&!entry.topics?.length&&!entry.flames?.length&&<p className="lore-empty-copy">Questa sezione non ha ancora un testo introduttivo. Consulta le sottosezioni a destra.</p>}
           </article>
         </div>
