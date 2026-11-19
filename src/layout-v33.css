@@ -1,0 +1,89 @@
+/* v3.3 · Home senza titolo duplicato; Atlante centrato quando è l'ultima tessera. */
+.home-explore{padding-top:20px}
+@media(min-width:1181px){
+  .home-explore .home-grid-centre-last>.home-card:last-child{grid-column:2}
+}
+
+/* Enciclopedia: tre colonne indipendenti, senza intestazione che sottrae altezza al testo. */
+.lore-editorial-page{--lore-focus:var(--gold);width:100%;height:100%;min-height:0;overflow:hidden;padding:clamp(13px,1.8vw,29px) clamp(16px,2.5vw,48px)}
+.lore-editorial-page.lore-section-fiamme-essenza,.lore-editorial-page.lore-layout-flames{--lore-focus:#dc9278}
+.lore-editorial-page.lore-section-quirk,.lore-editorial-page.lore-layout-quirk{--lore-focus:#87b8f1}
+.lore-editorial-page.lore-section-controcorpi,.lore-editorial-page.lore-layout-counterbodies{--lore-focus:#94b9b0}
+.lore-editorial-page.lore-section-organizzazioni,.lore-editorial-page.lore-layout-organizations{--lore-focus:#c5a4db}
+.lore-editorial-page.lore-layout-alchemy,.lore-editorial-page.lore-section-alchimia{--lore-focus:#93b9de}
+.lore-editorial-shell{height:100%;min-height:0;width:100%;max-width:1830px;margin:0 auto;display:grid;grid-template-columns:clamp(238px,19vw,316px) minmax(0,1fr) clamp(220px,18vw,300px);gap:clamp(13px,1.15vw,23px);align-items:stretch}
+.lore-editorial-sidebar,.lore-editorial-related,.lore-editorial-content{min-width:0;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent;overscroll-behavior:contain}
+.lore-editorial-sidebar{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--lore-focus)}
+.lore-editorial-sidebar-inner{padding:clamp(18px,1.45vw,25px)}
+.lore-editorial-sidebar .breadcrumb{display:flex;flex-wrap:wrap;gap:7px;padding:0;margin-bottom:27px;font-size:9px;line-height:1.5;color:var(--subtle)}
+.lore-editorial-sidebar .breadcrumb svg{width:11px;flex:none}
+.lore-editorial-sidebar .eyebrow{color:var(--lore-focus);font-size:9px}
+.lore-editorial-sidebar h1{font:500 clamp(34px,3.05vw,51px)/.98 'EB Garamond',Georgia,serif;letter-spacing:-.03em;color:var(--ink-strong);margin:12px 0 12px;overflow-wrap:break-word}
+.lore-editorial-lead{font:clamp(17px,1.3vw,20px)/1.32 'EB Garamond',Georgia,serif;color:var(--muted);margin:0 0 17px}
+.lore-editorial-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 0 15px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.lore-editorial-actions .edit-trigger{max-width:100%}
+.lore-editorial-sidebar .lore-toc{display:flex;flex-direction:column;gap:0;background:transparent;border:0;border-top:0;padding:17px 0 9px;margin:0;max-height:none;overflow:visible}
+.lore-editorial-sidebar .lore-toc>strong{font-size:10px;color:var(--lore-focus);letter-spacing:.12em;margin:0 0 8px}
+.lore-editorial-sidebar .lore-toc>a{color:var(--muted);padding:8px 4px;font-size:11px;line-height:1.4;overflow-wrap:break-word;transition:color .15s,padding .15s}
+.lore-editorial-sidebar .lore-toc>a:hover{color:var(--lore-focus);padding-left:8px}
+.lore-editorial-parent{margin-top:12px;padding-top:14px;display:flex;align-items:center;gap:9px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
+.lore-editorial-parent:hover{color:var(--lore-focus)}
+.lore-editorial-content{border:1px solid var(--line);background:var(--paper);padding-bottom:40px}
+.lore-editorial-article-head{display:flex;align-items:center;gap:11px;min-height:52px;border-bottom:1px solid var(--line);padding:10px clamp(18px,2vw,35px);background:var(--surface);color:var(--muted);letter-spacing:.14em;font-size:10px;font-weight:700}
+.lore-editorial-emblem{display:grid;place-items:center;color:var(--lore-focus);min-width:26px}
+.lore-editorial-body{padding:clamp(21px,2.3vw,42px) clamp(18px,3vw,58px) 55px;overflow-wrap:break-word;min-width:0}
+.lore-editorial-content>.flame-catalog{margin:22px clamp(15px,1.6vw,30px) 0;grid-template-columns:repeat(2,minmax(0,1fr))}
+.lore-editorial-body .rules,.lore-editorial-body .gm-content-block{min-width:0}
+.lore-editorial-body .rules{font-family:'EB Garamond',Georgia,serif;font-size:clamp(19px,1.3vw,22px);line-height:1.6;color:var(--ink)}
+.lore-editorial-body .rules p{max-width:78ch;margin:0 0 17px}
+.lore-editorial-body .rules ul,.lore-editorial-body .rules ol{max-width:78ch;margin:13px 0 22px;padding-left:27px}
+.lore-editorial-body .rules li{margin:6px 0}
+.lore-editorial-body .rules h2,.lore-editorial-body .gm-content-heading h2{
+  position:relative;margin:33px 0 17px;padding:24px 0 11px;border-top:1px solid var(--line);border-bottom:1px solid color-mix(in srgb,var(--lore-focus) 42%,var(--line));
+  color:var(--ink-strong);font:500 clamp(30px,2.6vw,42px)/1.07 'EB Garamond',Georgia,serif;scroll-margin-top:22px;
+}
+.lore-editorial-body .rules h2::before,.lore-editorial-body .gm-content-heading h2::before{content:'CAPITOLO';display:block;font:700 9px/1.3 'DM Sans',sans-serif;color:var(--lore-focus);letter-spacing:.16em;margin-bottom:8px}
+.lore-editorial-body .gm-content-block:first-child .rules h2:first-child,.lore-editorial-body>.gm-content-block:first-child>h2{margin-top:0;padding-top:6px;border-top:0}
+.lore-editorial-body .rules h3,.lore-editorial-body .gm-content-heading h3{font:500 clamp(23px,2vw,30px)/1.12 'EB Garamond',Georgia,serif;color:var(--ink-strong);margin:23px 0 11px;padding:0 0 6px;border-bottom:1px dashed var(--line);scroll-margin-top:22px}
+.lore-editorial-body .rules h4{font:600 21px/1.1 'EB Garamond',Georgia,serif;margin:19px 0 9px;color:var(--ink-strong)}
+.lore-editorial-body .rules a{color:var(--lore-focus);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
+.lore-editorial-body .rules strong{font-weight:700;color:var(--ink-strong)}
+.lore-editorial-body .rules blockquote{margin:15px 0;padding:12px 18px;background:var(--surface);border-left:2px solid var(--lore-focus)}
+.lore-editorial-body .lore-topic-explorer{grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:28px}
+.lore-editorial-related{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--lore-focus);padding:19px 13px 30px}
+.lore-editorial-related>.eyebrow{display:block;margin:1px 5px 17px;color:var(--gold);font-size:10px}
+.lore-editorial-related-list{display:flex;flex-direction:column;gap:9px}
+.lore-editorial-related-link{display:grid;grid-template-columns:30px minmax(0,1fr) 14px;align-items:start;gap:9px;padding:14px 10px;border:1px solid var(--line);background:var(--surface);color:var(--ink-strong);transition:border-color .18s,background .18s}
+.lore-editorial-related-link:hover{border-color:var(--lore-focus);background:var(--paper)}
+.lore-related-symbol{height:29px;width:29px;display:grid;place-items:center;color:var(--lore-focus);border:1px solid var(--line)}
+.lore-related-text{display:grid;gap:6px;min-width:0}.lore-related-text>small{font-size:9px;letter-spacing:.1em;color:var(--muted)}
+.lore-related-text>strong{font:500 21px/1.05 'EB Garamond',Georgia,serif;overflow-wrap:break-word}
+.lore-related-text>span{font-size:10px;line-height:1.4;color:var(--muted);overflow-wrap:break-word}
+.lore-editorial-related-link>svg{color:var(--lore-focus);margin-top:5px}
+.lore-editorial-related-empty>a{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);padding:12px 5px}
+.lore-editorial-related-empty>a:hover{color:var(--lore-focus)}
+
+@media(min-width:791px) and (max-width:1120px){
+ .lore-editorial-page{padding:11px 15px}
+ .lore-editorial-shell{grid-template-columns:210px minmax(0,1fr) 205px;gap:11px}
+ .lore-editorial-sidebar-inner{padding:14px}.lore-editorial-body{padding:20px 24px 30px}
+ .lore-editorial-content>.flame-catalog{grid-template-columns:1fr}
+ .lore-editorial-body .lore-topic-explorer{grid-template-columns:1fr}
+}
+@media(max-width:790px){
+ .lore-editorial-page{height:auto;overflow:visible;padding:13px 15px 36px}
+ .lore-editorial-shell{display:flex;flex-direction:column;height:auto;gap:15px}
+ .lore-editorial-sidebar,.lore-editorial-related,.lore-editorial-content{overflow:visible;height:auto}
+ .lore-editorial-sidebar-inner{padding:19px}
+ .lore-editorial-sidebar h1{font-size:clamp(35px,9vw,49px)}
+ .lore-editorial-sidebar .lore-toc{flex-direction:row;flex-wrap:wrap;gap:7px}
+ .lore-editorial-sidebar .lore-toc>strong{width:100%}
+ .lore-editorial-sidebar .lore-toc>a{border:1px solid var(--line);padding:7px 10px;font-size:11px}
+ .lore-editorial-body{padding:23px 21px 30px}
+ .lore-editorial-body .rules h2{font-size:30px}
+ .lore-editorial-content>.flame-catalog{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .lore-editorial-related{padding:15px}
+ .lore-editorial-related-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:500px){.lore-editorial-content>.flame-catalog,.lore-editorial-body .lore-topic-explorer,.lore-editorial-related-list{grid-template-columns:1fr}}
+@media print{.lore-editorial-page,.lore-editorial-shell,.lore-editorial-content,.lore-editorial-related,.lore-editorial-sidebar{height:auto!important;overflow:visible!important}.lore-editorial-shell{display:block}.lore-editorial-related{margin-top:20px}}

@@ -1,29 +1,50 @@
-.storia-tree{margin:27px 0 32px;border:1px solid var(--line);background:var(--paper)}
-.storia-tree-heading{display:flex;gap:18px;align-items:center;justify-content:space-between;padding:26px 30px 23px;border-bottom:1px solid var(--line);background:linear-gradient(115deg,var(--paper),color-mix(in srgb,var(--surface) 60%,var(--paper)))}
-.storia-tree-heading h2{font:500 clamp(30px,3vw,43px)/1.1 'EB Garamond',serif;margin:5px 0 7px;color:var(--ink-strong)}
-.storia-tree-heading p{max-width:760px;font-size:12px;line-height:1.65;color:var(--muted);margin:0}
-.storia-add,.storia-node-edit{border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);padding:9px 11px;display:inline-flex;align-items:center;gap:7px;font-size:11px;flex:none}
-.storia-scroll{overflow:auto;padding:0;background:radial-gradient(ellipse at 48% 60%,color-mix(in srgb,var(--gold) 5%,transparent),transparent 75%),var(--bg);scrollbar-width:thin}
-.storia-canvas{position:relative;width:1125px;min-width:1125px}
-.storia-lanes{position:absolute;z-index:2;inset:0 0 auto;height:70px;border-bottom:1px solid var(--line);background:var(--paper)}
-.storia-lanes span{position:absolute;top:23px;width:300px;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:10px;font-weight:750;letter-spacing:.09em;text-transform:uppercase}
-.storia-lanes svg{color:var(--gold)}
-.storia-wires{position:absolute;z-index:0;inset:0;overflow:visible;pointer-events:none}
-.storia-wire{fill:none;stroke:color-mix(in srgb,var(--gold) 74%,var(--muted));stroke-width:2;stroke-dasharray:7 6;opacity:.75}
-.storia-guide{stroke:var(--line-strong);stroke-width:1;stroke-dasharray:2 10;opacity:.7}
-.storia-node{position:absolute;z-index:1;border:1px solid var(--line-strong);background:var(--paper);box-shadow:0 8px 18px #00000014}
-.storia-node:before{content:"";position:absolute;top:-9px;left:calc(50% - 5px);height:9px;width:9px;transform:rotate(45deg);border:1px solid var(--gold);background:var(--bg)}
-.storia-node-index{display:flex;align-items:center;gap:12px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:10px;letter-spacing:.07em;color:var(--muted)}
-.storia-node-index span:first-child{color:var(--gold);font-weight:750}
-.storia-node-link{position:relative;display:flex;flex-direction:column;min-height:79px;padding:10px 32px 10px 14px;gap:5px;color:var(--ink-strong)}
-.storia-node-link strong{font:500 24px/1.05 'EB Garamond',serif}.storia-node-link small{font-size:11px;line-height:1.3;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.storia-node-link>svg{position:absolute;top:12px;right:12px;color:var(--gold)}
-.storia-node-link:hover{background:var(--accent-soft)}.storia-node-edit{width:100%;justify-content:center;border:0;border-top:1px solid var(--line);font-size:10px;padding:6px}
-.storia-help{display:flex;align-items:center;gap:7px;margin:0;padding:13px 18px;color:var(--muted);border-top:1px solid var(--line);font-size:11px;line-height:1.5}
-.storia-confirm{padding:8px 15px;display:flex;gap:8px;color:var(--ink)}
+/* Cronologia verticale e biblioteca tematica, entrambe modificabili da GM. */
+.storia-workspace{--storia-accent:#c4ab84;width:100%;height:100%;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.storia-workspace-header{flex:none;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;padding:clamp(15px,2vh,25px) clamp(24px,3.3vw,65px) 18px;border-bottom:1px solid var(--line);background:var(--paper)}
+.storia-workspace-title{display:flex;flex-direction:column;gap:9px;min-width:0}
+.storia-workspace-breadcrumb{display:flex;align-items:center;gap:10px;font-size:10px;letter-spacing:.07em;color:var(--muted);text-transform:uppercase}
+.storia-workspace-breadcrumb a{color:var(--muted)}.storia-workspace-breadcrumb a:hover{color:var(--gold)}
+.storia-workspace-header .eyebrow{font-size:9px}.storia-workspace-header h1{font:500 clamp(32px,3.2vw,52px)/.98 'EB Garamond',Georgia,serif;color:var(--ink-strong);margin:6px 0 3px}
+.storia-workspace-header p{font:17px/1.3 'EB Garamond',Georgia,serif;color:var(--muted);margin:0}
+.storia-workspace-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.storia-add{border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);padding:10px 12px;display:inline-flex;align-items:center;gap:7px;font-size:11px;white-space:nowrap}
+.storia-add:hover{border-color:var(--gold)}
+.storia-workspace-layout{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:0}
+.storia-events,.storia-lore{min-width:0;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent;overscroll-behavior:contain;padding:clamp(18px,2.4vw,39px) clamp(18px,3vw,53px) 56px}
+.storia-events{background:radial-gradient(ellipse at 0% 0%,color-mix(in srgb,var(--gold) 5%,transparent),transparent 67%),var(--bg);border-right:1px solid var(--line)}
+.storia-lore{background:color-mix(in srgb,var(--paper) 65%,var(--bg))}
+.storia-column-head{display:flex;align-items:center;gap:14px;color:var(--gold);margin-bottom:5px}
+.storia-column-head>svg{flex:none}.storia-column-head h2{font:500 clamp(29px,2.6vw,41px)/1.05 'EB Garamond',Georgia,serif;margin:5px 0 0;color:var(--ink-strong)}
+.storia-count{margin-left:auto;border:1px solid var(--line-strong);padding:5px 9px;font-size:12px;color:var(--muted)}
+.storia-column-intro{font-size:12px;color:var(--muted);line-height:1.65;max-width:65ch;margin:10px 0 25px}
+.storia-event-list{display:flex;flex-direction:column}
+.storia-event{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px;min-width:0;position:relative}
+.storia-event-axis{display:flex;align-items:center;flex-direction:column;gap:8px;color:var(--gold);position:relative;padding-top:19px;font-size:10px;letter-spacing:.1em}
+.storia-event:not(:last-child) .storia-event-axis:after{content:"";position:absolute;top:40px;bottom:-15px;left:50%;width:1px;background:linear-gradient(var(--gold),var(--line));opacity:.6}
+.storia-event-dot{width:13px;height:13px;background:var(--paper);border:2px solid var(--gold);border-radius:50%;z-index:1}
+.storia-event-card{min-width:0;position:relative;border:1px solid var(--line);border-left:3px solid color-mix(in srgb,var(--gold) 70%,var(--line));background:var(--paper);padding:17px 19px 18px;margin-bottom:18px}
+.storia-event-meta{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-bottom:7px;font-size:10px;letter-spacing:.05em;color:var(--gold)}
+.storia-event-meta button{border:0;background:none;display:flex;align-items:center;gap:5px;color:var(--muted);cursor:pointer;padding:4px 0;font-size:10px}
+.storia-event-link{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;color:var(--ink-strong)}
+.storia-event-link strong{font:500 clamp(23px,2vw,31px)/1.07 'EB Garamond',serif}.storia-event-link svg{color:var(--gold);flex:none;margin-top:5px}
+.storia-event-card>p{font:12px/1.5 'DM Sans',sans-serif;color:var(--muted);margin:9px 0 0;overflow-wrap:break-word}
+.storia-event-relations{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:12px;border-top:1px solid var(--line);padding-top:9px;font-size:10px;color:var(--muted)}
+.storia-event-relations a{color:var(--gold);text-decoration:underline;text-underline-offset:3px}
+.storia-lore-group{margin:0 0 25px;border:1px solid var(--line);background:var(--paper)}
+.storia-lore-group-heading{padding:15px 17px;background:var(--surface);border-bottom:1px solid var(--line);border-left:3px solid var(--gold)}
+.storia-lore-group-heading small{color:var(--gold);font-size:9px;letter-spacing:.14em}.storia-lore-group-heading h3{font:500 28px/1.07 'EB Garamond',serif;margin:4px 0 0;color:var(--ink-strong)}
+.storia-lore-cards{display:grid;grid-template-columns:1fr;gap:0}
+.storia-lore-card{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 18px;border-top:1px solid var(--line);color:var(--ink-strong)}
+.storia-lore-card:first-child{border-top:0}.storia-lore-card:hover{background:var(--surface)}
+.storia-lore-card>span{display:grid;gap:4px;min-width:0}.storia-lore-card strong{font:500 22px/1.12 'EB Garamond',serif}.storia-lore-card small{font:11px/1.4 'DM Sans',sans-serif;color:var(--muted)}.storia-lore-card svg{color:var(--gold);flex:none}
+.storia-empty{padding:22px;border:1px dashed var(--line);color:var(--muted);font-size:12px}
+.storia-confirm{padding:8px 30px;display:flex;gap:8px;color:var(--ink);font-size:12px}
 .storia-modal-backdrop{position:fixed;inset:0;z-index:200;background:#080a12ca;display:grid;place-items:center;padding:18px}
 .storia-modal{display:grid;gap:13px;width:min(600px,100%);max-height:calc(100vh - 35px);overflow:auto;padding:24px;border:1px solid var(--line-strong);background:var(--paper)}
 .storia-modal-top{display:flex;justify-content:space-between;align-items:flex-start}.storia-modal-top h2{margin:6px 0;font:500 32px 'EB Garamond',serif}.storia-modal-top>button{background:transparent;border:0;color:var(--ink)}
 .storia-modal label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700}.storia-modal input,.storia-modal select{width:100%;padding:10px 11px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink)}
-.storia-modal-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.storia-modal p{font-size:11px;line-height:1.5;color:var(--muted);overflow-wrap:anywhere}.storia-modal p.storia-error{color:#ce6460}
+.storia-modal p{font-size:11px;line-height:1.5;color:var(--muted);overflow-wrap:anywhere}.storia-modal p.storia-error{color:#ce6460}
 .storia-modal-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px;border-top:1px solid var(--line);padding-top:14px}.storia-modal-actions button{display:inline-flex;align-items:center;gap:6px;padding:9px 12px;background:var(--surface);border:1px solid var(--line);font-size:11px}.storia-modal-actions button.storia-publish{background:var(--accent-dark);color:var(--paper)}
-@media(max-width:790px){.storia-tree-heading{padding:18px;flex-direction:column;align-items:flex-start}.storia-help{align-items:flex-start}.storia-modal-row{grid-template-columns:1fr}}
+@media(max-width:960px){.storia-events,.storia-lore{padding:20px 18px 44px}.storia-event{grid-template-columns:35px minmax(0,1fr)}}
+@media(max-width:790px){.storia-workspace{height:auto;min-height:calc(100dvh - 58px);overflow:visible}.storia-workspace-header{align-items:flex-start;flex-direction:column}.storia-workspace-layout{display:flex;flex-direction:column;overflow:visible}.storia-events,.storia-lore{overflow:visible;height:auto;padding:22px 17px}.storia-events{border-right:0;border-bottom:1px solid var(--line)}.storia-workspace-actions{justify-content:flex-start}.storia-event{grid-template-columns:35px minmax(0,1fr)}}
+@media print{.storia-workspace,.storia-events,.storia-lore{height:auto!important;overflow:visible!important}.storia-workspace-layout{display:block}.storia-workspace-header{padding:20px}}

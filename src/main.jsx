@@ -25,6 +25,7 @@ import './editor-modular.css';
 import './home-cards.css';
 import './app-overhaul.css';
 import './layout-v32.css';
+import './layout-v33.css';
 
 const ALCHEMY = '/alchimia';
 const MATERIALS = '/alchimia/materiali';
@@ -257,8 +258,8 @@ const alchemyCards = [
   { title:'Materiali alchemici', subtitle:'Materiali e capacità', to:MATERIALS, tone:'elements', number:'01', icon:FlaskConical, featured:true, cta:'Consulta i materiali' },
   { title:'Processi alchemici', subtitle:'Le operazioni della trasformazione', to:GENESIS, tone:'composite', number:'02', icon:Layers3, cta:'Esplora i processi' },
 ];
-function SectionCards({cards}) {
-  return <div className="home-grid">{cards.map(card => {const Icon=card.icon||BookOpen;return <Link className={`home-card ${card.featured ? 'home-card-featured' : ''} tone-${card.tone}`} to={card.to} key={card.to}><div className="home-card-top"><span>{card.number} / SEZIONE</span></div><div className="home-card-icon" aria-hidden="true">{card.flameHex?<span className="lore-swatch" style={{backgroundColor:card.flameHex}}/>:<Icon size={28} strokeWidth={1.4}/>}</div><div className="home-card-content"><h3>{card.title}</h3><p>{card.subtitle}</p></div><span className="home-card-bottom">{card.cta}<ArrowUpRight size={19}/></span></Link>})}</div>;
+function SectionCards({cards,className=""}) {
+  return <div className={`home-grid ${className}`}>{cards.map(card => {const Icon=card.icon||BookOpen;return <Link className={`home-card ${card.featured ? 'home-card-featured' : ''} tone-${card.tone}`} to={card.to} key={card.to}><div className="home-card-top"><span>{card.number} / SEZIONE</span></div><div className="home-card-icon" aria-hidden="true">{card.flameHex?<span className="lore-swatch" style={{backgroundColor:card.flameHex}}/>:<Icon size={28} strokeWidth={1.4}/>}</div><div className="home-card-content"><h3>{card.title}</h3><p>{card.subtitle}</p></div><span className="home-card-bottom">{card.cta}<ArrowUpRight size={19}/></span></Link>})}</div>;
 }
 function Home({theme}) {
   const {materials,processes,pages}=useCatalog();
@@ -273,7 +274,7 @@ function Home({theme}) {
         <div className="hero-stats"><div><strong>{roots.length||1}</strong><span>Sezioni</span></div><div><strong>{materials.length}</strong><span>Materiali</span></div><div><strong>{pages.filter(p=>p.kind==='page').length}</strong><span>Voci di lore</span></div></div></div>
       <HomeConnectionPreview theme={theme}/>
     </div><div className="hero-bottom-line page-width"><span>BREACH THE OBLIVION · COMPENDIO</span><span>STORIA · POTERI · ALCHEMIA</span></div></section>
-    <section className="home-explore page-width"><div className="lore-section-intro"><span className="eyebrow">INDICE GENERALE</span><h2>Esplora l’ambientazione</h2><p>Le sezioni principali sono organizzate per argomento. Sottosezioni e singole voci si trovano all’interno delle rispettive raccolte.</p></div><SectionCards cards={homeCards}/></section>
+    <section className="home-explore page-width" aria-label="Sezioni del compendio"><SectionCards cards={homeCards} className={homeCards.length%3===1?"home-grid-centre-last":""}/></section>
   </div>;
 }
 function AlchemyHome() {
@@ -403,8 +404,34 @@ function CategoryExplorer({topics=[],entry}){
 }
 function LoreTOC({entry}){
  const headings=(entry.blocks||[]).flatMap(b=>b.type==='heading'&&b.text?[{id:slug(b.text),label:b.text}]:b.type==='rich'?[...String(b.html||'').matchAll(/<h[234]\s+[^>]*id="([a-z0-9-]+)"[^>]*>([\s\S]*?)<\/h[234]>/gi)].map(m=>({id:m[1],label:m[2].replace(/<[^>]*>/g,'')})):[]);
- if(headings.length<2)return null;
+ if(!headings.length)return null;
  return <nav className="lore-toc" aria-label="Indice della voce"><strong>IN QUESTA PAGINA</strong>{headings.map(h=><a key={h.id} href={`#/pagina/${entry.id}?sezione=${h.id}`}>{h.label}</a>)}</nav>;
+}
+function LoreRelatedRail({entry,children=[],siblings=[]}){
+  const entries=children.length?children:siblings;
+  const isNested=children.length>0;
+  if(!entries.length)return <aside className="lore-editorial-related lore-editorial-related-empty" aria-label="Navigazione della raccolta"><span className="eyebrow">NAVIGAZIONE</span><Link to={entry.parentId&&entry.parentId!=='root'?`/pagina/${entry.parentId}`:'/'}><ArrowLeft size={15}/> Torna alla raccolta</Link></aside>;
+  return <aside className="lore-editorial-related" aria-label={isNested?'Sottosezioni':'Altre voci della raccolta'}>
+    <span className="eyebrow">{isNested?'SOTTOSEZIONI':'NELLA RACCOLTA'}</span>
+    <div className="lore-editorial-related-list">{entries.map((p,i)=>{const Icon=entryIcon(p);return <Link className="lore-editorial-related-link" to={entryUrl(p)} key={p.id}>
+      <span className="lore-related-symbol"><Icon size={18} strokeWidth={1.5}/></span>
+      <span className="lore-related-text"><small>{String(i+1).padStart(2,'0')} · {p.kind==='page'?'VOCE':'SEZIONE'}</small><strong>{p.title}</strong>{p.description&&<span>{p.description}</span>}</span>
+      <ArrowUpRight size={14}/>
+    </Link>})}</div>
+  </aside>;
+}
+function LoreEditorialSidebar({entry,pages}){
+  const parent=pages.find(p=>p.id===entry.parentId);
+  return <aside className="lore-editorial-sidebar" aria-label={`Introduzione e indice di ${entry.title}`}>
+    <div className="lore-editorial-sidebar-inner"><LoreBreadcrumb entry={entry} pages={pages}/>
+      <span className="eyebrow">{entry.kind==='page'?'VOCE ENCICLOPEDICA':'SEZIONE DEL COMPENDIO'}</span>
+      <h1>{entry.title}</h1>
+      {entry.description&&<p className="lore-editorial-lead">{entry.description}</p>}
+      <div className="lore-editorial-actions">{entry.flameHex&&/^#[a-f0-9]{6}$/i.test(entry.flameHex)&&<span className="bto-flame-label"><i style={{backgroundColor:entry.flameHex}}/>{entry.flameColor}</span>}<EditTrigger entry={entry}/></div>
+      <LoreTOC entry={entry}/>
+      {parent&&<Link className="lore-editorial-parent" to={entryUrl(parent)}><ArrowLeft size={14}/>{parent.title}</Link>}
+    </div>
+  </aside>;
 }
 function GenericPage(){
   const {id}=useParams();
@@ -412,40 +439,25 @@ function GenericPage(){
   const entry=pages.find(p=>p.id===id);
   if(!entry)return <MissingPage/>;
   if(entry.id==='atlas-geografico')return <Navigate to="/atlante" replace/>;
+  if(entry.id==='storia-passato')return <StoriaTimeline pages={pages} entry={entry} editControl={<EditTrigger entry={entry}/>}/>;
   const children=pages.filter(p=>p.parentId===entry.id&&p.id!==entry.id);
-  if(entry.id==='organizzazioni'){
-    const orphan=pages.filter(isOrphanAntagonists);
-    if(!children.some(p=>p.id==='organizzazioni-antagonisti'))children.push(...orphan);
-  }
+  if(entry.id==='organizzazioni'&&!children.some(p=>p.id==='organizzazioni-antagonisti'))children.push(...pages.filter(isOrphanAntagonists));
   children.sort((a,b)=>a.order-b.order||a.title.localeCompare(b.title,'it'));
-  const isLanding=['chapter','collection'].includes(entry.kind);
+  const siblings=pages.filter(p=>p.parentId===entry.parentId&&p.id!==entry.id&&!isOrphanAntagonists(p)).sort((a,b)=>a.order-b.order||a.title.localeCompare(b.title,'it'));
   const Icon=entryIcon(entry);
-  if(isLanding){
-    const isHistory=entry.id==='storia-passato';
-    const major=entry.id==='fiamme-essenza' ? children.filter(p=>['fiamme-categorie'].includes(p.id)) :
-      entry.id==='quirk' ? children.filter(p=>['quirk-ancestrali'].includes(p.id)) :
-      entry.id==='controcorpi' ? children.filter(p=>['controcorpi-fondamenti','controcorpi-categorie'].includes(p.id)) :
-      entry.id==='atlas-geografico' ? children.filter(p=>p.kind==='collection') :
-      children.filter(p=>p.kind==='collection');
-    const featured=major.length?major:children.length<=4?children:[];
-    const remaining=children.filter(p=>!featured.some(m=>m.id===p.id));
-    return <div className={`section-landing lore-landing page-width lore-section-${entry.id} lore-layout-${entry.layout||'lore'}`}><LoreBreadcrumb entry={entry} pages={pages}/><PageHeading eyebrow="BREACH THE OBLIVION · COMPENDIO" title={entry.title} text={entry.description} trailing={<EditTrigger entry={entry}/>}/>
-      <div className="lore-content-scroll" tabIndex={0} aria-label={`Contenuto di ${entry.title}`}>
-        {entry.blocks?.length>0&&<div className="lore-section-intro-layout"><LoreTOC entry={entry}/><div className="lore-section-description">{entry.topics?.length>0&&<CategoryExplorer entry={entry} topics={entry.topics}/>}<GenericBlocks entry={entry}/></div></div>}
-        {isHistory&&<StoriaTimeline pages={pages}/>}
-        {!isHistory&&featured.length>0&&<section className="lore-featured"><div className="lore-index-heading"><span className="eyebrow">{entry.kind==='chapter'?'SEZIONI PRINCIPALI':'RACCOLTE'}</span><h2>Percorsi di lettura</h2></div><div className="section-landing-cards"><SectionCards cards={featured.map((p,i)=>cardOf(p,i))}/></div></section>}
-        {!isHistory&&remaining.length>0&&<LoreIndex entries={remaining} heading={featured.length?'Altre voci':'Contenuti della raccolta'}/>}
-        {children.length===0&&entry.blocks?.length===0&&<div className="lore-empty"><Icon size={29}/><p>Non sono ancora disponibili voci in questa sezione.</p></div>}
+  return <div className={`lore-editorial-page lore-section-${entry.id} lore-section-${entry.parentId} lore-layout-${entry.layout||'lore'}`}>
+    <div className="lore-editorial-shell">
+      <LoreEditorialSidebar entry={entry} pages={pages}/>
+      <div className="lore-editorial-content" tabIndex={0} aria-label={`Contenuto di ${entry.title}`}>
+        <div className="lore-editorial-article-head"><span className="lore-editorial-emblem">{entry.flameHex?<span className="lore-swatch" style={{backgroundColor:entry.flameHex}}/>:<Icon size={21} strokeWidth={1.4}/>}</span><span>{entry.flames?.length?'CATALOGO CROMATICO':entry.kind==='page'?'ARCHIVIO ENCICLOPEDICO':'INTRODUZIONE'}</span></div>
+        {entry.flames?.length>0&&<FlameCatalog flames={entry.flames}/>}
+        <article className="lore-editorial-body">
+          {entry.topics?.length>0&&<CategoryExplorer entry={entry} topics={entry.topics}/>}
+          {entry.blocks?.length>0?<GenericBlocks entry={entry}/>:<p className="lore-empty-copy">Questa sezione non ha ancora un testo introduttivo. Consulta le sottosezioni a destra.</p>}
+        </article>
       </div>
-    </div>;
-  }
-  const siblings=pages.filter(p=>p.parentId===entry.parentId&&p.id!==entry.id&&p.kind==='page').slice(0,7);
-  return <div className={`reading-page lore-detail page-width lore-section-${entry.parentId} lore-layout-${entry.layout||'lore'}`}><LoreBreadcrumb entry={entry} pages={pages}/>
-    <PageHeading eyebrow="COMPENDIO · VOCE ENCICLOPEDICA" title={entry.title} text={entry.description} trailing={<div className="bto-entry-actions">{entry.flameHex&&/^#[a-f0-9]{6}$/i.test(entry.flameHex)&&<span className="bto-flame-label"><i style={{backgroundColor:entry.flameHex}}/>{entry.flameColor}</span>}<EditTrigger entry={entry}/></div>}/>
-    <div className="lore-detail-layout"><LoreTOC entry={entry}/><div className="lore-article-scroll" tabIndex={0} aria-label={`Contenuto di ${entry.title}`}><div className="lore-article-head"><span className="lore-article-emblem">{entry.flameHex?<span className="lore-swatch" style={{backgroundColor:entry.flameHex}}/>:<Icon size={25} strokeWidth={1.4}/>}</span><span>{entry.flames?.length?'CATALOGO CROMATICO':'ARCHIVIO ENCICLOPEDICO'}</span></div>
-    {entry.flames?.length>0&&<FlameCatalog flames={entry.flames}/>}
-    <article className="lore-article"><GenericBlocks entry={entry}/>{!entry.blocks?.length&&<p className="lore-empty-copy">Contenuti ancora da definire.</p>}</article>
-    {siblings.length>0&&<LoreIndex entries={siblings} heading="Nella stessa raccolta"/>}</div></div>
+      <LoreRelatedRail entry={entry} children={children} siblings={siblings}/>
+    </div>
   </div>;
 }
 function MissingPage(){return <div className="missing-page page-width"><span className="eyebrow">PAGINA NON TROVATA</span><h1>Questa pagina non esiste.</h1><Link className="primary-button" to="/">Torna all’inizio <ArrowRight size={18}/></Link></div>}
