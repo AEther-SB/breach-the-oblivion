@@ -44,6 +44,8 @@ export default function AtlasGeografico(){
  const [search,setSearch]=useState('');
  const [filter,setFilter]=useState('all');
  const [view,setView]=useState(FULL);
+ const [compactMap,setCompactMap]=useState(()=>typeof window!=="undefined"&&window.matchMedia('(max-width:790px)').matches);
+ useEffect(()=>{const query=window.matchMedia('(max-width:790px)');const update=()=>setCompactMap(query.matches);update();query.addEventListener('change',update);return()=>query.removeEventListener('change',update);},[]);
  const [placement,setPlacement]=useState(null);
  const [edit,setEdit]=useState(null);
  const [pendingPositions,setPendingPositions]=useState({});
@@ -189,7 +191,7 @@ export default function AtlasGeografico(){
    <section className="atlas-map-column" aria-label="Mappa geografica">
     <div className="atlas-toolbar"><div className="atlas-toolbar-label"><Globe2 size={18}/><span>MONDO · ATLANTE GEOGRAFICO</span></div><div className="atlas-toolbar-actions"><button type="button" onClick={()=>zoom(1/1.65)} title="Riduci zoom" aria-label="Riduci zoom"><Minus size={17}/></button><button type="button" onClick={()=>setView(FULL)} title="Reimposta mappa" aria-label="Reimposta mappa"><Crosshair size={16}/></button><button type="button" onClick={()=>zoom(1.65)} title="Aumenta zoom" aria-label="Aumenta zoom"><Plus size={17}/></button></div></div>
     <div className="atlas-stage">
-     <svg ref={svgRef} viewBox={`${view.x} ${view.y} ${view.w} ${view.h}`} className={`atlas-map ${placement?'atlas-placing':''}`} xmlns="http://www.w3.org/2000/svg" aria-label="Mappa interattiva dei Paesi" onPointerDown={onMapPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onClick={e=>mapClick(e)} onDragOver={e=>e.preventDefault()} onDrop={onMapDrop} onWheel={onWheel} preserveAspectRatio="xMidYMid meet">
+     <svg ref={svgRef} viewBox={`${view.x} ${view.y} ${view.w} ${view.h}`} className={`atlas-map ${placement?'atlas-placing':''}`} xmlns="http://www.w3.org/2000/svg" aria-label="Mappa interattiva dei Paesi" onPointerDown={onMapPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onClick={e=>mapClick(e)} onDragOver={e=>e.preventDefault()} onDrop={onMapDrop} onWheel={onWheel} preserveAspectRatio={compactMap ? "xMidYMid slice" : "xMidYMid meet"}>
       <rect x={view.x-1000} y="0" width={view.w+2000} height={MAP_HEIGHT} fill="var(--atlas-sea)"/>
       {tiles.map(tile=><g key={'world-'+tile} transform={`translate(${tile*1000} 0) scale(1 ${VERTICAL_SCALE})`}>
         {Array.from({length:11},(_,i)=>i+1).map(i=><line key={'vx'+i} x1={i*1000/12} y1="0" x2={i*1000/12} y2="476" className="atlas-grid-line"/>)}

@@ -13,6 +13,7 @@ import { sanitizeHtml, validatedImageUrl } from './sanitize';
 import { formatLegacyMarkup } from './legacy-format.js';
 import { EditTrigger, GMControls, GenericBlocks } from './editor';
 import { buildRelations, relationsFor, glossaryEntries, linkedHtml, routes } from './relations';
+import {connectionDegrees} from './graph-metrics.js';
 import RelationMap, { HomeConnectionPreview } from './RelationMap';
 import Prerequisites from './Prerequisites';
 import AtlasGeografico from './AtlasGeografico';
@@ -33,6 +34,7 @@ import './layout-v34.css';
 import './layout-v35.css';
 import './layout-v36.css';
 import './layout-v39.css';
+import './layout-v310.css';
 
 const ALCHEMY = '/alchimia';
 const MATERIALS = '/alchimia/materiali';
@@ -177,7 +179,11 @@ function ScrollManager() {
 
 function GlobalSearch({ open, close }) {
   const [term, setTerm] = useState('');
-  const {searchItems,materials,processes}=useCatalog();
+  const {searchItems,materials,processes,pages}=useCatalog();
+  const graph = useMemo(() => open ? buildRelations(materials,processes,pages) : null, [open,materials,processes,pages]);
+  const degrees = useMemo(() => graph ? connectionDegrees(graph) : new Map(), [graph]);
+  const degreesByUrl = useMemo(() => new Map((graph?.nodes||[]).map(node => [node.url, degrees.get(node.id)||0])), [graph,degrees]);
+  const graphSearchItems = useMemo(() => (graph?.nodes||[]).filter(node => node.id==='page:alchimia'||node.id==='hub:processes'||node.id.startsWith('group:')).map(node=>({key:node.id,type:'Nodo',title:node.title,subtitle:'Atlante delle connessioni',url:node.url,index:node.title,search:normalize(node.title),nameIndex:normalize(node.title)})), [graph]);
   const input = useRef(null);
   const navigate = useNavigate();
   useEffect(() => { if (open) { setTerm(''); requestAnimationFrame(() => input.current?.focus()); } }, [open]);
@@ -186,16 +192,16 @@ function GlobalSearch({ open, close }) {
     const q = normalize(term).trim();
     if (q.length < 2) return [];
     const tokens = q.split(/\s+/).filter(Boolean);
-    return searchItems.filter(r => tokens.every(t => r.search.includes(t)))
+    return [...searchItems,...graphSearchItems].filter(r => tokens.every(t => r.search.includes(t)))
       .sort((a,b) => Number(b.nameIndex.startsWith(q)) - Number(a.nameIndex.startsWith(q)) || Number(Boolean(b.featured)) - Number(Boolean(a.featured)) || a.title.localeCompare(b.title, 'it')).slice(0, 12);
-  }, [term, searchItems]);
+  }, [term, searchItems, graphSearchItems]);
   if (!open) return null;
   return <div className="modal-backdrop" onMouseDown={e => e.target === e.currentTarget && close()}>
     <section role="dialog" aria-modal="true" aria-label="Ricerca nel compendio" className="search-dialog">
-      <div className="search-dialog-head"><Search size={20}/><input ref={input} aria-label="Cerca nel compendio" value={term} onChange={e => setTerm(e.target.value)} placeholder="Materiali, capacità, processi…"/><button type="button" className="icon-button" onClick={close} aria-label="Chiudi ricerca"><X size={20}/></button></div>
+      <div className="search-dialog-head"><Search size={20}/><input ref={input} aria-label="Cerca nel compendio" value={term} onChange={e => setTerm(e.target.value)} placeholder="Cerca voci, nodi e collegamenti…"/><button type="button" className="icon-button" onClick={close} aria-label="Chiudi ricerca"><X size={20}/></button></div>
       <div className="search-dialog-results">
-        {term.trim().length < 2 ? <div className="search-prompt"><span>Ricerca in tutto il compendio</span><p>{materials.length} materiali, {materials.reduce((n,m)=>n+(m.abilities?.length||0),0)} capacità e {processes.length} processi.</p></div> : hits.length ? hits.map(hit => <button className={`search-result ${hit.tone?`tone-${hit.tone}`:''}`} type="button" key={hit.key} onClick={() => { close(); navigate(hit.url); }}>
-          <span className="search-result-icon"><BookOpen size={17}/></span><span className="search-result-copy"><strong>{hit.title}</strong><small>{hit.subtitle}</small></span><span className="search-result-type">{hit.type}</span><ArrowUpRight size={16}/>
+        {term.trim().length < 2 ? <div className="search-prompt"><span>Esplora il compendio</span><p>{graph?.nodes.length||0} nodi e {graph?.edges.length||0} collegamenti nell’Atlante delle connessioni, tra materiali, capacità, personaggi, luoghi e organizzazioni.</p><Link className="search-graph-link" to={RELATIONS} onClick={close}><Network size={16}/> Apri l’Atlante delle connessioni <ArrowUpRight size={14}/></Link></div> : hits.length ? hits.map(hit => <button className={`search-result ${hit.tone?`tone-${hit.tone}`:''}`} type="button" key={hit.key} onClick={() => { close(); navigate(hit.url); }}>
+          <span className="search-result-icon"><BookOpen size={17}/></span><span className="search-result-copy"><strong>{hit.title}</strong><small>{hit.subtitle}{degreesByUrl.has(hit.url) ? ` · ${degreesByUrl.get(hit.url)} collegamenti` : ''}</small></span><span className="search-result-type">{hit.type}</span><ArrowUpRight size={16}/>
         </button>) : <div className="search-prompt"><span>Nessun risultato</span><p>Prova un'altra parola.</p></div>}
       </div>
       <div className="search-dialog-foot"><span>ESC per chiudere</span><span>⌘ / Ctrl + K per aprire</span></div>
@@ -239,18 +245,20 @@ function Layout({ theme, toggleTheme }) {
     <ScrollManager/>
     <header className="site-header">
       <div className="header-inner">
-        <Link to="/" className="site-brand" aria-label="Compendio, homepage"><SiteMark size={34}/><span className="brand-name">BREACH THE OBLIVION<span className="brand-subtitle">COMPENDIO</span></span></Link>
+        <Link to="/" className="site-brand" aria-label="Compendio, homepage"><SiteMark size={34}/><span className="brand-name">BREACH THE OBLIVION<span className="brand-subtitle">COMPENDIO</span></span><span className="brand-compact" aria-hidden="true">BTO<span>COMPENDIO</span></span></Link>
         <nav aria-label="Navigazione principale" className="desktop-nav">{headerNav()}</nav>
         <div className="header-actions">
           <button className="search-trigger" type="button" onClick={() => setSearchOpen(true)} aria-label="Cerca nel compendio"><Search size={18}/><span>Cerca</span><kbd>⌘ K</kbd></button>
-          <GMControls/>
-          <ContributionCenter/>
-          <button className="icon-button theme-toggle" type="button" aria-label={theme === 'dark' ? 'Attiva modalità giorno' : 'Attiva modalità notte'} title={theme === 'dark' ? 'Modalità giorno' : 'Modalità notte'} onClick={toggleTheme}>{theme === 'dark' ? <Sun size={19}/> : <Moon size={19}/>}</button>
+          <div className="header-desktop-tools">
+            <GMControls/>
+            <ContributionCenter/>
+            <button className="icon-button theme-toggle" type="button" aria-label={theme === 'dark' ? 'Attiva modalità giorno' : 'Attiva modalità notte'} title={theme === 'dark' ? 'Modalità giorno' : 'Modalità notte'} onClick={toggleTheme}>{theme === 'dark' ? <Sun size={19}/> : <Moon size={19}/>}</button>
+          </div>
           <button className="icon-button mobile-menu-button" type="button" onClick={() => setMobileOpen(true)} aria-label="Apri menu"><Menu size={22}/></button>
         </div>
       </div>
     </header>
-    {mobileOpen && <div className="mobile-nav-overlay" onMouseDown={e => e.currentTarget === e.target && setMobileOpen(false)}><nav className="mobile-nav" aria-label="Navigazione mobile"><div className="mobile-nav-title"><span>Esplora</span><button type="button" className="icon-button" onClick={() => setMobileOpen(false)} aria-label="Chiudi menu"><X/></button></div>{headerNav(true)}<button className="mobile-nav-search" type="button" onClick={() => { setMobileOpen(false); setSearchOpen(true); }}><Search size={18}/> Cerca nel compendio</button></nav></div>}
+    {mobileOpen && <div className="mobile-nav-overlay" onMouseDown={e => e.currentTarget === e.target && setMobileOpen(false)}><nav className="mobile-nav" aria-label="Navigazione mobile"><div className="mobile-nav-title"><span>Esplora</span><button type="button" className="icon-button" onClick={() => setMobileOpen(false)} aria-label="Chiudi menu"><X/></button></div>{headerNav(true)}<button className="mobile-nav-search" type="button" onClick={() => { setMobileOpen(false); setSearchOpen(true); }}><Search size={18}/> Cerca nel compendio</button><div className="mobile-nav-tools"><span className="mobile-nav-group-title">STRUMENTI</span><div className="mobile-nav-action-row"><GMControls/><ContributionCenter/><button className="icon-button theme-toggle" type="button" aria-label={theme === 'dark' ? 'Attiva modalità giorno' : 'Attiva modalità notte'} title={theme === 'dark' ? 'Modalità giorno' : 'Modalità notte'} onClick={toggleTheme}>{theme === 'dark' ? <Sun size={19}/> : <Moon size={19}/>}</button></div></div></nav></div>}
     <main id="contenuto"><Routes>
       <Route path="/" element={<Home theme={theme}/>}/>
       <Route path={ALCHEMY} element={<AlchemyHome/>}/>

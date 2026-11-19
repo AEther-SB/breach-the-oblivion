@@ -1,0 +1,18 @@
+import {readFileSync} from 'node:fs';
+import assert from 'node:assert/strict';
+const main=readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const atlas=readFileSync(new URL('../src/AtlasGeografico.jsx',import.meta.url),'utf8');
+const css=readFileSync(new URL('../src/layout-v310.css',import.meta.url),'utf8');
+assert.match(main,/import '\.\/layout-v310\.css'/,'CSS mobile importato per ultimo');
+assert.match(main,/className="header-desktop-tools"/,'Comandi desktop separati');
+assert.match(main,/className="mobile-nav-tools"/,'Strumenti disponibili nel menu mobile');
+assert.match(main,/className="brand-compact"/,'Marchio compatto su schermi stretti');
+assert.match(css,/@media\(max-width:1050px\)\{[\s\S]*?\.desktop-nav\{display:none\}/,'Navigazione compressa su telefoni/tablet');
+assert.match(css,/\.header-desktop-tools\{display:none\}/,'Comandi extra nascosti nella barra compatta');
+assert.match(css,/@media\(max-width:790px\)\{[\s\S]*?\.atlas-geografico \.atlas-layout\{display:grid;grid-template-columns:minmax\(0,1fr\)/,'Atlante mobile in colonna singola');
+assert.match(atlas,/preserveAspectRatio=\{compactMap \? "xMidYMid slice" : "xMidYMid meet"\}/,'Mappa adattata soltanto su mobile');
+assert.match(main,/connectionDegrees\(graph\)/,'Numero di vicini unici calcolato');
+assert.match(main,/graph\?\.nodes\.length/,'Il riepilogo della ricerca considera i nodi');
+assert.match(main,/graph\?\.edges\.length/,'Il riepilogo della ricerca considera i collegamenti');
+assert.doesNotMatch(main,/<p>\{materials\.length\} materiali, \{materials\.reduce/,'Riepilogo obsolete eliminato');
+console.log('OK — v3.10: header responsive e strumenti mobile, Atlante adattivo, ricerca per nodi e collegamenti.');
