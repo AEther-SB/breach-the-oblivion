@@ -17,6 +17,8 @@ import RelationMap, { HomeConnectionPreview } from './RelationMap';
 import Prerequisites from './Prerequisites';
 import AtlasGeografico from './AtlasGeografico';
 import StoriaTimeline from './StoriaTimeline';
+import ContributionCenter,{ProposalAction} from './ContributionCenter.jsx';
+import PlayerNotes from './PlayerNotes.jsx';
 import './styles.css';
 import './premium.css';
 import './atlas-home.css';
@@ -30,6 +32,7 @@ import './layout-v33.css';
 import './layout-v34.css';
 import './layout-v35.css';
 import './layout-v36.css';
+import './layout-v39.css';
 
 const ALCHEMY = '/alchimia';
 const MATERIALS = '/alchimia/materiali';
@@ -241,6 +244,7 @@ function Layout({ theme, toggleTheme }) {
         <div className="header-actions">
           <button className="search-trigger" type="button" onClick={() => setSearchOpen(true)} aria-label="Cerca nel compendio"><Search size={18}/><span>Cerca</span><kbd>⌘ K</kbd></button>
           <GMControls/>
+          <ContributionCenter/>
           <button className="icon-button theme-toggle" type="button" aria-label={theme === 'dark' ? 'Attiva modalità giorno' : 'Attiva modalità notte'} title={theme === 'dark' ? 'Modalità giorno' : 'Modalità notte'} onClick={toggleTheme}>{theme === 'dark' ? <Sun size={19}/> : <Moon size={19}/>}</button>
           <button className="icon-button mobile-menu-button" type="button" onClick={() => setMobileOpen(true)} aria-label="Apri menu"><Menu size={22}/></button>
         </div>
@@ -305,7 +309,7 @@ function AlchemyHome() {
   const extra=pages.filter(p=>p.parentId==='alchimia'&&!['alchimia','alchimia-materiali','alchimia-genesi'].includes(p.id)).map((p,i)=>({title:p.title,subtitle:p.description||'Pagina del compendio',to:entryUrl(p),tone:'planetary',number:String(i+3).padStart(2,'0'),icon:entryIcon(p),cta:'Apri'}));
   const foundation=extra.find(card=>card.to==='/pagina/alchimia-fondamenti');
   const cards=[...(foundation?[foundation]:[]),{...alchemyCards[0],featured:false,subtitle:`${materials.length} materiali · ${materials.reduce((n,m)=>n+(m.abilities||[]).length,0)} capacità`},{...alchemyCards[1],subtitle:`${processes.length} processi`},...extra.filter(card=>card!==foundation)].map((card,i)=>({...card,number:String(i+1).padStart(2,'0')}));
-  return <div className="section-landing page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/>Alchimia</div><PageHeading eyebrow="BREACH THE OBLIVION" title={current?.title||"Alchimia"} text={current?.description?.replaceAll('Processi di Genesi','processi alchemici')||"Materiali e processi alchemici."} trailing={<EditTrigger entry={current}/>}/><div className="section-landing-cards"><SectionCards cards={cards}/></div>{current?.blocks?.length>0&&<div className="gm-collection-body"><GenericBlocks entry={current}/></div>}</div>;
+  return <div className="section-landing page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/>Alchimia</div><PageHeading eyebrow="BREACH THE OBLIVION" title={current?.title||"Alchimia"} text={current?.description?.replaceAll('Processi di Genesi','processi alchemici')||"Materiali e processi alchemici."} trailing={<EditTrigger entry={current}/>}/><div className="section-landing-cards"><SectionCards cards={cards}/></div>{current?.blocks?.length>0&&<div className="gm-collection-body"><GenericBlocks entry={current}/></div>}<PlayerNotes entryId="alchimia"/></div>;
 }
 function LegacyRedirect({ path }) { const loc = useLocation(); return <Navigate to={`${path}${loc.search}`} replace/>; }
 function LegacyMaterialRedirect() { const {id} = useParams(); const loc=useLocation(); return <Navigate to={`${MATERIALS}/${id}${loc.search}`} replace/>; }
@@ -402,11 +406,12 @@ function MaterialDetail(){
         <AbilityList key={id} features={mat.abilities} currentId={`material:${mat.materialId}`}/>
         <div className="material-relations"><div className="material-relations-head"><div><span className="eyebrow">RIFERIMENTI NEL COMPENDIO</span><h2>Connessioni</h2></div><Link to={RELATIONS}>Apri la mappa <ArrowUpRight size={16}/></Link></div>{suggestions.length ? <div className="material-relation-links">{suggestions.slice(0,10).map(node=><Link key={node.id} to={node.url} className={`relation-chip relation-${node.tone}`}>{node.title}<ArrowUpRight size={14}/></Link>)}</div> : <p className="material-relation-empty">Esplora i materiali della stessa categoria attraverso la mappa.</p>}</div>
         <div className="detail-pagination"><Link to={`${MATERIALS}/${previous.materialId}`}><ChevronLeft size={18}/><span><small>PRECEDENTE</small><strong>{previous.title}</strong></span></Link><Link to={`${MATERIALS}/${next.materialId}`}><span><small>SUCCESSIVO</small><strong>{next.title}</strong></span><ChevronRight size={18}/></Link></div>
+        <PlayerNotes entryId={mat.id}/>
       </article>
     </div>
   </div>;
 }
-function GenesisPage(){const {processes,pages}=useCatalog();const nested=pages.filter(p=>p.parentId==='alchimia-genesi'&&p.id!=='alchimia-genesi');const featureList=useMemo(()=>processes.map(p=>({...p,name:p.title})),[processes]);return <div className="reading-page page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/><Link to={ALCHEMY}>Alchimia</Link><ChevronRight size={15}/> Processi</div><PageHeading eyebrow="ALCHIMIA" title="Processi alchemici" text={`${processes.length} processi.`} trailing={<div className="gm-section-title-actions"><Link className="material-reference" to={RELATIONS}>Mappa generale <ArrowUpRight size={16}/></Link><EditTrigger entry={pages.find(p=>p.id==='alchimia-genesi')}/></div>}/><div className="reading-layout"><div className="reading-side"><span className="reading-side-label">PROCESSI</span><Layers3 size={55} strokeWidth={1}/><span>{processes.length} processi</span></div><div className="reading-body"><AbilityList kind="process" features={featureList}/>{pages.find(p=>p.id==='alchimia-genesi')?.blocks?.length>0&&<GenericBlocks entry={pages.find(p=>p.id==='alchimia-genesi')}/>} {nested.length>0&&<div className="generic-children"><h2>Altri contenuti</h2><SectionCards cards={nested.map((p,i)=>({title:p.title,subtitle:p.description||'Contenuto',to:entryUrl(p),tone:'heavy',number:String(i+1).padStart(2,'0'),icon:BookOpen,cta:'Apri'}))}/></div>}</div></div></div>}
+function GenesisPage(){const {processes,pages}=useCatalog();const nested=pages.filter(p=>p.parentId==='alchimia-genesi'&&p.id!=='alchimia-genesi');const featureList=useMemo(()=>processes.map(p=>({...p,name:p.title})),[processes]);return <div className="reading-page page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/><Link to={ALCHEMY}>Alchimia</Link><ChevronRight size={15}/> Processi</div><PageHeading eyebrow="ALCHIMIA" title="Processi alchemici" text={`${processes.length} processi.`} trailing={<div className="gm-section-title-actions"><Link className="material-reference" to={RELATIONS}>Mappa generale <ArrowUpRight size={16}/></Link><EditTrigger entry={pages.find(p=>p.id==='alchimia-genesi')}/></div>}/><div className="reading-layout"><div className="reading-side"><span className="reading-side-label">PROCESSI</span><Layers3 size={55} strokeWidth={1}/><span>{processes.length} processi</span></div><div className="reading-body"><AbilityList kind="process" features={featureList}/>{pages.find(p=>p.id==='alchimia-genesi')?.blocks?.length>0&&<GenericBlocks entry={pages.find(p=>p.id==='alchimia-genesi')}/>} {nested.length>0&&<div className="generic-children"><h2>Altri contenuti</h2><SectionCards cards={nested.map((p,i)=>({title:p.title,subtitle:p.description||'Contenuto',to:entryUrl(p),tone:'heavy',number:String(i+1).padStart(2,'0'),icon:BookOpen,cta:'Apri'}))}/></div>}<PlayerNotes entryId="alchimia-genesi"/></div></div></div>}
 function LoreBreadcrumb({entry,pages}){
   const ancestors=[];const seen=new Set([entry.id]);let node=pages.find(p=>p.id===entry.parentId);
   while(node&&!seen.has(node.id)&&ancestors.length<7){ancestors.unshift(node);seen.add(node.id);node=pages.find(p=>p.id===node.parentId);}
@@ -454,7 +459,7 @@ function LoreEditorialSidebar({entry,pages}){
       <h1 className={entry.title.length>12?'lore-long-title':''}>{entry.title}</h1>
       {entry.description&&<p className="lore-editorial-lead">{entry.description}</p>}
       {entry.imagePlacement==='sidebar'&&validatedImageUrl(entry.imageUrl)&&<figure className="lore-sidebar-portrait"><img src={validatedImageUrl(entry.imageUrl)} alt={entry.imageAlt||`Ritratto di ${entry.title}`} loading="lazy" referrerPolicy="no-referrer"/></figure>}
-      <div className="lore-editorial-actions">{entry.flameHex&&/^#[a-f0-9]{6}$/i.test(entry.flameHex)&&<span className="bto-flame-label"><i style={{backgroundColor:entry.flameHex}}/>{entry.flameColor}</span>}<EditTrigger entry={entry}/></div>
+      <div className="lore-editorial-actions">{entry.flameHex&&/^#[a-f0-9]{6}$/i.test(entry.flameHex)&&<span className="bto-flame-label"><i style={{backgroundColor:entry.flameHex}}/>{entry.flameColor}</span>}<EditTrigger entry={entry}/><ProposalAction entry={entry}/></div>
       <LoreTOC entry={entry}/>
       {parent&&<Link className="lore-editorial-parent" to={entryUrl(parent)}><ArrowLeft size={14}/>{parent.title}</Link>}
     </div>
@@ -494,6 +499,52 @@ function LoreChapter({entry,chapter,index}){
   <div className="lore-chapter-body"><GenericBlocks entry={{...entry,blocks:chapter.blocks,imageUrl:isIntro&&entry.imagePlacement!=='sidebar'?entry.imageUrl:''}}/></div>
  </section>;
 }
+// Hub specifico di Organizzazioni: la pagina principale è un indice visuale,
+// mentre gli articoli delle altre raccolte mantengono il layout editoriale usuale.
+function OrganizationsHub({entry,pages,children}){
+  const palette=['#93b9de','#d9a0aa','#bfa6e4','#91c4b4','#d7b582','#a1b8da','#93c2cb','#d3b8a3'];
+  const directSections=children.filter(p=>p.kind!=='page');
+  const ordered=directSections.length?directSections:children;
+  const descendantsOf=id=>pages.filter(p=>p.parentId===id&&p.id!==id).sort((a,b)=>(a.order||0)-(b.order||0)||a.title.localeCompare(b.title,'it'));
+  const count=ordered.length;
+  return <div className="lore-editorial-page lore-section-organizzazioni organization-hub-page">
+    <div className="lore-editorial-shell organization-hub-shell">
+      <LoreEditorialSidebar entry={entry} pages={pages}/>
+      <main className="organization-hub-content" tabIndex={0} aria-label="Archivio visuale delle organizzazioni">
+        <div className="organization-hub-topbar"><UsersRound size={19} strokeWidth={1.5}/><span>ARCHIVIO DELLE ORGANIZZAZIONI</span><span className="organization-hub-count">{count} {count===1?'ambito':'ambiti'}</span></div>
+        <div className="organization-hub-scroll">
+          <header className="organization-hub-intro">
+            <span className="eyebrow">INDICE DELLE AFFILIAZIONI</span>
+            <h2>Esplora le organizzazioni</h2>
+            <p>Seleziona un ambito per consultare gruppi, istituzioni e persone collegate. Le sottocategorie si trovano all’interno di ciascun ambito.</p>
+          </header>
+          <div className="organization-hub-core" aria-hidden="true"><span className="organization-hub-core-line"/><span className="organization-hub-core-seal"><Network size={24} strokeWidth={1.5}/></span><span className="organization-hub-core-line"/></div>
+          <nav className="organization-hub-grid" aria-label="Sottosezioni delle organizzazioni">
+            {ordered.map((section,i)=>{
+              const SectionIcon=entryIcon(section);
+              const nested=descendantsOf(section.id);
+              const nestedCollections=nested.filter(p=>p.kind!=='page');
+              const spotlight=nestedCollections.length?nestedCollections:nested.slice(0,3);
+              return <section className="organization-hub-card" key={section.id} style={{'--org-tint':palette[i%palette.length]}}>
+                <div className="organization-hub-card-top"><span className="organization-hub-card-index">{String(i+1).padStart(2,'0')} / AMBITO</span><span className="organization-hub-card-icon"><SectionIcon size={23} strokeWidth={1.45}/></span></div>
+                <h3><Link to={entryUrl(section)}>{section.title}<ArrowUpRight size={18}/></Link></h3>
+                {section.description&&<p className="organization-hub-card-description">{section.description}</p>}
+                {spotlight.length>0&&<div className="organization-hub-nested" aria-label={`Categorie in ${section.title}`}>
+                  <span className="organization-hub-nested-label">AL SUO INTERNO</span>
+                  <div className="organization-hub-nested-links">{spotlight.map(child=><Link to={entryUrl(child)} key={child.id} className="organization-hub-child-link"><ChevronRight size={14}/>{child.title}</Link>)}</div>
+                </div>}
+                <Link className="organization-hub-card-footer" to={entryUrl(section)}>Apri l'archivio <ArrowUpRight size={16}/></Link>
+              </section>;
+            })}
+          </nav>
+          {!ordered.length&&<p className="organization-hub-empty">Non ci sono ancora sottosezioni. Puoi aggiungerle dall'editor GM.</p>}
+          {entry.blocks?.length>0&&<section className="organization-hub-editorial"><div className="organization-hub-editorial-title"><ScrollText size={18}/><h3>Informazioni sulla raccolta</h3></div><GenericBlocks entry={entry}/></section>}
+          <PlayerNotes entryId={entry.id}/>
+        </div>
+      </main>
+    </div>
+  </div>;
+}
 function GenericPage(){
   const {id}=useParams();
   const {pages}=useCatalog();
@@ -504,6 +555,9 @@ function GenericPage(){
   const children=pages.filter(p=>p.parentId===entry.id&&p.id!==entry.id);
   if(entry.id==='organizzazioni'&&!children.some(p=>p.id==='organizzazioni-antagonisti'))children.push(...pages.filter(isOrphanAntagonists));
   children.sort((a,b)=>a.order-b.order||a.title.localeCompare(b.title,'it'));
+  // Solo la pagina principale Organizzazioni usa l'hub visuale a due colonne.
+  // Non altera schede figlie, Quirk, Controcorpi o Fiamme.
+  if(entry.id==='organizzazioni')return <OrganizationsHub entry={entry} pages={pages} children={children}/>;
   const siblings=pages.filter(p=>p.parentId===entry.parentId&&p.id!==entry.id&&!isOrphanAntagonists(p)).sort((a,b)=>a.order-b.order||a.title.localeCompare(b.title,'it'));
   const Icon=entryIcon(entry);
   const chapters=loreChapters(entry).filter(chapter=>entry.layout!=='counterbodies'||!isCounterbodySubsection(chapter.title));
@@ -519,6 +573,7 @@ function GenericPage(){
             {chapters.map((chapter,i)=>(chapter.blocks.length>0||(chapter.intro&&entry.imageUrl&&entry.imagePlacement!=='sidebar'))?<LoreChapter key={chapter.id+'-'+i} entry={entry} chapter={chapter} index={i}/>:null)}
             {!entry.blocks?.length&&!entry.topics?.length&&!entry.flames?.length&&<p className="lore-empty-copy">Questa sezione non ha ancora un testo introduttivo. Consulta le sottosezioni a destra.</p>}
           </article>
+          <PlayerNotes entryId={entry.id}/>
         </div>
       </div>
       <LoreRelatedRail entry={entry} children={children} siblings={siblings}/>

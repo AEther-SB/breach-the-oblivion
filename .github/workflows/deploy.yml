@@ -32,6 +32,8 @@ jobs:
         run: npm run check:ui
       - name: Verifica editor a blocchi
         run: npm run check:editor
+      - name: Verifica collaborazioni e sicurezza v3.7
+        run: npm run check:collaboration
       - name: Compila il sito
         env:
           VITE_FIREBASE_API_KEY: ${{ vars.VITE_FIREBASE_API_KEY }}

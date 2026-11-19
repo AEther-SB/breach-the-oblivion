@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const app=fs.readFileSync('src/main.jsx','utf8');
+const css=fs.readFileSync('src/layout-v39.css','utf8');
+assert.match(app,/import '\.\/layout-v39\.css'/);
+assert.match(app,/function OrganizationsHub\(\{entry,pages,children\}\)/);
+assert.match(app,/if\(entry\.id==='organizzazioni'\)return <OrganizationsHub/);
+assert.match(app,/descendantsOf=id=>pages\.filter\(p=>p\.parentId===id/);
+assert.match(app,/organization-hub-card/);
+assert.match(app,/<LoreEditorialSidebar entry=\{entry\} pages=\{pages\}/);
+assert.match(app,/<PlayerNotes entryId=\{entry\.id\}\/>/);
+assert.match(css,/\.organization-hub-page \.organization-hub-shell\{/);
+assert.match(css,/grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
+assert.match(css,/@media\(max-width:530px\)/);
+assert.ok(!/if\(entry\.id==='quirk'\)return <OrganizationsHub/.test(app));
+assert.ok(!/if\(entry\.id==='controcorpi'\)return <OrganizationsHub/.test(app));
+console.log('OK — v3.9: hub esclusivo di Organizzazioni, schede annidate, navigazione GM e appunti invariati.');

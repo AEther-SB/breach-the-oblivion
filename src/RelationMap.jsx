@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowUpRight, ChevronRight, Compass, Focus, Minus, Plus, Search, X } from 'lucide-react';
 import { buildRelations, relationsFor } from './relations';
 import { useContent } from './content-store';
+import {connectionDegrees, degreeStyle, DEGREE_LEGEND} from './graph-metrics.js';
 
 const palette = {
   azure:'#89bce9',lilac:'#ac9ee4',steel:'#9eacbf',rose:'#e69ca8',amber:'#dfb977',violet:'#b3a0e6',gold:'#e5c38e',
@@ -87,6 +88,7 @@ function ConnectionsCanvas({graph, theme, query, relationsOnly, selected, onHove
     const ctx=canvas.getContext('2d');if(!ctx)return;
     const positions=initialNodes(graph), nodes=graph.nodes.map(n=>({...n,...positions.get(n.id)}));
     const nodeById=new Map(nodes.map(n=>[n.id,n]));
+    const degrees=connectionDegrees(graph),referenceDegrees=connectionDegrees(graph,true);
     const edges=graph.edges.map(e=>({...e,a:nodeById.get(e.source),b:nodeById.get(e.target)})).filter(e=>e.a&&e.b);
     const reducedMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
     const s={nodes,edges,nodeById,scale:.76,panX:0,panY:0,width:100,height:100,dpr:1,drag:null,turn:0,raf:null,dirty:true,lastFrame:0,ambientTime:0};state.current=s;
@@ -102,7 +104,7 @@ function ConnectionsCanvas({graph, theme, query, relationsOnly, selected, onHove
       const sway=ambient&&!reducedMotion?Math.cos(s.ambientTime*.00033+n.x*.011-n.y*.013)*4.2:0;
       return {x:s.width/2+s.panX+(n.x+drift)*s.scale,y:s.height/2+s.panY+(n.y+sway)*s.scale};
     };
-    const find=(x,y)=>{let closest=null, distance=Infinity;for(const n of nodes){const at=place(n);const d=Math.hypot(at.x-x,at.y-y);if(d<distance&&d<Math.max(16,n.r*s.scale+10)){closest=n;distance=d;}}return closest;};
+    const find=(x,y)=>{let closest=null, distance=Infinity;for(const n of nodes){const at=place(n);const d=Math.hypot(at.x-x,at.y-y);if(d<distance&&d<Math.max(16,degreeStyle((filter.current.relationsOnly?referenceDegrees:degrees).get(n.id)||0).radius*s.scale+10)){closest=n;distance=d;}}return closest;};
     const toWorld=(x,y)=>({x:(x-s.width/2-s.panX)/s.scale,y:(y-s.height/2-s.panY)/s.scale});
     const eventPoint=e=>{const rect=canvas.getBoundingClientRect();return {x:e.clientX-rect.left,y:e.clientY-rect.top};};
     const pointerDown=e=>{if(e.button!==0&&e.pointerType==='mouse')return;const {x,y}=eventPoint(e);const hit=find(x,y);s.drag={x,y,oldX:x,oldY:y,hit,start:Date.now(),moved:false};if(hit){hit.fixed=true;canvas.style.cursor='grabbing';}else canvas.style.cursor='grabbing';canvas.setPointerCapture(e.pointerId);};
@@ -151,7 +153,7 @@ function ConnectionsCanvas({graph, theme, query, relationsOnly, selected, onHove
       }
       ctx.setLineDash([]);
       for(const n of nodes){const pt=place(n),qHit=q&&norm(n.title).includes(q),isFocus=focus===n,isNeighbor=neighbors.has(n.id),muted=focus&&!isNeighbor&&!isFocus;const opacity=muted?.18:q&&!qHit?.36:1;
-        const radius=(n.type==='chapter'?11:n.type==='group'?9:n.type==='process'?5.9:6.9)*Math.min(1.3,Math.sqrt(s.scale));const color=palette[n.tone]||'#bdc7d8';
+        const connectivity=(filter.current.relationsOnly?referenceDegrees:degrees).get(n.id)||0;const style=degreeStyle(connectivity);const radius=style.radius*Math.min(1.3,Math.sqrt(s.scale));const color=style.color;
         ctx.globalAlpha=opacity;
         if(isFocus||qHit){ctx.beginPath();ctx.arc(pt.x,pt.y,radius+8,0,Math.PI*2);ctx.strokeStyle=color;ctx.lineWidth=.9;ctx.stroke();}
         ctx.beginPath();ctx.arc(pt.x,pt.y,radius+4,0,Math.PI*2);ctx.fillStyle=dark?'rgba(10,13,23,.9)':'rgba(248,248,250,.9)';ctx.fill();
@@ -162,7 +164,7 @@ function ConnectionsCanvas({graph, theme, query, relationsOnly, selected, onHove
         }
         ctx.beginPath();ctx.arc(pt.x,pt.y,radius,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();
         if(n.type==='group'||n.type==='chapter'){ctx.beginPath();ctx.arc(pt.x,pt.y,radius+3.5,0,Math.PI*2);ctx.strokeStyle=color;ctx.lineWidth=.75;ctx.stroke();}
-        const labelVisible=n.type==='chapter'||n.type==='group'||isFocus||isNeighbor||qHit||s.scale>.72;
+        const labelVisible=n.type==='chapter'||n.type==='group'||isFocus||isNeighbor||qHit||connectivity>=6||s.scale>.72;
         if(labelVisible){ctx.font=`${n.type==='chapter'?'650 12':n.type==='group'?'600 11':'500 10'}px 'DM Sans',sans-serif`;
           ctx.fillStyle=dark?'#edf0f9':'#272d42';ctx.textAlign='center';ctx.textBaseline='top';
           const txt=n.title.length>24?n.title.slice(0,23)+'…':n.title;
@@ -194,7 +196,7 @@ export function HomeConnectionPreview({theme}) {
     </div>
     <div className="home-atlas-detail home-atlas-ambient-detail">
       <span className="home-atlas-ambient-stats"><Compass size={17} strokeWidth={1.5}/>{graph.nodes.length} nodi <span aria-hidden="true">·</span> {graph.referenceCount} riferimenti</span>
-      <span className="home-atlas-ambient-note">Una mappa dell’intero compendio</span>
+      <span className="home-atlas-ambient-note">Nodi più grandi e caldi = più collegamenti</span>
     </div>
   </section>;
 }
@@ -205,23 +207,24 @@ export default function RelationMap({theme}) {
   const controls=useRef(null),navigate=useNavigate();
   const focused=graph.nodes.find(n=>n.id===(selected||hovered));
   const links=focused?relationsFor(graph,focused.id):null;
-  const related=relatedNodes(graph,focused?.id);
-  const found=graph.nodes.filter(n=>norm(n.title).includes(norm(query)));
+  const related=relatedNodes(graph,focused?.id).filter(n=>!relationsOnly||n.relation==='reference').sort((a,b)=>(degrees.get(b.id)||0)-(degrees.get(a.id)||0));
+  const degrees=useMemo(()=>connectionDegrees(graph,relationsOnly),[graph,relationsOnly]);
+  const found=graph.nodes.filter(n=>norm(n.title).includes(norm(query))).sort((a,b)=>(degrees.get(b.id)||0)-(degrees.get(a.id)||0)||a.title.localeCompare(b.title,'it'));
   return <div className="graph-page page-width">
     <div className="breadcrumb"><Link to="/">HOME</Link><ChevronRight size={14}/>ATLANTE</div>
-    <div className="graph-heading"><div><span className="eyebrow">IL COMPENDIO, IN RELAZIONE</span><h1>Atlante delle connessioni</h1><p>Seleziona un nodo per esplorare i collegamenti; apri la scheda soltanto quando vuoi consultarla.</p></div><div className="graph-stat">{graph.nodes.length} NODI <span>·</span> {graph.referenceCount} RIFERIMENTI</div></div>
+    <div className="graph-heading"><div><span className="eyebrow">IL COMPENDIO, IN RELAZIONE</span><h1>Atlante delle connessioni</h1><p>Colori e dimensioni indicano quante voci sono collegate. Linee continue: gerarchia; tratteggiate: rimandi espliciti.</p></div><div className="graph-stat">{graph.nodes.length} NODI <span>·</span> {graph.referenceCount} RIFERIMENTI</div></div>
     <div className="graph-layout">
       <section className="graph-stage" aria-label="Grafo delle relazioni">
         <div className="graph-stage-top"><span><span className="graph-live-dot"/> MAPPA INTERATTIVA</span><span>Trascina · Zoom · Clicca per selezionare</span></div>
         <ConnectionsCanvas graph={graph} theme={theme} query={query} selected={selected} relationsOnly={relationsOnly} onHover={setHovered} onSelect={setSelected} controller={controls}/>
         <div className="graph-zoom"><button type="button" aria-label="Ingrandisci" title="Ingrandisci" onClick={()=>controls.current?.zoom(1.3)}><Plus size={17}/></button><button type="button" aria-label="Riduci" title="Riduci" onClick={()=>controls.current?.zoom(.77)}><Minus size={17}/></button><button type="button" aria-label="Inquadra tutto" title="Inquadra tutto" onClick={()=>controls.current?.fit()}><Focus size={17}/></button></div>
-        <div className="graph-legend">{Object.entries(palette).filter(([tone])=>tone!=='gold').map(([tone,color])=><span key={tone}><i style={{background:color}}/>{({azure:'Elementi',lilac:'Planetari',steel:'Pagine / Pesanti',rose:'Materia vitale',amber:'Alchimia / Compositi',violet:'Processi'})[tone]}</span>)}</div>
+        <div className="graph-legend graph-degree-legend"><strong>COLLEGAMENTI · colore e dimensione dei nodi</strong>{DEGREE_LEGEND.map(t=><span key={t.label}><i style={{background:t.color,width:t.radius*1.3,height:t.radius*1.3,borderRadius:'50%'}}/>{t.label}</span>)}</div>
       </section>
       <aside className="graph-panel"><label className="graph-search"><Search size={17}/><input type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Cerca pagine e materiali…" aria-label="Cerca un nodo"/>{query&&<button aria-label="Pulisci ricerca" onClick={()=>setQuery('')} type="button"><X size={15}/></button>}</label>
         <label className="graph-check"><input type="checkbox" checked={relationsOnly} onChange={e=>setRelationsOnly(e.target.checked)}/> Solo riferimenti testuali</label>
-        <div className="graph-panel-content">{focused?<><div className="graph-section-label">NODO SELEZIONATO</div><div className="graph-focus-card"><small>{focused.type==='material'?'MATERIALE':focused.type==='process'?'PROCESSO':focused.type==='group'?'CATEGORIA':focused.type==='chapter'?'SEZIONE':'PAGINA'}</small><strong>{focused.title}</strong><button type="button" onClick={()=>navigate(focused.url)}>Apri scheda <ArrowUpRight size={15}/></button></div>
-          {related.length>0&&<div className="graph-connections"><div className="graph-section-label">CONNESSIONI <span>{related.length}</span></div>{related.slice(0,22).map(n=><button type="button" key={n.id} onClick={()=>{setSelected(n.id);controls.current?.focus(n.id);}}><span className="graph-node-dot" style={{background:palette[n.tone]}}/>{n.title}<ChevronRight size={13}/></button>)}</div>}</>:<><div className="graph-section-label">ESPLORA</div><p className="graph-aside-description">Clicca un nodo nel grafo o sceglilo nell’elenco. La pagina si apre soltanto con «Apri scheda».</p></>}
-          <div className="graph-section-label">{query?'RISULTATI':'NODI'} <span>{found.length}</span></div><div className="graph-node-results">{found.map(n=><button type="button" key={n.id} className={selected===n.id?'active':''} onClick={()=>{setSelected(n.id);controls.current?.focus(n.id);}}><span className="graph-node-dot" style={{background:palette[n.tone]}}/><span>{n.title}</span><ChevronRight size={14}/></button>)}{!found.length&&<span className="graph-empty">Nessun risultato.</span>}</div>
+        <div className="graph-panel-content">{focused?<><div className="graph-section-label">NODO SELEZIONATO</div><div className="graph-focus-card"><small>{focused.type==='material'?'MATERIALE':focused.type==='process'?'PROCESSO':focused.type==='group'?'CATEGORIA':focused.type==='chapter'?'SEZIONE':'PAGINA'}</small><strong>{focused.title}</strong><span className="graph-degree-counter">{degrees.get(focused.id)||0} connessioni dirette</span><button type="button" onClick={()=>navigate(focused.url)}>Apri scheda <ArrowUpRight size={15}/></button></div>
+          {related.length>0&&<div className="graph-connections"><div className="graph-section-label">CONNESSIONI <span>{related.length}</span></div>{related.slice(0,22).map(n=><button type="button" key={n.id} onClick={()=>{setSelected(n.id);controls.current?.focus(n.id);}}><span className="graph-node-dot" style={{background:degreeStyle(degrees.get(n.id)||0).color}}/>{n.title}<ChevronRight size={13}/></button>)}</div>}</>:<><div className="graph-section-label">ESPLORA</div><p className="graph-aside-description">I nodi sono ordinati per numero di collegamenti. Le linee continue rappresentano appartenenza, quelle tratteggiate collegamenti testuali. Clicca un nodo per selezionarlo.</p></>}
+          <div className="graph-section-label">{query?'RISULTATI':'NODI'} <span>{found.length}</span></div><div className="graph-node-results">{found.map(n=><button type="button" key={n.id} className={selected===n.id?'active':''} onClick={()=>{setSelected(n.id);controls.current?.focus(n.id);}}><span className="graph-node-dot" style={{background:degreeStyle(degrees.get(n.id)||0).color}}/><span>{n.title}</span><small>{degrees.get(n.id)||0}</small><ChevronRight size={14}/></button>)}{!found.length&&<span className="graph-empty">Nessun risultato.</span>}</div>
         </div>
       </aside>
     </div>

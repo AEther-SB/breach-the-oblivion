@@ -2,7 +2,7 @@ import legacyLore from './data/legacy-lore-v30.json';
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
-import { getFirestore, collection, doc, getDoc, getDocs, onSnapshot, query, where, setDoc, deleteDoc, deleteField, serverTimestamp, writeBatch } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDoc, getDocs, onSnapshot, query, where, setDoc, deleteDoc, deleteField, serverTimestamp, writeBatch, runTransaction } from 'firebase/firestore';
 import source from './data/compendium.json';
 import previousSource from './data/editorial-baseline-v242.json';
 import previousV25 from './data/editorial-baseline-v250-history.json';
@@ -33,6 +33,8 @@ if (configured) {
   auth = getAuth(app);
   db = getFirestore(app);
 }
+// Stessa istanza Firebase usata dai contributi GM; gli appunti restano separati.
+export function notesDatabase(){return db;}
 
 function fallbackEntries() {
   const mat = source.materials.map((m, index) => ({
@@ -64,6 +66,8 @@ const omitServer = (entry) => {
 export function ContentProvider({children}) {
   const [user, setUser] = useState(null);
   const [gm, setGM] = useState(false);
+  const [contributor, setContributor] = useState(false);
+  const [submissions, setSubmissions] = useState([]);
   const [authPending, setAuthPending] = useState(configured);
   const [seeded, setSeeded] = useState(false);
   const [published, setPublished] = useState([]);
@@ -76,12 +80,17 @@ export function ContentProvider({children}) {
     return onAuthStateChanged(auth, async next => {
       setUser(next);
       setGM(false);
+      setContributor(false);
       setAuthPending(true);
       if (next) {
         try {
           const admin = await getDoc(doc(db, 'admins', next.uid));
           setGM(admin.exists() && admin.data().enabled === true);
         } catch (e) { setError(`Verifica del ruolo GM: ${e.message}`); }
+        try {
+          const player = await getDoc(doc(db, 'contributors', next.uid));
+          setContributor(player.exists() && player.data().enabled === true);
+        } catch (e) { setError(`Ruolo Collaboratore: ${e.message}. Verifica di aver pubblicato firestore.rules v3.7.`); }
       }
       setAuthPending(false);
     }, e => { setError(e.message); setAuthPending(false); });
@@ -96,6 +105,12 @@ export function ContentProvider({children}) {
     if (!configured || !gm) {setDrafts([]);return;}
     return onSnapshot(collection(db,'drafts'), snap => setDrafts(snap.docs.map(d => ({...d.data(),id:d.id}))), e => setError(`Lettura delle bozze: ${e.message}`));
   }, [gm]);
+  useEffect(() => {
+    if (!configured || !user || (!gm && !contributor)) { setSubmissions([]); return; }
+    const ref = gm ? collection(db, 'submissions') : query(collection(db, 'submissions'), where('authorId','==',user.uid));
+    return onSnapshot(ref, snap => setSubmissions(snap.docs.map(d=>({...d.data(),id:d.id}))),
+      e => setError(`Lettura delle proposte: ${e.message}`));
+  }, [user?.uid,gm,contributor]);
   const entries = useMemo(() => {
     const primary = seeded && loaded ? published : fallback;
     const map = new Map(primary.map(e => [e.id,e]));
@@ -167,6 +182,47 @@ export function ContentProvider({children}) {
       await batch.commit();imported+=chunk.length;
     }
     return {imported,skipped,mode:publishNow?'pubblicate':'bozze'};
+  }
+  // Le proposte sono dati privati: un contributore non scrive mai direttamente in entries/drafts.
+  async function submitProposal(entry, targetId='') {
+    if (!db || !user || (!contributor && !gm)) throw Error('Richiedi al GM il ruolo Collaboratore.');
+    if (!seeded) throw Error('Il compendio non è ancora inizializzato.');
+    if (entry?.kind !== 'page' || !String(entry.title||'').trim()) throw Error('Per le proposte è necessaria una pagina con titolo.');
+    if (String(entry.title).length > 160 || String(entry.description||'').length > 700) throw Error('Titolo o descrizione troppo lunghi.');
+    if (!Array.isArray(entry.blocks) || entry.blocks.length>40) throw Error('Massimo 40 blocchi.');
+    const normalized=omitServer(entry);
+    if (JSON.stringify(normalized).length > 100000) throw Error('Proposta troppo grande (massimo 100 KB).');
+    const record=doc(collection(db,'submissions'));
+    await setDoc(record,{authorId:user.uid,authorName:user.displayName||user.email||'Collaboratore',status:'pending',targetId:targetId||'',entry:normalized,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+    return record.id;
+  }
+  async function decideProposal(proposal, decision, editedEntry=null) {
+    requireGM();
+    if (!['approved','rejected'].includes(decision) || proposal?.status!=='pending') throw Error('Proposta non più in attesa.');
+    const proposalRef=doc(db,'submissions',proposal.id);
+    // Transazione: due GM non possono approvare contemporaneamente la stessa proposta.
+    await runTransaction(db, async transaction => {
+      const snap=await transaction.get(proposalRef);
+      if (!snap.exists() || snap.data().status!=='pending') throw Error('La proposta è stata già esaminata.');
+      if (decision==='approved') {
+        const entry=omitServer(editedEntry||snap.data().entry);
+        if (entry.kind!=='page' || !entry.id || !entry.title || (editedEntry && entry.id!==snap.data().entry.id)) throw Error('Pagina proposta non valida.');
+        const entryRef=doc(db,'entries',entry.id),draftRef=doc(db,'drafts',entry.id);
+        const existing=await transaction.get(entryRef);
+        const draft=await transaction.get(draftRef);
+        if (existing.exists() && (snap.data().targetId!==entry.id || existing.data().kind!=='page')) throw Error('La proposta tenta di sovrascrivere una voce non modificabile.');
+        if (snap.data().targetId && !existing.exists()) throw Error('La pagina originale non esiste più.');
+        if (draft.exists()) throw Error('Esiste una bozza GM per questa pagina: risolvila prima di approvare.');
+        transaction.set(entryRef,{...entry,published:true,updatedAt:serverTimestamp(),updatedBy:user.uid});
+        transaction.set(doc(collection(db,'revisions')),{entryId:entry.id,content:entry,author:user.uid,sourceProposal:proposal.id,at:serverTimestamp()});
+      }
+      transaction.update(proposalRef,{status:decision,reviewedAt:serverTimestamp(),reviewedBy:user.uid});
+    });
+  }
+  async function setContributorEnabled(uid,enabled) {
+    requireGM();
+    if (!/^[a-zA-Z0-9_-]{6,128}$/.test(uid)) throw Error('UID Firebase non valido.');
+    await setDoc(doc(db,'contributors',uid),{enabled:Boolean(enabled),updatedAt:serverTimestamp(),updatedBy:user.uid});
   }
   async function resetLegacyLore(ids){
     requireGM();
@@ -299,7 +355,7 @@ export function ContentProvider({children}) {
     }
     return {updated,skipped};
   }
-  const value = { configured, user, gm, authPending, seeded, loaded, ready:!configured||(loaded&&configLoaded), error, setError, entries, publishedEntries:published, draftEntries:gm?drafts:[], materials, processes, pages, isDraft, resetLegacyLore, login, logout, saveDraft, publish, remove, loadHistory, bootstrap, syncEditorial, importEntries, baseVersion:source.version };
+  const value = { configured, user, gm, contributor, submissions, authPending, seeded, loaded, ready:!configured||(loaded&&configLoaded), error, setError, entries, publishedEntries:published, draftEntries:gm?drafts:[], materials, processes, pages, isDraft, resetLegacyLore, login, logout, submitProposal, decideProposal, setContributorEnabled, saveDraft, publish, remove, loadHistory, bootstrap, syncEditorial, importEntries, baseVersion:source.version };
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 export function useContent() { const value = useContext(context); if(!value) throw Error('ContentProvider mancante'); return value; }

@@ -4,6 +4,8 @@ import {ArrowUpRight, BookOpen, Check, ChevronRight, Clock3, GitBranch, Plus, Sa
 import {newEntry, useContent} from './content-store';
 import {buildPeriodForest, createsPeriodCycle} from './storia-periods.js';
 import './storia-timeline.css';
+import {openContribution} from './ContributionCenter.jsx';
+import PlayerNotes from './PlayerNotes.jsx';
 
 // Le voci enciclopediche non sono avvenimenti: nessuna data viene dedotta dalla lore.
 // I record timeline.show creati dall'editor GM sono gli unici eventi della cronologia.
@@ -34,7 +36,7 @@ function groupEvents(events,yearMarkers=[]){
 }
 
 export default function StoriaTimeline({pages,editControl}){
- const {gm,seeded,saveDraft,publish}=useContent();
+ const {gm,contributor,seeded,saveDraft,publish}=useContent();
  const canEdit=gm&&seeded;
  const [edit,setEdit]=useState(null),[error,setError]=useState(''),[message,setMessage]=useState(''),[busy,setBusy]=useState(false);
  const timelinePages=useMemo(()=>pages.filter(p=>p.kind==='page'&&p.timeline?.show===true),[pages]);
@@ -48,8 +50,8 @@ export default function StoriaTimeline({pages,editControl}){
  const loreGroups=useMemo(()=>{
   const groups=new Map();
   const lore=pages.filter(p=>p.kind==='page'&&p.parentId==='storia-passato'&&!p.timeline?.show);
-  for(const page of lore){const group=LORE_AREAS[page.id]||'Altri approfondimenti';if(!groups.has(group))groups.set(group,[]);groups.get(group).push(page);}
-  return [...groups].sort(([a],[b])=>GROUP_ORDER.indexOf(a)-GROUP_ORDER.indexOf(b)).map(([name,items])=>({name,items:items.sort((a,b)=>(a.order||0)-(b.order||0)||a.title.localeCompare(b.title,'it'))}));
+  for(const page of lore){const group=page.loreCategory||LORE_AREAS[page.id]||'Altri approfondimenti';if(!groups.has(group))groups.set(group,[]);groups.get(group).push(page);}
+  return [...groups].sort(([a],[b])=>(GROUP_ORDER.includes(a)?GROUP_ORDER.indexOf(a):GROUP_ORDER.length)-(GROUP_ORDER.includes(b)?GROUP_ORDER.indexOf(b):GROUP_ORDER.length)||a.localeCompare(b,'it')).map(([name,items])=>({name,items:items.sort((a,b)=>(a.order||0)-(b.order||0)||a.title.localeCompare(b.title,'it'))}));
  },[pages]);
  const eventById=useMemo(()=>new Map(events.map(p=>[p.id,p])),[events]);
  const periodBlocks=useMemo(()=>buildPeriodForest(periodOptions,events,yearPages),[periodOptions,events,yearPages]);
@@ -106,7 +108,7 @@ export default function StoriaTimeline({pages,editControl}){
  return <div className="storia-workspace">
   <header className="storia-workspace-header">
    <div className="storia-workspace-title"><div className="storia-workspace-breadcrumb"><Link to="/">Home</Link><ChevronRight size={13}/>Storia e Passato</div><div><span className="eyebrow">ARCHIVIO STORICO · COMPENDIO</span><h1>Storia e Passato</h1><p>Cronologia documentata e approfondimenti sull’ambientazione.</p></div></div>
-   <div className="storia-workspace-actions">{editControl}{canEdit&&<><button type="button" className="storia-add storia-add-secondary" onClick={()=>openYear()}><CalendarDays size={16}/> Nuovo anno</button><button type="button" className="storia-add storia-add-secondary" onClick={()=>openPeriod()}><Layers3 size={16}/> Nuovo periodo</button><button type="button" className="storia-add" onClick={()=>openEvent()}><Plus size={16}/> Nuovo evento</button></>}</div>
+   <div className="storia-workspace-actions">{editControl}{canEdit&&<><button type="button" className="storia-add storia-add-secondary" onClick={()=>openYear()}><CalendarDays size={16}/> Nuovo anno</button><button type="button" className="storia-add storia-add-secondary" onClick={()=>openPeriod()}><Layers3 size={16}/> Nuovo periodo</button><button type="button" className="storia-add" onClick={()=>openEvent()}><Plus size={16}/> Nuovo evento</button></>}{!gm&&contributor&&<button type="button" className="storia-add" onClick={()=>openContribution({parentId:'storia-passato',event:true})}><Plus size={16}/> Proponi evento</button>}</div>
   </header>
   {message&&<p className="storia-confirm" role="status"><Check size={15}/>{message}</p>}
   <div className="storia-workspace-layout">
@@ -122,8 +124,10 @@ export default function StoriaTimeline({pages,editControl}){
    <section className="storia-lore" aria-label="Lore e ambientazione">
     <div className="storia-column-head"><BookOpen size={19}/><div><span className="eyebrow">ARCHIVIO ENCICLOPEDICO</span><h2>Lore e Ambientazione</h2></div></div>
     <p className="storia-column-intro">Fonti, ricerche e ricostruzioni. Sono distinte dagli avvenimenti effettivamente inseriti nella cronologia.</p>
+    {(gm||contributor)&&<button type="button" className="storia-lore-add" onClick={()=>openContribution({parentId:'storia-passato',historical:true})}><Plus size={16}/>{gm?'Nuovo approfondimento':'Proponi approfondimento'}</button>}
     <div className="storia-lore-groups">{loreGroups.map((group,i)=><section className="storia-lore-group" key={group.name}><div className="storia-lore-group-heading"><small>{String(i+1).padStart(2,'0')} / AMBITO</small><h3>{group.name}</h3></div><div className="storia-lore-cards">{group.items.map(page=><Link to={`/pagina/${page.id}`} key={page.id} className="storia-lore-card"><span><strong>{page.title}</strong><small>{page.description||'Approfondimento dell’ambientazione'}</small></span><ArrowUpRight size={16}/></Link>)}</div></section>)}</div>
     {!loreGroups.length&&<p className="storia-empty">Non sono ancora disponibili approfondimenti storici.</p>}
+    <PlayerNotes entryId="storia-passato"/>
    </section>
   </div>
   {edit&&<div className="storia-modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget&&!busy)close()}}><form className="storia-modal" onSubmit={e=>{e.preventDefault();save(false)}} role="dialog" aria-modal="true" aria-label={edit.mode==='period'?'Editor periodo storico':edit.mode==='year'?'Editor anno storico':'Editor evento storico'}>

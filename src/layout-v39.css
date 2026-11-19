@@ -1,0 +1,68 @@
+/* v3.9 · Hub visuale limitato alla raccolta principale Organizzazioni.
+   Le schede di Quirk, Controcorpi, Fiamme e le sotto-raccolte restano invariate. */
+.organization-hub-page .organization-hub-shell{
+  grid-template-columns:clamp(240px,18vw,300px) minmax(0,1fr);
+}
+.organization-hub-content{
+  min-width:0;min-height:0;display:flex;flex-direction:column;
+  overflow:hidden;border:1px solid var(--line);background:var(--paper);
+}
+.organization-hub-topbar{
+  min-height:50px;display:flex;align-items:center;gap:11px;padding:11px clamp(18px,2.1vw,31px);
+  color:var(--lore-focus);font-size:10px;font-weight:700;letter-spacing:.13em;
+  border-bottom:1px solid var(--line);background:var(--surface);
+}
+.organization-hub-count{margin-left:auto;color:var(--muted);font-size:11px;letter-spacing:.02em;text-transform:lowercase;white-space:nowrap}
+.organization-hub-scroll{min-height:0;flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent;overscroll-behavior:contain;padding:clamp(20px,2.6vw,38px)}
+.organization-hub-intro{max-width:78ch;text-align:center;margin:0 auto}
+.organization-hub-intro .eyebrow{color:var(--lore-focus)}
+.organization-hub-intro h2{font:500 clamp(31px,3.1vw,48px)/1.07 'EB Garamond',Georgia,serif;color:var(--ink-strong);margin:10px 0 9px}
+.organization-hub-intro p{font:clamp(16px,1.28vw,20px)/1.42 'EB Garamond',Georgia,serif;color:var(--muted);margin:0}
+.organization-hub-core{display:flex;gap:15px;align-items:center;justify-content:center;max-width:370px;margin:23px auto 20px;color:var(--lore-focus)}
+.organization-hub-core-line{height:1px;flex:1;background:linear-gradient(90deg,transparent,var(--lore-focus));opacity:.5}
+.organization-hub-core-line:last-child{transform:rotate(180deg)}
+.organization-hub-core-seal{display:grid;place-items:center;width:53px;height:53px;border:1px solid var(--lore-focus);background:var(--surface);border-radius:50%;box-shadow:0 0 0 7px var(--paper)}
+.organization-hub-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,1.3vw,20px);align-items:stretch}
+.organization-hub-card{display:flex;flex-direction:column;gap:9px;min-width:0;border:1px solid var(--line);border-top:3px solid var(--org-tint);background:var(--surface);padding:clamp(15px,1.35vw,23px);transition:background .18s,border-color .18s,transform .18s}
+.organization-hub-card:hover{background:var(--paper);border-color:var(--org-tint);transform:translateY(-2px)}
+.organization-hub-card-top{display:flex;align-items:start;justify-content:space-between;gap:12px}
+.organization-hub-card-index{font:700 9px/1.5 'DM Sans',sans-serif;letter-spacing:.14em;color:var(--muted)}
+.organization-hub-card-icon{display:grid;place-items:center;flex:none;width:42px;height:42px;color:var(--org-tint);border:1px solid var(--line-strong)}
+.organization-hub-card h3{font:500 clamp(22px,1.8vw,30px)/1.13 'EB Garamond',Georgia,serif;margin:0;color:var(--ink-strong);overflow-wrap:break-word}
+.organization-hub-card h3 a{display:inline-flex;align-items:baseline;gap:8px;color:inherit;text-decoration:none}
+.organization-hub-card h3 a svg{color:var(--org-tint);flex:none;align-self:center}
+.organization-hub-card h3 a:hover{color:var(--org-tint)}
+.organization-hub-card-description{font:12px/1.5 'DM Sans',sans-serif;color:var(--muted);margin:0;overflow-wrap:break-word}
+.organization-hub-nested{display:grid;gap:8px;margin-top:4px;padding-top:12px;border-top:1px solid var(--line)}
+.organization-hub-nested-label{color:var(--muted);font:700 9px/1.4 'DM Sans',sans-serif;letter-spacing:.12em}
+.organization-hub-nested-links{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.organization-hub-child-link{display:inline-flex;align-items:center;gap:3px;min-height:30px;padding:6px 9px;border:1px solid var(--line);color:var(--ink);font:11px/1.3 'DM Sans',sans-serif;text-decoration:none;background:var(--paper)}
+.organization-hub-child-link svg{color:var(--org-tint);flex:none}
+.organization-hub-child-link:hover{border-color:var(--org-tint);color:var(--org-tint)}
+.organization-hub-card-footer{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-top:auto;padding-top:13px;border-top:1px solid var(--line);font:700 10px/1.4 'DM Sans',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--org-tint);text-decoration:none}
+.organization-hub-card-footer:hover{text-decoration:underline;text-underline-offset:3px}
+.organization-hub-empty{border:1px dashed var(--line);padding:22px;text-align:center;color:var(--muted)}
+.organization-hub-editorial{margin-top:26px;border:1px solid var(--line);padding:clamp(15px,1.6vw,23px);background:var(--surface)}
+.organization-hub-editorial-title{display:flex;align-items:center;gap:10px;color:var(--lore-focus);padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.organization-hub-editorial-title h3{font:500 23px/1.1 'EB Garamond',Georgia,serif;color:var(--ink-strong);margin:0}
+.organization-hub-editorial .rules{font:19px/1.45 'EB Garamond',Georgia,serif;color:var(--ink)}
+.organization-hub-editorial .rules p{margin:0 0 10px;max-width:none;text-align:left}
+.organization-hub-page .player-notes{margin-top:27px}
+.organization-hub-page .lore-editorial-sidebar h1{font-size:clamp(30px,2.7vw,44px);overflow-wrap:normal;word-break:normal;hyphens:none}
+@media(min-width:791px) and (max-width:1280px){
+  .organization-hub-page .organization-hub-shell{grid-template-columns:clamp(225px,24vw,275px) minmax(0,1fr)}
+  .organization-hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:790px){
+  .organization-hub-page .organization-hub-shell{display:flex;flex-direction:column;height:auto}
+  .organization-hub-content,.organization-hub-scroll{height:auto;overflow:visible}
+  .organization-hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .organization-hub-scroll{padding:20px}
+  .organization-hub-card:hover{transform:none}
+}
+@media(max-width:530px){
+  .organization-hub-grid{grid-template-columns:1fr}
+  .organization-hub-scroll{padding:16px}
+  .organization-hub-core{margin:15px auto}
+}
+@media(prefers-reduced-motion:reduce){.organization-hub-card{transition:none}}

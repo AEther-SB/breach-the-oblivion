@@ -11,6 +11,151 @@ service cloud.firestore {
       allow get: if request.auth != null && request.auth.uid == uid;
       allow list, create, update, delete: if false;
     }
+    function contributor() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/contributors/$(request.auth.uid))
+        && get(/databases/$(database)/documents/contributors/$(request.auth.uid)).data.enabled == true;
+    }
+    match /contributors/{uid} {
+      allow get: if gm() || (request.auth != null && request.auth.uid == uid);
+      allow list: if gm();
+      allow create, update, delete: if gm();
+    }
+    function validSubmission() {
+      return request.resource.data.keys().hasOnly(['authorId','authorName','status','targetId','entry','createdAt','updatedAt'])
+        && request.resource.data.authorId == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.authorName is string
+        && request.resource.data.authorName.size() <= 160
+        && request.resource.data.targetId is string
+        && request.resource.data.targetId.size() <= 160
+        && request.resource.data.entry is map
+        && request.resource.data.entry.kind == 'page'
+        && request.resource.data.entry.title is string
+        && request.resource.data.entry.title.size() > 0
+        && request.resource.data.entry.title.size() <= 160
+        && request.resource.data.entry.id is string
+        && request.resource.data.entry.id.size() <= 160
+        && request.resource.data.entry.description is string
+        && request.resource.data.entry.description.size() <= 700
+        && request.resource.data.entry.blocks is list
+        && request.resource.data.entry.blocks.size() <= 40;
+    }
+    match /submissions/{submissionId} {
+      allow get, list: if gm() || (contributor() && resource.data.authorId == request.auth.uid);
+      allow create: if contributor() && validSubmission()
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+      // I contributori non possono alterare stato, autore o contenuto dopo l'invio.
+      allow update, delete: if gm();
+    }
+    // Appunti pubblici, separati dalle pagine ufficiali e dalle revisioni editoriali.
+    // Le firme sono pubbliche e contengono soltanto il nome scelto dal partecipante.
+    function noteWriter() { return gm() || contributor(); }
+    function validNoteProfile() {
+      return request.resource.data.keys().hasOnly(['displayName','createdAt','updatedAt'])
+        && request.resource.data.keys().hasAll(['displayName','createdAt','updatedAt'])
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() >= 2
+        && request.resource.data.displayName.size() <= 48
+        && request.resource.data.updatedAt == request.time;
+    }
+    match /noteProfiles/{uid} {
+      allow get: if true;
+      allow list: if false;
+      allow create: if noteWriter() && request.auth.uid == uid
+        && validNoteProfile() && request.resource.data.createdAt == request.time;
+      allow update: if noteWriter() && request.auth.uid == uid && validNoteProfile()
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName','updatedAt']);
+      allow delete: if false;
+    }
+    function validNoteGroup() {
+      return request.resource.data.keys().hasOnly(['entryId','authorId','title','createdAt','updatedAt'])
+        && request.resource.data.keys().hasAll(['entryId','authorId','title','createdAt','updatedAt'])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 80
+        && request.resource.data.updatedAt == request.time;
+    }
+    match /noteGroups/{groupId} {
+      allow get, list: if true;
+      allow create: if noteWriter() && validNoteGroup()
+        && request.resource.data.entryId is string
+        && request.resource.data.entryId.size() <= 160
+        && exists(/databases/$(database)/documents/entries/$(request.resource.data.entryId))
+        && request.resource.data.authorId == request.auth.uid
+        && request.resource.data.createdAt == request.time;
+      allow update: if noteWriter() && resource.data.authorId == request.auth.uid
+        && validNoteGroup()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['title','updatedAt']);
+      allow delete: if gm() || (contributor() && resource.data.authorId == request.auth.uid);
+    }
+    function validNoteFields() {
+      return request.resource.data.keys().hasOnly(['entryId','authorId','authorName','title','body','parentId','groupId','deleted','hidden','createdAt','updatedAt'])
+        && request.resource.data.keys().hasAll(['entryId','authorId','authorName','title','body','parentId','groupId','deleted','hidden','createdAt','updatedAt'])
+        && request.resource.data.entryId is string
+        && request.resource.data.entryId.size() > 0
+        && request.resource.data.entryId.size() <= 160
+        && request.resource.data.authorId is string
+        && request.resource.data.authorName is string
+        && request.resource.data.authorName.size() <= 48
+        && request.resource.data.title is string
+        && request.resource.data.title.size() <= 100
+        && request.resource.data.body is string
+        && request.resource.data.body.size() <= 12000
+        && request.resource.data.parentId is string
+        && request.resource.data.parentId.size() <= 160
+        && request.resource.data.groupId is string
+        && request.resource.data.groupId.size() <= 160
+        && request.resource.data.deleted is bool
+        && request.resource.data.hidden is bool
+        && request.resource.data.updatedAt == request.time;
+    }
+    function validNoteGroupUse() {
+      return request.resource.data.groupId == '' || (
+        request.resource.data.parentId == ''
+        && exists(/databases/$(database)/documents/noteGroups/$(request.resource.data.groupId))
+        && get(/databases/$(database)/documents/noteGroups/$(request.resource.data.groupId)).data.entryId == request.resource.data.entryId
+        && get(/databases/$(database)/documents/noteGroups/$(request.resource.data.groupId)).data.authorId == request.auth.uid
+      );
+    }
+    function validNoteParent(noteId) {
+      return request.resource.data.parentId == '' || (
+        request.resource.data.parentId != noteId
+        && exists(/databases/$(database)/documents/pageNotes/$(request.resource.data.parentId))
+        && get(/databases/$(database)/documents/pageNotes/$(request.resource.data.parentId)).data.entryId == request.resource.data.entryId
+        && get(/databases/$(database)/documents/pageNotes/$(request.resource.data.parentId)).data.hidden == false
+        && get(/databases/$(database)/documents/pageNotes/$(request.resource.data.parentId)).data.deleted == false
+      );
+    }
+    match /pageNotes/{noteId} {
+      allow get, list: if true;
+      allow create: if noteWriter() && validNoteFields()
+        && request.resource.data.authorId == request.auth.uid
+        && exists(/databases/$(database)/documents/entries/$(request.resource.data.entryId))
+        && exists(/databases/$(database)/documents/noteProfiles/$(request.auth.uid))
+        && request.resource.data.authorName == get(/databases/$(database)/documents/noteProfiles/$(request.auth.uid)).data.displayName
+        && request.resource.data.body.size() > 0
+        && request.resource.data.deleted == false
+        && request.resource.data.hidden == false
+        && request.resource.data.createdAt == request.time
+        && validNoteGroupUse() && validNoteParent(noteId);
+      // Il partecipante può ritirare/modificare solo i propri testi: autore,
+      // pagina, data originale e collegamento alla risposta non cambiano.
+      allow update: if gm() || (
+        contributor() && resource.data.authorId == request.auth.uid
+        && resource.data.deleted == false && resource.data.hidden == false
+        && validNoteFields()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['title','body','groupId','deleted','updatedAt'])
+        && (request.resource.data.deleted == false || (
+          request.resource.data.deleted == true
+          && request.resource.data.title == '' && request.resource.data.body == ''
+        ))
+        && (request.resource.data.groupId == resource.data.groupId || validNoteGroupUse())
+      );
+      allow delete: if gm();
+    }
     // Solo contenuti pubblicati. Sono intenzionalmente leggibili da tutti.
     match /entries/{entryId} {
       allow read: if true;
