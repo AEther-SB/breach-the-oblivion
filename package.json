@@ -1,7 +1,7 @@
 {
   "name": "compendio-breach-the-oblivion",
   "private": true,
-  "version": "2.9.0",
+  "version": "3.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
@@ -11,9 +11,10 @@
     "check:structure": "node scripts/check-structure.mjs",
     "check:relations": "node scripts/check-relations.mjs",
     "check:ui": "node scripts/check-ui.mjs",
-    "check": "npm run check:content && npm run check:structure && npm run check:relations && npm run check:ui && npm run check:editor && npm run check:import",
+    "check": "npm run check:content && npm run check:structure && npm run check:relations && npm run check:ui && npm run check:editor && npm run check:import && npm run check:atlas",
     "check:editor": "node scripts/check-editor.mjs",
-    "check:import": "node scripts/check-import.mjs"
+    "check:import": "node scripts/check-import.mjs",
+    "check:atlas": "node scripts/check-atlas.mjs"
   },
   "dependencies": {
     "lucide-react": "0.468.0",

@@ -14,6 +14,7 @@ import { EditTrigger, GMControls, GenericBlocks } from './editor';
 import { buildRelations, relationsFor, glossaryEntries, linkedHtml, routes } from './relations';
 import RelationMap, { HomeConnectionPreview } from './RelationMap';
 import Prerequisites from './Prerequisites';
+import AtlasGeografico from './AtlasGeografico';
 import './styles.css';
 import './premium.css';
 import './atlas-home.css';
@@ -30,7 +31,7 @@ const abilityLabel = { int: 'Intelligenza', wis: 'Saggezza', cha: 'Carisma', str
 const groupStyle = { 'Elementi': 'elements', 'Metalli Planetari': 'planetary', 'Metalli Pesanti': 'heavy', 'Materia Vitale': 'vital', 'Compositi': 'composite' };
 const groupIcons = { 'Elementi': Droplets, 'Metalli Planetari': Orbit, 'Metalli Pesanti': Shield, 'Materia Vitale': Flame, 'Compositi': FlaskConical };
 const clean = (html) => String(html ?? '').replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
-const entryUrl = entry => entry.kind === 'material' ? `${MATERIALS}/${entry.materialId}` : entry.kind === 'genesis' ? GENESIS : entry.id === 'alchimia' ? ALCHEMY : entry.id === 'alchimia-materiali' ? MATERIALS : entry.id === 'alchimia-genesi' ? GENESIS : `/pagina/${entry.id}`;
+const entryUrl = entry => entry.kind === 'material' ? `${MATERIALS}/${entry.materialId}` : entry.kind === 'genesis' ? GENESIS : entry.id === 'alchimia' ? ALCHEMY : entry.id === 'atlas-geografico' ? '/atlante' : entry.id === 'alchimia-materiali' ? MATERIALS : entry.id === 'alchimia-genesi' ? GENESIS : `/pagina/${entry.id}`;
 function useCatalog() {
   const {materials, processes, pages} = useContent();
   const groups = [...new Set(materials.map(m=>m.group))];
@@ -177,6 +178,7 @@ function Layout({ theme, toggleTheme }) {
       <Route path={`${MATERIALS}/:id`} element={<MaterialDetail/>}/>
       <Route path={GENESIS} element={<GenesisPage/>}/>
       <Route path={RELATIONS} element={<RelationMap theme={theme}/>}/>
+      <Route path="/atlante" element={<AtlasGeografico/>}/>
       <Route path="/alchimia/connessioni" element={<LegacyRedirect path={RELATIONS}/>}/>
       <Route path="/alchimia/processi-di-genesi" element={<LegacyRedirect path={GENESIS}/>}/>
       <Route path="/pagina/:id" element={<GenericPage/>}/>
@@ -331,7 +333,7 @@ function GenericPage(){
   const children=pages.filter(p=>p.parentId===entry.id&&p.id!==entry.id);
   const parent=pages.find(p=>p.id===entry.parentId);
   return <div className="reading-page page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/>{parent&&<><Link to={entryUrl(parent)}>{parent.title}</Link><ChevronRight size={15}/></>}{entry.title}</div>
-    <PageHeading eyebrow={entry.kind==='chapter'?'SEZIONE':entry.kind==='collection'?'RACCOLTA':'COMPENDIO'} title={entry.title} text={entry.description} trailing={<EditTrigger entry={entry}/>}/>
+    <PageHeading eyebrow={entry.kind==='chapter'?'SEZIONE':entry.kind==='collection'?'RACCOLTA':'COMPENDIO'} title={entry.title} text={entry.description} trailing={<div className="bto-entry-actions">{entry.flameHex&&/^#[a-f0-9]{6}$/i.test(entry.flameHex)&&<span className="bto-flame-label"><i style={{backgroundColor:entry.flameHex}}/>{entry.flameColor}</span>}<EditTrigger entry={entry}/></div>}/>
     <div className="reading-layout generic-reading"><aside className="reading-side"><BookOpen size={52} strokeWidth={1}/><span>{entry.kind==='chapter'?'SEZIONE':entry.kind==='collection'?'RACCOLTA':'PAGINA'}</span></aside><article className="reading-body" tabIndex={0}><GenericBlocks entry={entry}/>{children.length>0&&<div className="generic-children"><h2>Contenuti</h2><SectionCards cards={children.map((p,i)=>({title:p.title,subtitle:p.description||'Compendio',to:entryUrl(p),tone:'elements',number:String(i+1).padStart(2,'0'),icon:BookOpen,cta:'Apri'}))}/></div>}</article></div>
   </div>;
 }
