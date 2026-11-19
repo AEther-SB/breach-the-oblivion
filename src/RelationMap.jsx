@@ -205,10 +205,11 @@ export default function RelationMap({theme}) {
   const graph=useMemo(()=>buildRelations(materials,processes,pages),[materials,processes,pages]);
   const [query,setQuery]=useState(''),[selected,setSelected]=useState(null),[hovered,setHovered]=useState(null),[relationsOnly,setRelationsOnly]=useState(false);
   const controls=useRef(null),navigate=useNavigate();
+  // Il conteggio deve precedere tutte le sort che lo utilizzano, anche al primo hover.
+  const degrees=useMemo(()=>connectionDegrees(graph,relationsOnly),[graph,relationsOnly]);
   const focused=graph.nodes.find(n=>n.id===(selected||hovered));
   const links=focused?relationsFor(graph,focused.id):null;
   const related=relatedNodes(graph,focused?.id).filter(n=>!relationsOnly||n.relation==='reference').sort((a,b)=>(degrees.get(b.id)||0)-(degrees.get(a.id)||0));
-  const degrees=useMemo(()=>connectionDegrees(graph,relationsOnly),[graph,relationsOnly]);
   const found=graph.nodes.filter(n=>norm(n.title).includes(norm(query))).sort((a,b)=>(degrees.get(b.id)||0)-(degrees.get(a.id)||0)||a.title.localeCompare(b.title,'it'));
   return <div className="graph-page page-width">
     <div className="breadcrumb"><Link to="/">HOME</Link><ChevronRight size={14}/>ATLANTE</div>
