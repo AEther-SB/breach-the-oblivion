@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import compendium from './data/compendium.json';
 import { ContentProvider, useContent, normalize, slug } from './content-store';
+import {isCounterbodySubsection} from './counterbody-sections.js';
 import { sanitizeHtml, validatedImageUrl } from './sanitize';
 import { formatLegacyMarkup } from './legacy-format.js';
 import { EditTrigger, GMControls, GenericBlocks } from './editor';
@@ -27,6 +28,7 @@ import './app-overhaul.css';
 import './layout-v32.css';
 import './layout-v33.css';
 import './layout-v34.css';
+import './layout-v35.css';
 
 const ALCHEMY = '/alchimia';
 const MATERIALS = '/alchimia/materiali';
@@ -264,18 +266,23 @@ function SectionCards({cards,className=""}) {
 }
 function Home({theme}) {
   const {materials,processes,pages}=useCatalog();
+  const {ready}=useContent();
   const roots=editorialRoot(pages);
-  const homeCards=roots.map((p,i)=>cardOf(p,i,{featured:p.id==='alchimia',cta:sectionMeta[p.id]?.cta||'Esplora la sezione'}));
-  if(!homeCards.some(c=>c.to===ALCHEMY))homeCards.unshift({title:'Alchimia',subtitle:'Materiali e processi alchemici',to:ALCHEMY,tone:'elements',number:'01',icon:FlaskConical,featured:true,cta:'Apri Alchimia'});
+  // I sette riquadri sono presenti fin dal primo render. Non si passa più
+  // da una sola voce locale a sette voci Firestore durante il refresh.
+  const initialSections=coreRootIds.map((id,i)=>({id,kind:'chapter',parentId:'root',title:({alchimia:'Alchimia','fiamme-essenza':'Fiamme ed Essenza',quirk:'Quirk',controcorpi:'Controcorpi','storia-passato':'Storia e Passato',organizzazioni:'Organizzazioni','atlas-geografico':'Atlante'})[id],description:'',order:i}));
+  const shownRoots=ready?roots:initialSections;
+  const homeCards=shownRoots.map((p,i)=>cardOf(p,i,{featured:false,cta:sectionMeta[p.id]?.cta||'Esplora la sezione'}));
+  if(ready&&!homeCards.some(c=>c.to===ALCHEMY))homeCards.unshift({title:'Alchimia',subtitle:'Materiali e processi alchemici',to:ALCHEMY,tone:'elements',number:'01',icon:FlaskConical,featured:false,cta:'Apri Alchimia'});
   
   return <div className="home-page">
     <section className="home-hero"><div className="hero-inner page-width">
       <div className="hero-copy"><div className="eyebrow"><span className="eyebrow-line"/> ARCHIVIO DELL’AMBIENTAZIONE</div><h1>Breach<br/><em>the Oblivion.</em></h1><p>Fiamme ed Essenza, Quirk, Controcorpi, storia, organizzazioni e alchimia: un unico compendio dell’ambientazione.</p>
         <div className="hero-cta"><Link className="primary-button" to="/pagina/fiamme-essenza">Esplora il compendio <ArrowUpRight size={19}/></Link><Link className="home-secondary-cta" to="/atlante">Atlante <Globe2 size={17}/></Link></div>
-        <div className="hero-stats"><div><strong>{roots.length||1}</strong><span>Sezioni</span></div><div><strong>{materials.length}</strong><span>Materiali</span></div><div><strong>{pages.filter(p=>p.kind==='page').length}</strong><span>Voci di lore</span></div></div></div>
-      <HomeConnectionPreview theme={theme}/>
+        <div className="hero-stats"><div><strong>{ready?(roots.length||1):'–'}</strong><span>Sezioni</span></div><div><strong>{ready?materials.length:'–'}</strong><span>Materiali</span></div><div><strong>{ready?pages.filter(p=>p.kind==='page').length:'–'}</strong><span>Voci di lore</span></div></div></div>
+      {ready?<HomeConnectionPreview theme={theme}/>:<div className="home-atlas home-atlas-loading" aria-label="Caricamento dell’atlante delle connessioni" aria-busy="true"><div className="home-atlas-heading">ATLANTE DELLE CONNESSIONI</div><div className="home-atlas-stage"/><div className="home-atlas-detail">Caricamento dell’archivio…</div></div>}
     </div><div className="hero-bottom-line page-width"><span>BREACH THE OBLIVION · COMPENDIO</span><span>STORIA · POTERI · ALCHEMIA</span></div></section>
-    <section className="home-explore page-width" aria-label="Sezioni del compendio"><SectionCards cards={homeCards} className={homeCards.length%3===1?"home-grid-centre-last":""}/></section>
+    <section className={`home-explore page-width ${!ready?'home-initializing':''}`} aria-label="Sezioni del compendio" aria-busy={!ready}><SectionCards cards={homeCards} className={homeCards.length%3===1?"home-grid-centre-last":""}/></section>
   </div>;
 }
 function AlchemyHome() {
@@ -405,12 +412,12 @@ function CategoryExplorer({topics=[],entry}){
 }
 function LoreTOC({entry}){
  const headings=(entry.blocks||[]).flatMap(b=>b.type==='heading'&&b.text?[{id:slug(b.text),label:b.text}]:b.type==='rich'?[...String(b.html||'').matchAll(/<h[234]\s+[^>]*id="([a-z0-9-]+)"[^>]*>([\s\S]*?)<\/h[234]>/gi)].map(m=>({id:m[1],label:m[2].replace(/<[^>]*>/g,'')})):[]);
- const visible=entry.layout==='counterbodies'?headings.filter(h=>!(entry.topics||[]).some(t=>(t.anchor||slug(t.name))===h.id)):headings;
+ const visible=entry.layout==='counterbodies'?headings.filter(h=>!isCounterbodySubsection(h.label)):headings;
  if(!visible.length)return null;
  return <nav className="lore-toc" aria-label="Indice della voce"><strong>IN QUESTA PAGINA</strong>{visible.map(h=><a key={h.id} href={`#/pagina/${entry.id}?sezione=${h.id}`}>{h.label}</a>)}</nav>;
 }
 function LoreRelatedRail({entry,children=[],siblings=[]}){
-  const topics=entry.layout==='counterbodies'?(entry.topics||[]):[];
+  const topics=[]; // Le categorie dei Controcorpi sono vere sottosezioni figlie, non link ad ancore.
   const entries=children.length?children:siblings;
   const isNested=children.length>0||topics.length>0;
   if(!entries.length&&!topics.length)return <aside className="lore-editorial-related lore-editorial-related-empty" aria-label="Navigazione della raccolta"><span className="eyebrow">NAVIGAZIONE</span><Link to={entry.parentId&&entry.parentId!=='root'?`/pagina/${entry.parentId}`:'/'}><ArrowLeft size={15}/> Torna alla raccolta</Link></aside>;
@@ -483,7 +490,7 @@ function GenericPage(){
   children.sort((a,b)=>a.order-b.order||a.title.localeCompare(b.title,'it'));
   const siblings=pages.filter(p=>p.parentId===entry.parentId&&p.id!==entry.id&&!isOrphanAntagonists(p)).sort((a,b)=>a.order-b.order||a.title.localeCompare(b.title,'it'));
   const Icon=entryIcon(entry);
-  const chapters=loreChapters(entry);
+  const chapters=loreChapters(entry).filter(chapter=>entry.layout!=='counterbodies'||!isCounterbodySubsection(chapter.title));
   return <div className={`lore-editorial-page lore-section-${entry.id} lore-section-${entry.parentId} lore-layout-${entry.layout||'lore'}`}>
     <div className="lore-editorial-shell">
       <LoreEditorialSidebar entry={entry} pages={pages}/>

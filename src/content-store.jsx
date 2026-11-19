@@ -10,6 +10,7 @@ import previousProcessesV27 from './data/editorial-baseline-v270-processes.json'
 import previousAbilitiesV271 from './data/editorial-baseline-v271-abilities.json';
 import previousAbilitiesV280 from './data/editorial-baseline-v280-abilities.json';
 import {ensureImportEntry} from './import-utils.js';
+import {expandCounterbodyPages} from './counterbody-sections.js';
 
 export const normalize = (value) => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[’‘]/g, "'");
 export const slug = (value) => normalize(value).replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -67,6 +68,7 @@ export function ContentProvider({children}) {
   const [published, setPublished] = useState([]);
   const [drafts, setDrafts] = useState([]);
   const [loaded, setLoaded] = useState(false);
+  const [configLoaded, setConfigLoaded] = useState(false);
   const [error, setError] = useState('');
   useEffect(() => {
     if (!configured) return;
@@ -85,7 +87,7 @@ export function ContentProvider({children}) {
   }, []);
   useEffect(() => {
     if (!configured) return;
-    const offConfig = onSnapshot(doc(db,'site','config'), snap => setSeeded(Boolean(snap.data()?.initialized)), e => setError(`Configurazione: ${e.message}`));
+    const offConfig = onSnapshot(doc(db,'site','config'), snap => {setSeeded(Boolean(snap.data()?.initialized));setConfigLoaded(true);}, e => {setConfigLoaded(true);setError(`Configurazione: ${e.message}`);});
     const offPublished = onSnapshot(collection(db,'entries'), snap => { setPublished(snap.docs.map(d => ({...d.data(),id:d.id}))); setLoaded(true); }, e => { setLoaded(true);setError(`Lettura del compendio: ${e.message}`); });
     return () => { offConfig(); offPublished(); };
   }, []);
@@ -103,7 +105,7 @@ export function ContentProvider({children}) {
   }, [seeded, loaded, published, gm, drafts]);
   const materials = useMemo(() => entries.filter(e => e.kind === 'material').sort((a,b) => a.order - b.order || a.title.localeCompare(b.title,'it')), [entries]);
   const processes = useMemo(() => entries.filter(e => e.kind === 'genesis').sort((a,b) => a.order - b.order || a.title.localeCompare(b.title,'it')), [entries]);
-  const pages = useMemo(() => entries.filter(e => e.kind === 'page' || e.kind === 'chapter' || e.kind === 'collection').sort((a,b) => a.order - b.order || a.title.localeCompare(b.title,'it')), [entries]);
+  const pages = useMemo(() => expandCounterbodyPages(entries.filter(e => e.kind === 'page' || e.kind === 'chapter' || e.kind === 'collection')).sort((a,b) => a.order - b.order || a.title.localeCompare(b.title,'it')), [entries]);
   const isDraft = (id) => gm && drafts.some(d => d.id===id);
   async function login() { if (!auth) throw Error('Configura prima Firebase.'); setError(''); await signInWithPopup(auth, new GoogleAuthProvider()); }
   async function logout() { if (auth) await signOut(auth); }
@@ -296,7 +298,7 @@ export function ContentProvider({children}) {
     }
     return {updated,skipped};
   }
-  const value = { configured, user, gm, authPending, seeded, loaded, error, setError, entries, publishedEntries:published, draftEntries:gm?drafts:[], materials, processes, pages, isDraft, resetLegacyLore, login, logout, saveDraft, publish, remove, loadHistory, bootstrap, syncEditorial, importEntries, baseVersion:source.version };
+  const value = { configured, user, gm, authPending, seeded, loaded, ready:!configured||(loaded&&configLoaded), error, setError, entries, publishedEntries:published, draftEntries:gm?drafts:[], materials, processes, pages, isDraft, resetLegacyLore, login, logout, saveDraft, publish, remove, loadHistory, bootstrap, syncEditorial, importEntries, baseVersion:source.version };
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 export function useContent() { const value = useContext(context); if(!value) throw Error('ContentProvider mancante'); return value; }

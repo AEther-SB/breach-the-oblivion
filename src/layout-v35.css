@@ -1,0 +1,25 @@
+/* v3.5 — Home coerente dal primo caricamento. */
+.home-explore .home-card,
+.home-page .hero-copy .eyebrow,
+.home-page .hero-copy h1,
+.home-page .hero-copy>p,
+.home-page .hero-cta,
+.home-page .hero-stats,
+.home-page .home-atlas{animation:none!important}
+.home-explore .home-card:hover{transform:none}
+.home-explore .home-card:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.home-explore .home-card:not(:hover):not(:focus-visible){box-shadow:none}
+.home-initializing .home-grid{pointer-events:none}
+.home-initializing .home-card{opacity:.55}
+.home-initializing .home-card .home-card-bottom{opacity:.55}
+/* Nessuna tessera inizialmente selezionata o con trattamento grafico esclusivo. */
+.home-explore .home-card{background:var(--paper);color:var(--ink-strong);border-color:var(--line)}
+.home-explore .home-card p{color:var(--muted)}
+.home-explore .home-card h3{color:var(--ink-strong)}
+.home-explore .home-card:focus-visible,.home-explore .home-card:hover{border-color:var(--tone-color,var(--gold))}
+/* Le sei categorie base compaiono a destra come sottosezioni autonome.
+   Il capitolo Hybrid resta nel corpo enciclopedico dei Controcorpi. */
+.lore-section-controcorpi .lore-editorial-related-link .lore-related-text>strong{font-size:clamp(18px,1.35vw,22px)}
+.home-atlas-loading{opacity:.8;min-height:0}
+.home-atlas-loading .home-atlas-stage{background:radial-gradient(ellipse at center,#151c2f,#0c1120 75%)}
+.home-atlas-loading .home-atlas-detail{color:#9da9c1;font-size:11px}
