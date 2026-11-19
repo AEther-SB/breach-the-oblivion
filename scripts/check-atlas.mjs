@@ -6,7 +6,7 @@ const data=fs.readFileSync(path,'utf8');
 const entries=parseJsonImport(data,path,'root').map(ensureImportEntry);
 const ids=new Set(entries.map(e=>e.id));
 assert.equal(ids.size,entries.length,'ID duplicati');
-assert.equal(entries.length,29,'Voci mancanti');
+assert.equal(entries.length,30,'Voci mancanti');
 assert.equal(entries.find(e=>e.id==='fiamme-categorie')?.flames?.length,11,'Fiamme mancanti');
 assert.equal(entries.find(e=>e.id==='controcorpi')?.blocks?.[0]?.html?.match(/<h3 id="(?:vessel|sentinel|tether|warrior|container|special|hybrid)">/g)?.length,7,'Categorie Controcorpi mancanti');
 assert.equal(entries.find(e=>e.id==='quirk')?.blocks?.[0]?.html?.match(/<h3 id="(?:mutant|transformation|emitter|hybrid)">/g)?.length,4,'Tipi Quirk mancanti');

@@ -8,6 +8,12 @@ const ids=new Set(entries.map(e=>e.id));
 assert.equal(ids.size,entries.length,'ID duplicati');
 assert.ok(entries.length<40,'Consolidamento delle voci non completato');
 for(const required of ['fiamme-essenza','fiamme-categorie','quirk','controcorpi','storia-passato','organizzazioni','organizzazione-catalyst','personaggio-ivory-covenant','atlas-geografico','alchimia-flussi'])assert.ok(ids.has(required),required);
+const ivory=entries.find(e=>e.id==='personaggio-ivory-covenant');
+const king=entries.find(e=>e.id==='personaggio-re-italia');
+assert.equal(ivory.parentId,'organizzazioni-governi','Ivory Covenant va classificato nel governo italiano');
+assert.equal(ivory.templateId,'character','Ivory Covenant deve usare il modello personaggio');
+assert.equal(king.parentId,'organizzazioni-governi','Il Re d’Italia deve comparire tra le figure governative');
+assert.equal(king.templateId,'character','La scheda del Re deve essere un personaggio');
 const flames=entries.find(e=>e.id==='fiamme-categorie');assert.equal(flames.flames.length,11);
 const names=new Set(flames.flames.map(f=>f.name));for(const name of ['Guerriero','Antico','Eremita','Guaritore','Martire','Sentinella','Cacciatore','Saggio','La Tomba','La Moglie','La Libertà'])assert.ok(names.has(name));
 for(const entry of entries){

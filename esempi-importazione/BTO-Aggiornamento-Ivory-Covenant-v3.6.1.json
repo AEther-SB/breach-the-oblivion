@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "title": "BTO · Correzione personaggi e governo d’Italia v3.6.1",
+    "version": "3.6.1",
+    "entryCount": 2,
+    "instructions": "Importa dalla Home come GM, seleziona \"Sovrascrivi gli ID già presenti\" e \"Pubblica subito\". Questo sovrascrive l’intera scheda di Ivory Covenant: esegui prima un backup se hai modifiche personalizzate."
+  },
+  "entries": [
+    {
+      "id": "personaggio-ivory-covenant",
+      "kind": "page",
+      "parentId": "organizzazioni-governi",
+      "title": "Ivory Covenant",
+      "description": "Personaggio subordinato al Re d’Italia; collegato ai Quirk Ancestrali.",
+      "icon": "user",
+      "order": 10,
+      "markdown": "**Ivory Covenant** è un individuo collegato ai [Quirk Ancestrali](#/pagina/quirk-ancestrali) e sottoposto all’autorità del [Re d’Italia](#/pagina/personaggio-re-italia). È considerato un possibile interlocutore dalla [Catalyst](#/pagina/organizzazione-catalyst), ma la sua lealtà verso il sovrano lo porta a non condividere le informazioni in suo possesso sui poteri ancestrali.\n\n## Inquadramento\n\n- **Tipo di voce:** Personaggio.\n- **Ambito:** Governo e istituzioni italiane, in virtù del rapporto con il sovrano.\n- **Superiorità gerarchica:** Re d’Italia.\n- **Posizione e incarico:** non ancora specificati.\n- **Quirk:** collegato ai Quirk Ancestrali; nome e capacità non ancora definiti.\n\n## Relazioni e ricerche\n\nIl rapporto con la Catalyst è descritto come una **possibile collaborazione**, non come un’affiliazione. Non sono disponibili elementi sufficienti per precisare il suo ruolo presso la monarchia italiana.\n\n## Informazioni da approfondire\n\nIdentità, aspetto, storia personale, rango e incarico, natura specifica del potere e relazioni ulteriori non sono ancora documentati.",
+      "packageId": "bto-lore-v3.1",
+      "templateId": "character",
+      "layout": "organizations",
+      "imagePlacement": "sidebar"
+    },
+    {
+      "id": "personaggio-re-italia",
+      "kind": "page",
+      "parentId": "organizzazioni-governi",
+      "title": "Re d’Italia",
+      "description": "Sovrano italiano, figura di riferimento e superiore di Ivory Covenant.",
+      "icon": "landmark",
+      "order": 9,
+      "layout": "organizations",
+      "templateId": "character",
+      "imagePlacement": "sidebar",
+      "markdown": "Il **Re d’Italia** è il sovrano al quale [Ivory Covenant](#/pagina/personaggio-ivory-covenant) è subordinato e verso il quale dimostra lealtà. Tale rapporto influisce sulla disponibilità di Ivory Covenant a condividere informazioni sui [Quirk Ancestrali](#/pagina/quirk-ancestrali) con la Catalyst.\n\n## Informazioni note\n\n- **Titolo:** Re d’Italia.\n- **Relazione documentata:** superiore di Ivory Covenant.\n\n## Informazioni da approfondire\n\nNome e identità personale, natura e competenze della monarchia, storia, poteri e altri rapporti istituzionali non sono ancora descritti.",
+      "packageId": "bto-lore-v3.1"
+    }
+  ]
+}

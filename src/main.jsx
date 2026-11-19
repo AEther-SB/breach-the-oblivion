@@ -4,7 +4,7 @@ import { HashRouter, Link, NavLink, Navigate, Route, Routes, useLocation, useNav
 import {
   ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Check, ChevronDown,
   ChevronLeft, ChevronRight, Copy, Droplets, Flame, FlaskConical, Layers3, Menu,
-  Moon, Orbit, Search, Shield, SlidersHorizontal, Sun, X, Globe2, Landmark, UsersRound, Dna, Network, History, MapPinned, Fingerprint, Castle, Building2, GraduationCap, ScrollText, Swords, HeartPulse, Microscope, Eye, Brain, Waypoints, Sparkles, Bookmark, ListTree, BookMarked, MapPin, Factory, FlaskRound, CircleDot, GitBranch,
+  Moon, Orbit, Search, Shield, SlidersHorizontal, Sun, X, Globe2, Landmark, UsersRound, Dna, Network, History, MapPinned, Fingerprint, Castle, Building2, GraduationCap, ScrollText, Swords, HeartPulse, Microscope, Eye, Brain, Waypoints, Sparkles, Bookmark, UserRound, ListTree, BookMarked, MapPin, Factory, FlaskRound, CircleDot, GitBranch,
 } from 'lucide-react';
 import compendium from './data/compendium.json';
 import { ContentProvider, useContent, normalize, slug } from './content-store';
@@ -50,10 +50,11 @@ const sectionMeta = {
   organizzazioni:{icon:UsersRound,tone:'planetary',cta:'Esplora le organizzazioni'},
   'atlas-geografico':{icon:Globe2,tone:'elements',cta:'Apri l’Atlante'},
 };
-const loreIcons = {flame:Flame,dna:Dna,shield:Shield,history:History,globe:Globe2,users:UsersRound,book:BookOpen,landmark:Landmark,network:Network,brain:Brain,scroll:ScrollText,eye:Eye,microscope:Microscope,bookmark:Bookmark,castle:Castle,building:Building2,school:GraduationCap,swords:Swords,heart:HeartPulse,waypoints:Waypoints,map:MapPinned,location:MapPin,factory:Factory,flask:FlaskConical,branch:GitBranch,sparkles:Sparkles};
+const loreIcons = {flame:Flame,dna:Dna,shield:Shield,history:History,globe:Globe2,users:UsersRound,book:BookOpen,landmark:Landmark,network:Network,brain:Brain,scroll:ScrollText,eye:Eye,microscope:Microscope,bookmark:Bookmark,user:UserRound,castle:Castle,building:Building2,school:GraduationCap,swords:Swords,heart:HeartPulse,waypoints:Waypoints,map:MapPinned,location:MapPin,factory:Factory,flask:FlaskConical,branch:GitBranch,sparkles:Sparkles};
 function entryIcon(entry){
   if(entry?.icon && loreIcons[entry.icon])return loreIcons[entry.icon];
   if(sectionMeta[entry?.id])return sectionMeta[entry.id].icon;
+  if(entry?.templateId==='character')return UserRound;
   const id=entry?.id||'';
   if(id.startsWith('fiamma-')||id.startsWith('fiamme-'))return Flame;
   if(id.includes('flogisto')||id.includes('alchimia-'))return FlaskConical;
@@ -73,7 +74,10 @@ function entryIcon(entry){
   if(id.includes('atlas')||id.includes('paesi')||id.includes('luoghi'))return Globe2;
   return entry?.kind==='page'?Bookmark:BookOpen;
 }
-function entryTone(entry){return sectionMeta[entry?.id]?.tone||((entry?.id||'').startsWith('fiamma')?'vital':(entry?.id||'').startsWith('controcorpo')?'heavy':(entry?.id||'').startsWith('quirk')?'planetary':(entry?.id||'').startsWith('organizzazioni')?'composite':'elements');}
+function entryTone(entry){
+  if(entry?.templateId==='character') return 'planetary';
+  return sectionMeta[entry?.id]?.tone||((entry?.id||'').startsWith('fiamma')?'vital':(entry?.id||'').startsWith('controcorpo')?'heavy':(entry?.id||'').startsWith('quirk')?'planetary':(entry?.id||'').startsWith('organizzazioni')?'composite':'elements');
+}
 const coreRootIds=['alchimia','fiamme-essenza','quirk','controcorpi','storia-passato','organizzazioni','atlas-geografico'];
 const isOrphanAntagonists=p=>p.parentId==='root'&&normalize(p.title)==='antagonisti';
 function editorialRoot(pages){

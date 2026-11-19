@@ -1,10 +1,10 @@
 {
   "metadata": {
-    "title": "BTO · Compendio lore riorganizzato v3.1",
-    "version": "3.1.0",
+    "title": "BTO · Compendio lore riorganizzato v3.6.1",
+    "version": "3.6.1",
     "source": "Materiale dell’autore + categorie nel modulo Foundry",
-    "instructions": "Per installare senza duplicati: GM → Ripulisci importazione lore v3.0 (prima esporta backup); quindi importa questo JSON in Home · Compendio con Pubblica subito. Non azzera le pagine alchemiche originali.",
-    "entryCount": 29
+    "instructions": "Importazione completa iniziale. Per spostare soltanto Ivory Covenant senza sovrascrivere le altre voci, usa BTO-Aggiornamento-Ivory-Covenant-v3.6.1.json.",
+    "entryCount": 30
   },
   "entries": [
     {
@@ -141,21 +141,37 @@
       "description": "Origini, teorie scientifiche e figure conosciute.",
       "icon": "history",
       "order": 1,
-      "markdown": "I **Quirk Ancestrali**, detti anche **Primordiali**, erano in antico poco più che leggende: favori ritenuti divini, trasmessi nelle tradizioni di sciamani e religiosi. Le testimonianze più antiche li descrivono come lievi alterazioni della fortuna, innaturali ma di scarsa incidenza pratica.\n\nCon l’Era dei Poteri le capacità e la versatilità degli Ancestrali sono aumentate enormemente. Quando espressi al massimo del dominio, questi poteri sembrano trovare rivali soltanto fra altri Quirk Ancestrali.\n\nLe loro origini sono associate, secondo alcune tradizioni e ipotesi, ai cimeli antichi e alle anomalie cronologiche. La natura di questo legame non è dimostrata.\n\n## Ipotesi di ricerca\n\nLa Catalyst discute diverse spiegazioni: collegamento atemporale con i predecessori, accumulo di energia in artefatti e relazione diretta con i Flussi Alchemici. Sono teorie concorrenti, non fatti accertati.\n\n## Limiti della ricerca\n\nSecondo le informazioni fornite, nessun possessore noto di Quirk Ancestrali è associato alla Catalyst. Ivory Covenant è considerato un possibile interlocutore, ma la sua lealtà verso il proprio Re limita la disponibilità di informazioni.\n\nFra le potenze mondiali, **Italia, Giappone e America** sono indicate come sicuramente in possesso di informazioni; **Egitto, Israele, Turchia, Corea, Germania e Sudafrica** vengono menzionati come possibili detentori. Questa distinzione riflette il grado di certezza della fonte e non una verifica indipendente.\n## Ipotesi della Catalyst\n\n**Collegamento atemporale.** Una corrente di ricerca ipotizza che i possessori contemporanei attingano alla vita, alla morte e alla memoria di antenati o controparti preesistenti.\n\n**Accumulo negli artefatti.** Un’altra interpretazione ritiene che parte dell’energia sia stata conservata in cimeli antichi, fornendo a un singolo possessore una riserva quasi inesauribile nell’arco della sua vita.\n\n**Frammentazione e Flussi Alchemici.** Secondo ulteriori ipotesi gli oggetti potrebbero essersi divisi, fusi con i Flussi Alchemici oppure non costituire alcun intermediario necessario. Nessuna di queste teorie è considerata dimostrata.\n\n## Ricerca e possessori\n\nLa **Catalyst** indaga sulle Fiamme e sul potenziale umano, ma non possiede direttamente utilizzatori noti di Quirk Ancestrali. **Ivory Covenant** è considerato un possibile interlocutore, benché il suo legame di lealtà verso il proprio Re impedisca attualmente di ottenere informazioni. [Scheda di Ivory Covenant](#/pagina/personaggio-ivory-covenant) · [Catalyst](#/pagina/organizzazione-catalyst).\n\nLa ricerca cita Italia, Giappone e America come Paesi sicuramente in possesso di informazioni rilevanti; altre nazioni sono considerate possibilità, non conferme. Questi riferimenti non indicano l’ubicazione di artefatti o individui specifici.\n",
+      "markdown": "I **Quirk Ancestrali**, detti anche **Primordiali**, erano in antico poco più che leggende: favori ritenuti divini, trasmessi nelle tradizioni di sciamani e religiosi. Le testimonianze più antiche li descrivono come lievi alterazioni della fortuna, innaturali ma di scarsa incidenza pratica.\n\nCon l’Era dei Poteri le capacità e la versatilità degli Ancestrali sono aumentate enormemente. Quando espressi al massimo del dominio, questi poteri sembrano trovare rivali soltanto fra altri Quirk Ancestrali.\n\nLe loro origini sono associate, secondo alcune tradizioni e ipotesi, ai cimeli antichi e alle anomalie cronologiche. La natura di questo legame non è dimostrata.\n\n## Ipotesi di ricerca\n\nLa Catalyst discute diverse spiegazioni: collegamento atemporale con i predecessori, accumulo di energia in artefatti e relazione diretta con i Flussi Alchemici. Sono teorie concorrenti, non fatti accertati.\n\n## Limiti della ricerca\n\nSecondo le informazioni fornite, nessun possessore noto di Quirk Ancestrali è associato alla Catalyst. Ivory Covenant è considerato un possibile interlocutore, ma la sua lealtà verso il Re d’Italia limita la disponibilità di informazioni.\n\nFra le potenze mondiali, **Italia, Giappone e America** sono indicate come sicuramente in possesso di informazioni; **Egitto, Israele, Turchia, Corea, Germania e Sudafrica** vengono menzionati come possibili detentori. Questa distinzione riflette il grado di certezza della fonte e non una verifica indipendente.\n## Ipotesi della Catalyst\n\n**Collegamento atemporale.** Una corrente di ricerca ipotizza che i possessori contemporanei attingano alla vita, alla morte e alla memoria di antenati o controparti preesistenti.\n\n**Accumulo negli artefatti.** Un’altra interpretazione ritiene che parte dell’energia sia stata conservata in cimeli antichi, fornendo a un singolo possessore una riserva quasi inesauribile nell’arco della sua vita.\n\n**Frammentazione e Flussi Alchemici.** Secondo ulteriori ipotesi gli oggetti potrebbero essersi divisi, fusi con i Flussi Alchemici oppure non costituire alcun intermediario necessario. Nessuna di queste teorie è considerata dimostrata.\n\n## Ricerca e possessori\n\nLa **Catalyst** indaga sulle Fiamme e sul potenziale umano, ma non possiede direttamente utilizzatori noti di Quirk Ancestrali. **Ivory Covenant** è considerato un possibile interlocutore, benché il suo legame di lealtà verso il Re d’Italia impedisca attualmente di ottenere informazioni. [Scheda di Ivory Covenant](#/pagina/personaggio-ivory-covenant) · [Catalyst](#/pagina/organizzazione-catalyst).\n\nLa ricerca cita Italia, Giappone e America come Paesi sicuramente in possesso di informazioni rilevanti; altre nazioni sono considerate possibilità, non conferme. Questi riferimenti non indicano l’ubicazione di artefatti o individui specifici.\n",
       "packageId": "bto-lore-v3.1",
       "layout": "lore"
     },
     {
       "id": "personaggio-ivory-covenant",
       "kind": "page",
-      "parentId": "quirk-ancestrali",
+      "parentId": "organizzazioni-governi",
       "title": "Ivory Covenant",
-      "description": "Possessore di un Quirk Ancestrale; leale al proprio Re.",
-      "icon": "bookmark",
-      "order": 1,
-      "markdown": "**Ivory Covenant** è un individuo legato ai Quirk Ancestrali e un potenziale interlocutore per la Catalyst. Il suo legame di lealtà verso il proprio Re lo porta tuttavia a non condividere informazioni sui poteri ancestrali.\n\n**Identità, Quirk e storia personale:** da approfondire.\n\n**Il Re:** figura menzionata, la cui identità non è ancora definita. Non si tratta di una nazione o organizzazione stabilita sulla base delle informazioni disponibili.",
+      "description": "Personaggio subordinato al Re d’Italia; collegato ai Quirk Ancestrali.",
+      "icon": "user",
+      "order": 10,
+      "markdown": "**Ivory Covenant** è un individuo collegato ai [Quirk Ancestrali](#/pagina/quirk-ancestrali) e sottoposto all’autorità del [Re d’Italia](#/pagina/personaggio-re-italia). È considerato un possibile interlocutore dalla [Catalyst](#/pagina/organizzazione-catalyst), ma la sua lealtà verso il sovrano lo porta a non condividere le informazioni in suo possesso sui poteri ancestrali.\n\n## Inquadramento\n\n- **Tipo di voce:** Personaggio.\n- **Ambito:** Governo e istituzioni italiane, in virtù del rapporto con il sovrano.\n- **Superiorità gerarchica:** Re d’Italia.\n- **Posizione e incarico:** non ancora specificati.\n- **Quirk:** collegato ai Quirk Ancestrali; nome e capacità non ancora definiti.\n\n## Relazioni e ricerche\n\nIl rapporto con la Catalyst è descritto come una **possibile collaborazione**, non come un’affiliazione. Non sono disponibili elementi sufficienti per precisare il suo ruolo presso la monarchia italiana.\n\n## Informazioni da approfondire\n\nIdentità, aspetto, storia personale, rango e incarico, natura specifica del potere e relazioni ulteriori non sono ancora documentati.",
       "packageId": "bto-lore-v3.1",
-      "templateId": "character"
+      "templateId": "character",
+      "layout": "organizations",
+      "imagePlacement": "sidebar"
+    },
+    {
+      "id": "personaggio-re-italia",
+      "kind": "page",
+      "parentId": "organizzazioni-governi",
+      "title": "Re d’Italia",
+      "description": "Sovrano italiano, figura di riferimento e superiore di Ivory Covenant.",
+      "icon": "landmark",
+      "order": 9,
+      "layout": "organizations",
+      "templateId": "character",
+      "imagePlacement": "sidebar",
+      "markdown": "Il **Re d’Italia** è il sovrano al quale [Ivory Covenant](#/pagina/personaggio-ivory-covenant) è subordinato e verso il quale dimostra lealtà. Tale rapporto influisce sulla disponibilità di Ivory Covenant a condividere informazioni sui [Quirk Ancestrali](#/pagina/quirk-ancestrali) con la Catalyst.\n\n## Informazioni note\n\n- **Titolo:** Re d’Italia.\n- **Relazione documentata:** superiore di Ivory Covenant.\n\n## Informazioni da approfondire\n\nNome e identità personale, natura e competenze della monarchia, storia, poteri e altri rapporti istituzionali non sono ancora descritti.",
+      "packageId": "bto-lore-v3.1"
     },
     {
       "id": "controcorpi",
