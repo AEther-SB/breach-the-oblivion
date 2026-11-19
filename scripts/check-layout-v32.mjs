@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const app = fs.readFileSync('src/main.jsx','utf8');
+const css = fs.readFileSync('src/layout-v32.css','utf8');
+const read = text => text.replace(/\s+/g,' ');
+assert.ok(!app.includes('<footer className="site-footer"'), 'La barra inferiore non deve essere presente.');
+assert.ok(app.includes("compendiumNavigation=rootSections.filter(p=>!['atlas-geografico','storia-passato'].includes(p.id))"), 'Alchimia deve appartenere al menu Compendio.');
+assert.ok(app.includes('className="lore-content-scroll"'), 'Le pagine di sezione devono avere un solo contenitore di lettura.');
+assert.ok(!app.includes('className="lore-scroll lore-section-description"'), 'Non reintrodurre un pannello interno scorrevole nella descrizione della sezione.');
+assert.ok(css.includes('lore-detail-layout:not(:has(> .lore-toc))'), 'Le pagine senza indice devono avere larghezza intera.');
+assert.ok(css.includes('lore-section-intro-layout:not(:has(> .lore-toc))'), 'Le sezioni senza indice devono avere larghezza intera.');
+assert.ok(css.includes('.home-hero{min-height:0;overflow:hidden}'), 'La fascia superiore della Home non deve avere una scrollbar.');
+assert.ok(css.includes('grid-template-columns:repeat(3,minmax(0,1fr))'), 'Le raccolte della Home devono formare una griglia.');
+assert.ok(css.includes('.lore-landing>.lore-content-scroll{display:block;max-height:none}'), 'Le sezioni devono avere una zona scorrevole unificata.');
+assert.ok(app.includes('className="lore-article-scroll" tabIndex={0}'), 'Le aree di lettura devono essere accessibili da tastiera.');
+console.log('OK — v3.2: Alchimia nel Compendio, Home fissa e a griglia, footer rimosso, articoli a piena larghezza senza indice, lettura unificata.');

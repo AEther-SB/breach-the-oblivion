@@ -24,6 +24,7 @@ import './motion.css';
 import './editor-modular.css';
 import './home-cards.css';
 import './app-overhaul.css';
+import './layout-v32.css';
 
 const ALCHEMY = '/alchimia';
 const MATERIALS = '/alchimia/materiali';
@@ -156,7 +157,7 @@ function ScrollManager() {
       return () => cancelAnimationFrame(raf);
     }
     window.scrollTo({ top: 0, behavior: 'auto' });
-    for (const area of document.querySelectorAll('.detail-main, .detail-sidebar, .catalog-scroll, .reading-body, .lore-scroll, .section-landing, .lore-article-scroll, .atlas-sidebar')) area.scrollTop = 0;
+    for (const area of document.querySelectorAll('.detail-main, .detail-sidebar, .catalog-scroll, .reading-body, .lore-scroll, .lore-content-scroll, .section-landing, .lore-article-scroll, .atlas-sidebar')) area.scrollTop = 0;
   }, [loc.pathname, loc.search]);
   return null;
 }
@@ -202,16 +203,16 @@ function Layout({ theme, toggleTheme }) {
   }, []);
   useEffect(() => { document.body.classList.toggle('prevent-scroll', mobileOpen || searchOpen); return () => document.body.classList.remove('prevent-scroll'); }, [mobileOpen, searchOpen]);
   const rootSections=editorialRoot(pages);
-  const navigation = [['/', 'HOME'],[ALCHEMY,'ALCHIMIA'],['/pagina/storia-passato','STORIA'],['/atlante','ATLANTE']];
-  const compendiumNavigation=rootSections.filter(p=>!['alchimia','atlas-geografico','storia-passato'].includes(p.id));
+  const navigation = [['/', 'HOME'],['/pagina/storia-passato','STORIA'],['/atlante','ATLANTE']];
+  const compendiumNavigation=rootSections.filter(p=>!['atlas-geografico','storia-passato'].includes(p.id));
   useEffect(() => {
     document.documentElement.dataset.section = location.pathname.startsWith(RELATIONS) ? 'connessioni' : location.pathname.startsWith(MATERIALS) ? 'materiali' : location.pathname.startsWith(GENESIS) ? 'processi' : location.pathname.startsWith(ALCHEMY) ? 'alchimia' : 'home';
   },[location.pathname]);
   const headerNav = (mobile=false) => <>
-    {navigation.slice(0,2).map(([href,text])=><NavLink key={href} onClick={mobile?()=>setMobileOpen(false):undefined} className={({isActive})=>`nav-link ${isActive?'nav-link-active':''}`} to={href} end={href==='/' }>{text}</NavLink>)}
+    {navigation.slice(0,1).map(([href,text])=><NavLink key={href} onClick={mobile?()=>setMobileOpen(false):undefined} className={({isActive})=>`nav-link ${isActive?'nav-link-active':''}`} to={href} end={href==='/' }>{text}</NavLink>)}
     {mobile?<><span className="mobile-nav-group-title">COMPENDIO</span>{compendiumNavigation.map(p=><NavLink key={p.id} to={entryUrl(p)} onClick={()=>setMobileOpen(false)} className="nav-link">{p.title}</NavLink>)}</>:
       <details className="nav-dropdown"><summary className="nav-link">COMPENDIO <ChevronDown size={12}/></summary><div className="nav-dropdown-panel">{compendiumNavigation.map(p=>{const Icon=entryIcon(p);return <Link key={p.id} to={entryUrl(p)} onClick={e=>e.currentTarget.closest('details')?.removeAttribute('open')}><Icon size={17}/>{p.title}</Link>})}</div></details>}
-    {navigation.slice(2).map(([href,text])=><NavLink key={href} onClick={mobile?()=>setMobileOpen(false):undefined} className={({isActive})=>`nav-link ${isActive?'nav-link-active':''}`} to={href}>{text}</NavLink>)}
+    {navigation.slice(1).map(([href,text])=><NavLink key={href} onClick={mobile?()=>setMobileOpen(false):undefined} className={({isActive})=>`nav-link ${isActive?'nav-link-active':''}`} to={href}>{text}</NavLink>)}
   </>;
   return <>
     <ScrollManager/>
@@ -248,7 +249,6 @@ function Layout({ theme, toggleTheme }) {
       <Route path="/classi/exalt" element={<LegacyRedirect path={ALCHEMY}/>}/>
       <Route path="*" element={<MissingPage/>}/>
     </Routes></main>
-    <footer className="site-footer"><div className="footer-inner"><div className="footer-brand"><SiteMark size={25}/><span>BREACH THE OBLIVION</span></div><span>Enciclopedia dell’ambientazione · Alchimia, Fiamme, Quirk e storia</span><Link to="/atlante">Atlante <ArrowRight size={14}/></Link></div></footer>
     <GlobalSearch open={searchOpen} close={() => setSearchOpen(false)}/>
   </>;
 }
@@ -430,17 +430,19 @@ function GenericPage(){
     const featured=major.length?major:children.length<=4?children:[];
     const remaining=children.filter(p=>!featured.some(m=>m.id===p.id));
     return <div className={`section-landing lore-landing page-width lore-section-${entry.id} lore-layout-${entry.layout||'lore'}`}><LoreBreadcrumb entry={entry} pages={pages}/><PageHeading eyebrow="BREACH THE OBLIVION · COMPENDIO" title={entry.title} text={entry.description} trailing={<EditTrigger entry={entry}/>}/>
-      {entry.blocks?.length>0&&<div className="lore-section-intro-layout"><LoreTOC entry={entry}/><div className="lore-scroll lore-section-description">{entry.topics?.length>0&&<CategoryExplorer entry={entry} topics={entry.topics}/>}<GenericBlocks entry={entry}/></div></div>}
-      {isHistory&&<StoriaTimeline pages={pages}/>}
-      {!isHistory&&featured.length>0&&<section className="lore-featured"><div className="lore-index-heading"><span className="eyebrow">{entry.kind==='chapter'?'SEZIONI PRINCIPALI':'RACCOLTE'}</span><h2>{isHistory?'Approfondisci gli eventi':'Percorsi di lettura'}</h2></div><div className="section-landing-cards"><SectionCards cards={featured.map((p,i)=>cardOf(p,i))}/></div></section>}
-      {!isHistory&&remaining.length>0&&<LoreIndex entries={remaining} heading={isHistory?'Fonti e voci storiche':(featured.length?'Altre voci':'Contenuti della raccolta')}/>}
-      {children.length===0&&entry.blocks?.length===0&&<div className="lore-empty"><Icon size={29}/><p>Non sono ancora disponibili voci in questa sezione.</p></div>}
+      <div className="lore-content-scroll" tabIndex={0} aria-label={`Contenuto di ${entry.title}`}>
+        {entry.blocks?.length>0&&<div className="lore-section-intro-layout"><LoreTOC entry={entry}/><div className="lore-section-description">{entry.topics?.length>0&&<CategoryExplorer entry={entry} topics={entry.topics}/>}<GenericBlocks entry={entry}/></div></div>}
+        {isHistory&&<StoriaTimeline pages={pages}/>}
+        {!isHistory&&featured.length>0&&<section className="lore-featured"><div className="lore-index-heading"><span className="eyebrow">{entry.kind==='chapter'?'SEZIONI PRINCIPALI':'RACCOLTE'}</span><h2>Percorsi di lettura</h2></div><div className="section-landing-cards"><SectionCards cards={featured.map((p,i)=>cardOf(p,i))}/></div></section>}
+        {!isHistory&&remaining.length>0&&<LoreIndex entries={remaining} heading={featured.length?'Altre voci':'Contenuti della raccolta'}/>}
+        {children.length===0&&entry.blocks?.length===0&&<div className="lore-empty"><Icon size={29}/><p>Non sono ancora disponibili voci in questa sezione.</p></div>}
+      </div>
     </div>;
   }
   const siblings=pages.filter(p=>p.parentId===entry.parentId&&p.id!==entry.id&&p.kind==='page').slice(0,7);
   return <div className={`reading-page lore-detail page-width lore-section-${entry.parentId} lore-layout-${entry.layout||'lore'}`}><LoreBreadcrumb entry={entry} pages={pages}/>
     <PageHeading eyebrow="COMPENDIO · VOCE ENCICLOPEDICA" title={entry.title} text={entry.description} trailing={<div className="bto-entry-actions">{entry.flameHex&&/^#[a-f0-9]{6}$/i.test(entry.flameHex)&&<span className="bto-flame-label"><i style={{backgroundColor:entry.flameHex}}/>{entry.flameColor}</span>}<EditTrigger entry={entry}/></div>}/>
-    <div className="lore-detail-layout"><LoreTOC entry={entry}/><div className="lore-article-scroll"><div className="lore-article-head"><span className="lore-article-emblem">{entry.flameHex?<span className="lore-swatch" style={{backgroundColor:entry.flameHex}}/>:<Icon size={25} strokeWidth={1.4}/>}</span><span>{entry.flames?.length?'CATALOGO CROMATICO':'ARCHIVIO ENCICLOPEDICO'}</span></div>
+    <div className="lore-detail-layout"><LoreTOC entry={entry}/><div className="lore-article-scroll" tabIndex={0} aria-label={`Contenuto di ${entry.title}`}><div className="lore-article-head"><span className="lore-article-emblem">{entry.flameHex?<span className="lore-swatch" style={{backgroundColor:entry.flameHex}}/>:<Icon size={25} strokeWidth={1.4}/>}</span><span>{entry.flames?.length?'CATALOGO CROMATICO':'ARCHIVIO ENCICLOPEDICO'}</span></div>
     {entry.flames?.length>0&&<FlameCatalog flames={entry.flames}/>}
     <article className="lore-article"><GenericBlocks entry={entry}/>{!entry.blocks?.length&&<p className="lore-empty-copy">Contenuti ancora da definire.</p>}</article>
     {siblings.length>0&&<LoreIndex entries={siblings} heading="Nella stessa raccolta"/>}</div></div>
