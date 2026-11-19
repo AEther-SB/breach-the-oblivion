@@ -5,21 +5,16 @@ on:
     branches: [main]
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
+    name: Verifica, compila e carica il sito
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -44,9 +39,53 @@ jobs:
           VITE_FIREBASE_PROJECT_ID: ${{ vars.VITE_FIREBASE_PROJECT_ID }}
           VITE_FIREBASE_APP_ID: ${{ vars.VITE_FIREBASE_APP_ID }}
         run: npm run build
+      - name: Controlla i file compilati
+        run: |
+          test -f dist/index.html || { echo '::error::La build non ha prodotto dist/index.html'; exit 1; }
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v4
+      - name: Carica artefatto GitHub Pages
+        uses: actions/upload-pages-artifact@v4
         with:
+          name: github-pages
           path: ./dist
-      - id: deployment
+          retention-days: 7
+
+  deploy:
+    name: Pubblica il sito
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+      actions: read
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Verifica la disponibilità dell'artefatto
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          for attempt in 1 2 3 4 5 6 7 8; do
+            count=$(gh api "repos/$REPOSITORY/actions/runs/$RUN_ID/artifacts?per_page=100" \
+              --jq '[.artifacts[] | select(.name == "github-pages" and .expired == false)] | length') || count=0
+            if [ "$count" = "1" ]; then
+              echo "Artefatto github-pages disponibile (tentativo $attempt)."
+              exit 0
+            fi
+            if [ "$count" -gt 1 ]; then
+              echo "::error::Trovati più artefatti github-pages nello stesso run: avvia un nuovo run, non ripetere solo il job."
+              exit 1
+            fi
+            echo "Artefatto non ancora indicizzato, tentativo $attempt/8..."
+            sleep 5
+          done
+          echo '::error::Artefatto github-pages assente: controlla il job build e il caricamento.'
+          exit 1
+      - name: Distribuisci su GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages
