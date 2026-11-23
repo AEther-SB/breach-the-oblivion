@@ -1,5 +1,5 @@
 {
-  "alkahest": "Saggezza almeno 16 e un altro materiale con Purezza superiore di almeno 3 gradi a quella attuale di Arsenico. Se Arsenico ha Purezza 0, l’altro materiale deve avere Purezza almeno 3.",
+  "alkahest": "Saggezza almeno 16, Arsenico con Purezza almeno 1 e un altro materiale con Purezza superiore di almeno 3 gradi a quella attuale di Arsenico.",
   "zero": "Livello Exalt almeno 3; nessun altro Elemento posseduto. Zero e gli altri Elementi sono reciprocamente incompatibili.",
   "argento": "Zero oppure Alkahest con Purezza almeno 1, insieme a Ossigeno con Purezza almeno 1; oppure un materiale della Materia Vitale con Purezza almeno 1 e Ferro, Argentovivo o Rame con Purezza superiore di almeno 1 grado a quella dell’Argento che si intende ottenere; oppure Arsenico con Purezza almeno 3 e un Elemento con Purezza almeno 2. I requisiti vengono verificati a ogni aumento di Purezza di Argento.",
   "oro": "Zero oppure Alkahest con Purezza almeno 1, insieme a Flogisto con Purezza almeno 1; oppure un Elemento con Purezza almeno 1 e Piombo, Stagno o Rame con Purezza superiore di almeno 1 grado a quella dell’Oro che si intende ottenere; oppure Platino con Purezza almeno 3 e un materiale della Materia Vitale con Purezza almeno 2. I requisiti vengono verificati a ogni aumento di Purezza di Oro.",

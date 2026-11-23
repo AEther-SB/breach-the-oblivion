@@ -1,6 +1,6 @@
 {
-  "version": "0.7.48",
-  "source": "Suite BTE v0.7.48 · audit materiali verificato; descrizioni meccaniche invariate",
+  "version": "0.7.50",
+  "source": "Suite BTE v0.7.50 · prerequisito Alkahest corretto; testi delle capacità invariati",
   "dcFormula": "6 + Competenza + Purezza effettiva del singolo materiale + modificatore di Intelligenza",
   "materials": [
     {
@@ -64,7 +64,7 @@
           "html": "<section class=\"exalt-prose\"><p>Con <strong>un'azione bonus</strong>, una volta al giorno, stabilizzi temporaneamente la tua essenza in una forma che le aggressioni esterne faticano a contaminare. Per uno dei tuoi turni per ogni grado di Purezza effettiva di Alkahest ottieni i seguenti benefici:</p><ul><li>La prima istanza di danno che subisci in ogni round viene dimezzata dopo l'applicazione delle altre riduzioni.</li><li>Ottieni un bonus ai tiri salvezza pari a metà del tuo <strong>bonus di Competenza</strong>, arrotondata per difetto, con un minimo di <strong>+1</strong>.</li><li>Una volta per tuo turno, quando colpisci un nemico, puoi applicare gratuitamente <em>Dissociazione</em>, compresi il danno immediato e il relativo tiro salvezza, senza dover prima utilizzare <em>Solvente Universale</em>.</li></ul><p>La Dissociazione ottenuta in questo modo non separa Purezza, Punti Quirk o utilizzi del Controcorpo. Le sue altre conseguenze vengono risolte normalmente.</p></section>"
         }
       ],
-      "requirementsText": "Saggezza almeno 16 e un altro materiale con Purezza superiore di almeno 3 gradi a quella attuale di Arsenico. Se Arsenico ha Purezza 0, l’altro materiale deve avere Purezza almeno 3.",
+      "requirementsText": "Saggezza almeno 16, Arsenico con Purezza almeno 1 e un altro materiale con Purezza superiore di almeno 3 gradi a quella attuale di Arsenico.",
       "profile": {
         "theme": "L’Alkahest è il solvente impossibile, cercato dagli alchimisti come sostanza capace di dissolvere ogni altra sostanza. Nell’Exalt questa idea si rovescia in una volontà di separazione assoluta: non si consuma soltanto la materia, ma il vincolo che la protegge, la sostiene e le permette di opporre resistenza. La stessa padronanza può arrestare per un istante ciò che dovrebbe mutare.",
         "history": "L'alkahest era il solvente universale immaginato da alcuni alchimisti, capace in teoria di dissolvere le sostanze fino ai loro principi fondamentali. Rimase una nozione alchemica, non una sostanza identificata dalla chimica moderna."

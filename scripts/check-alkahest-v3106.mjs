@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const read=path=>JSON.parse(readFileSync(new URL(path,import.meta.url),'utf8'));
+const compendium=read('../src/data/compendium.json');
+const requirements=read('../contenuti/prerequisiti.json');
+const imported=read('../esempi-importazione/Materiali-BTO-v3.10.6-reimportazione-completa.json');
+const site=compendium.materials.find(m=>m.id==='alkahest');
+assert(site);
+const text=site.requirementsText;
+assert.equal(text,requirements.alkahest);
+assert.match(text,/Saggezza almeno 16/);
+assert.match(text,/Arsenico con Purezza almeno 1/);
+assert.match(text,/superiore di almeno 3 gradi/);
+assert.doesNotMatch(text,/Se Arsenico ha Purezza 0/);
+const imp=imported.entries.find(e=>e.materialId==='alkahest');
+assert(imp);
+assert.equal(imp.requirementsText,text);
+console.log('OK — Requisito Alkahest coerente in Compendio, prerequisiti e JSON GM.');
