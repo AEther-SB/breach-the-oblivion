@@ -290,6 +290,30 @@ export function ContentProvider({children}) {
     batch.set(doc(db,'site','config'), {initialized:true, source:source.source, initializedAt:serverTimestamp(),initializedBy:user.uid});
     await batch.commit();
   }
+  async function syncMaterialRequirements() {
+    requireGM();
+    if (!seeded) throw Error('Importa prima il compendio iniziale.');
+    const live = new Map(published.filter(e=>e.kind==='material').map(e=>[e.materialId,e]));
+    const draftsSet = new Set(drafts.map(e=>e.id));
+    let updated=0,unchanged=0,skipped=0;
+    const items=[];
+    for (const material of source.materials) {
+      const docu=live.get(material.id);
+      if (!docu || draftsSet.has(docu.id)) {skipped++;continue;}
+      if (docu.requirementsText === material.requirementsText) {unchanged++;continue;}
+      items.push({id:docu.id,requirementsText:material.requirementsText});
+    }
+    for (let i=0;i<items.length;i+=120) {
+      const batch=writeBatch(db);
+      for (const item of items.slice(i,i+120)) {
+        batch.update(doc(db,'entries',item.id),{
+          requirementsText:item.requirementsText,updatedAt:serverTimestamp(),updatedBy:user.uid,
+        });
+      }
+      await batch.commit();updated+=Math.min(120,items.length-i);
+    }
+    return {updated,unchanged,skipped};
+  }
   async function syncEditorial() {
     requireGM();
     if (!seeded) throw Error('Importa prima il compendio iniziale.');
@@ -391,7 +415,7 @@ export function ContentProvider({children}) {
     }
     return {updated,skipped};
   }
-  const value = { configured, user, gm, contributor, submissions, registeredUsers, contributorRecords, directoryError, authPending, seeded, loaded, ready:!configured||(loaded&&configLoaded), error, setError, entries, publishedEntries:published, draftEntries:gm?drafts:[], materials, processes, pages, isDraft, resetLegacyLore, login, logout, submitProposal, decideProposal, setContributorEnabled, saveDraft, publish, remove, loadHistory, bootstrap, syncEditorial, importEntries, baseVersion:source.version };
+  const value = { configured, user, gm, contributor, submissions, registeredUsers, contributorRecords, directoryError, authPending, seeded, loaded, ready:!configured||(loaded&&configLoaded), error, setError, entries, publishedEntries:published, draftEntries:gm?drafts:[], materials, processes, pages, isDraft, resetLegacyLore, login, logout, submitProposal, decideProposal, setContributorEnabled, saveDraft, publish, remove, loadHistory, bootstrap, syncEditorial, syncMaterialRequirements, importEntries, baseVersion:source.version };
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 export function useContent() { const value = useContext(context); if(!value) throw Error('ContentProvider mancante'); return value; }

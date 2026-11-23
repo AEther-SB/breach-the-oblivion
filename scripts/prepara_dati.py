@@ -67,8 +67,8 @@ for process in source['processes']:
 
 count=sum(len(m['abilities']) for m in source['materials'])
 output={
-    'version':'0.7.40',
-    'source':'Suite BTE v0.7.40 · descrizioni uniformate con Foundry',
+    'version':'0.7.48',
+    'source':'Suite BTE v0.7.48 · audit materiali verificato; descrizioni meccaniche invariate',
     'dcFormula':'6 + Competenza + Purezza effettiva del singolo materiale + modificatore di Intelligenza',
     'materials':source['materials'],
     'genesisProcesses':source['processes'],

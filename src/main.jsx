@@ -1,3 +1,4 @@
+import './material-rules-audit.css';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter, Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -328,7 +329,7 @@ function MaterialCard({material}) {
   return <Link to={`${MATERIALS}/${material.materialId}`} className={`material-card tone-${groupStyle[material.group]}`}>
     <div className="material-card-top"><span className="material-card-group"><GroupIcon group={material.group} size={15}/>{material.group}</span><ArrowUpRight size={18}/></div>
     <div className="material-card-title"><span className="material-card-symbol">{material.symbol || '◇'}</span><h3>{material.title}</h3></div>
-    <p className="material-card-bonus">{material.bonus}</p>
+    <p className="material-card-bonus">{material.bonus} <small>per capacità sbloccata</small></p>
     <div className="material-card-bottom"><span>{material.abilities.length} {material.abilities.length === 1 ? 'capacità' : 'capacità'}</span><span className="material-levels">{material.abilities.map(a=><span key={a.level}>{a.level}</span>)}</span></div>
   </Link>;
 }
@@ -397,7 +398,7 @@ function MaterialDetail(){
   const currentSelected=new URLSearchParams(loc.search).get('abilita');
   const related=relationsFor(graph,`material:${mat.materialId}`);
   const suggestions=[...related.outgoing,...related.incoming.filter(n=>!related.outgoing.some(x=>x.id===n.id))];
-  return <div className={`detail-page page-width tone-${groupStyle[mat.group]||'elements'}`}>
+  return <div className={`detail-page page-width tone-${groupStyle[mat.group]||'elements'} material-${mat.materialId}`}>
     <div className="breadcrumb"><Link to={ALCHEMY}>Alchimia</Link><ChevronRight size={15}/><Link to={MATERIALS}>Materiali</Link><ChevronRight size={15}/><Link to={`${MATERIALS}?categoria=${encodeURIComponent(mat.group)}`}>{mat.group}</Link><ChevronRight size={15}/><span>{mat.title}</span></div>
     <div className="detail-layout"><aside className="detail-sidebar"><div className="sidebar-head">INDICE DEI MATERIALI</div><div className="sidebar-groups">{groups.map(g=><div key={g}><div className="sidebar-group-label">{g}</div>{byName.filter(m=>m.group===g).map(m=><Link key={m.id} className={`sidebar-item ${m.materialId===id?'selected':''}`} to={`${MATERIALS}/${m.materialId}`}><span>{m.symbol || '◇'}</span>{m.title}</Link>)}</div>)}</div></aside>
       <article className="detail-main" tabIndex={0} aria-label={`Scheda di ${mat.title}`}><div className="material-overview"><div className={`detail-hero tone-${groupStyle[mat.group]}`}><div className="detail-hero-top"><span><GroupIcon group={mat.group}/>{mat.group}</span><div className="detail-actions"><EditTrigger entry={mat}/><button type="button" className="share-button" onClick={share}>{copied?<Check size={17}/>:<Copy size={17}/>}<span>{copied?'Copiato':'Copia link'}</span></button></div></div><div className="detail-hero-title"><div><span className="detail-kicker">MATERIALE ALCHEMICO</span><h1>{mat.title}</h1></div><div className="detail-symbol" aria-hidden="true">{mat.symbol || '◇'}</div></div><p className="detail-hero-bottom">{mat.abilities.length} capacità <span>·</span> Gradi {mat.abilities.map(a=>a.level).join(', ')}</p></div>
@@ -406,10 +407,10 @@ function MaterialDetail(){
           <LinkedText text={mat.profile?.theme} currentId={`material:${mat.materialId}`} className="material-portrait-theme"/>
           <p className="material-portrait-history">{mat.profile?.history}</p>
         </div>
-        <div className="material-facts"><div><span>BONUS DI PUREZZA</span><strong>{mat.bonus}</strong></div><div><span>CARATTERISTICA</span><strong>{abilityLabel[mat.ability] || '—'}</strong></div></div>
+        <div className="material-facts"><div><span>BONUS DI PUREZZA (PER CAPACITÀ)</span><strong>{mat.bonus}</strong><small>Si cumula per ogni capacità attualmente sbloccata del materiale (fino a ×{mat.abilities.length}).</small></div><div><span>CARATTERISTICA</span><strong>{abilityLabel[mat.ability] || '—'}</strong></div></div>
         <Prerequisites material={mat}/>
         </div>
-        <div className="dc-note"><FlaskConical size={19}/><div><span>CD DEI TIRI SALVEZZA</span><p><strong>6 + Competenza + Purezza effettiva di {mat.title} + modificatore di Intelligenza</strong></p><small>Salvo modificatori specifici delle capacità.</small></div></div>
+        <div className="dc-note"><FlaskConical size={19}/><div><span>CD DEI TIRI SALVEZZA</span><p><strong>6 + Competenza + Purezza effettiva di {mat.title} + modificatore di Intelligenza</strong></p><small>Formula base: i talenti <em>Disciplina Alchemica: Saggezza</em> e <em>Disciplina Alchemica: Carisma</em> sostituiscono INT con SAG o CAR nelle CD. Si applicano anche gli eventuali modificatori specifici della capacità.</small></div></div>
         <div className="abilities-toc"><span>VAI ALLA CAPACITÀ</span><div>{mat.abilities.map(a=><button key={a.name} type="button" onClick={()=>navigate(`${MATERIALS}/${id}?abilita=${encodeURIComponent(a.name)}`)} className={currentSelected===a.name?'toc-current':''}><b>{a.level}</b>{a.name}</button>)}</div></div>
         <AbilityList key={id} features={mat.abilities} currentId={`material:${mat.materialId}`}/>
         <div className="material-relations"><div className="material-relations-head"><div><span className="eyebrow">RIFERIMENTI NEL COMPENDIO</span><h2>Connessioni</h2></div><Link to={RELATIONS}>Apri la mappa <ArrowUpRight size={16}/></Link></div>{suggestions.length ? <div className="material-relation-links">{suggestions.slice(0,10).map(node=><Link key={node.id} to={node.url} className={`relation-chip relation-${node.tone}`}>{node.title}<ArrowUpRight size={14}/></Link>)}</div> : <p className="material-relation-empty">Esplora i materiali della stessa categoria attraverso la mappa.</p>}</div>
