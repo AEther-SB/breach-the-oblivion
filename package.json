@@ -1,7 +1,7 @@
 {
   "name": "compendio-breach-the-oblivion",
   "private": true,
-  "version": "3.10.6",
+  "version": "3.11.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
@@ -11,7 +11,7 @@
     "check:structure": "node scripts/check-structure.mjs",
     "check:relations": "node scripts/check-relations.mjs && node scripts/check-relationmap-hover.mjs",
     "check:ui": "node scripts/check-ui.mjs",
-    "check": "npm run check:content && npm run check:structure && npm run check:relations && npm run check:ui && npm run check:editor && npm run check:import && npm run check:atlas && npm run check:lore && npm run check:layout && npm run check:collaboration && npm run check:notes && npm run check:organizations && npm run check:mobile && npm run check:users && npm run check:moderation && node scripts/check-alkahest-v3106.mjs",
+    "check": "npm run check:content && npm run check:structure && npm run check:relations && npm run check:ui && npm run check:editor && npm run check:import && npm run check:atlas && npm run check:lore && npm run check:layout && npm run check:collaboration && npm run check:notes && npm run check:organizations && npm run check:mobile && npm run check:users && npm run check:moderation && node scripts/check-alkahest-v3106.mjs && npm run check:collections",
     "check:editor": "node scripts/check-editor.mjs",
     "check:import": "node scripts/check-import.mjs",
     "check:atlas": "node scripts/check-atlas.mjs",
@@ -22,7 +22,8 @@
     "check:organizations": "node scripts/check-organizations-v39.mjs",
     "check:mobile": "node scripts/check-mobile-v310.mjs",
     "check:users": "node scripts/check-users-v3102.mjs",
-    "check:moderation": "node scripts/check-moderation-v3104.mjs"
+    "check:moderation": "node scripts/check-moderation-v3104.mjs",
+    "check:collections": "node scripts/check-collections-v311.mjs"
   },
   "dependencies": {
     "lucide-react": "0.468.0",

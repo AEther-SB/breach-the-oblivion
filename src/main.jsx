@@ -12,7 +12,7 @@ import { ContentProvider, useContent, normalize, slug } from './content-store';
 import {isCounterbodySubsection} from './counterbody-sections.js';
 import { sanitizeHtml, validatedImageUrl } from './sanitize';
 import { formatLegacyMarkup } from './legacy-format.js';
-import { EditTrigger, GMControls, GenericBlocks } from './editor';
+import { EditTrigger, GMControls, GMCollectionActions, GenericBlocks } from './editor';
 import { buildRelations, relationsFor, glossaryEntries, linkedHtml, routes } from './relations';
 import {connectionDegrees} from './graph-metrics.js';
 import RelationMap, { HomeConnectionPreview } from './RelationMap';
@@ -36,6 +36,7 @@ import './layout-v35.css';
 import './layout-v36.css';
 import './layout-v39.css';
 import './layout-v310.css';
+import './collection-manager.css';
 
 const ALCHEMY = '/alchimia';
 const MATERIALS = '/alchimia/materiali';
@@ -318,7 +319,7 @@ function AlchemyHome() {
   const extra=pages.filter(p=>p.parentId==='alchimia'&&!['alchimia','alchimia-materiali','alchimia-genesi'].includes(p.id)).map((p,i)=>({title:p.title,subtitle:p.description||'Pagina del compendio',to:entryUrl(p),tone:'planetary',number:String(i+3).padStart(2,'0'),icon:entryIcon(p),cta:'Apri'}));
   const foundation=extra.find(card=>card.to==='/pagina/alchimia-fondamenti');
   const cards=[...(foundation?[foundation]:[]),{...alchemyCards[0],featured:false,subtitle:`${materials.length} materiali · ${materials.reduce((n,m)=>n+(m.abilities||[]).length,0)} capacità`},{...alchemyCards[1],subtitle:`${processes.length} processi`},...extra.filter(card=>card!==foundation)].map((card,i)=>({...card,number:String(i+1).padStart(2,'0')}));
-  return <div className="section-landing page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/>Alchimia</div><PageHeading eyebrow="BREACH THE OBLIVION" title={current?.title||"Alchimia"} text={current?.description?.replaceAll('Processi di Genesi','processi alchemici')||"Materiali e processi alchemici."} trailing={<EditTrigger entry={current}/>}/><div className="section-landing-cards"><SectionCards cards={cards}/></div>{current?.blocks?.length>0&&<div className="gm-collection-body"><GenericBlocks entry={current}/></div>}<PlayerNotes entryId="alchimia"/></div>;
+  return <div className="section-landing page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/>Alchimia</div><PageHeading eyebrow="BREACH THE OBLIVION" title={current?.title||"Alchimia"} text={current?.description?.replaceAll('Processi di Genesi','processi alchemici')||"Materiali e processi alchemici."} trailing={<div className="gm-section-title-actions"><EditTrigger entry={current}/><GMCollectionActions entry={current}/></div>}/><div className="section-landing-cards"><SectionCards cards={cards}/></div>{current?.blocks?.length>0&&<div className="gm-collection-body"><GenericBlocks entry={current}/></div>}<PlayerNotes entryId="alchimia"/></div>;
 }
 function LegacyRedirect({ path }) { const loc = useLocation(); return <Navigate to={`${path}${loc.search}`} replace/>; }
 function LegacyMaterialRedirect() { const {id} = useParams(); const loc=useLocation(); return <Navigate to={`${MATERIALS}/${id}${loc.search}`} replace/>; }
@@ -468,7 +469,7 @@ function LoreEditorialSidebar({entry,pages}){
       <h1 className={entry.title.length>12?'lore-long-title':''}>{entry.title}</h1>
       {entry.description&&<p className="lore-editorial-lead">{entry.description}</p>}
       {entry.imagePlacement==='sidebar'&&validatedImageUrl(entry.imageUrl)&&<figure className="lore-sidebar-portrait"><img src={validatedImageUrl(entry.imageUrl)} alt={entry.imageAlt||`Ritratto di ${entry.title}`} loading="lazy" referrerPolicy="no-referrer"/></figure>}
-      <div className="lore-editorial-actions">{entry.flameHex&&/^#[a-f0-9]{6}$/i.test(entry.flameHex)&&<span className="bto-flame-label"><i style={{backgroundColor:entry.flameHex}}/>{entry.flameColor}</span>}<EditTrigger entry={entry}/><ProposalAction entry={entry}/></div>
+      <div className="lore-editorial-actions">{entry.flameHex&&/^#[a-f0-9]{6}$/i.test(entry.flameHex)&&<span className="bto-flame-label"><i style={{backgroundColor:entry.flameHex}}/>{entry.flameColor}</span>}<EditTrigger entry={entry}/><ProposalAction entry={entry}/></div><GMCollectionActions entry={entry}/>
       <LoreTOC entry={entry}/>
       {parent&&<Link className="lore-editorial-parent" to={entryUrl(parent)}><ArrowLeft size={14}/>{parent.title}</Link>}
     </div>
