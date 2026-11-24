@@ -64,3 +64,7 @@
  .rules .bto-image-left,.rules .bto-image-right{float:none;max-width:100%;margin:10px auto}
  .lore-chapter-body .rules p,.lore-chapter-body .rules li,.gm-preview-article .rules p{text-align:left}
 }
+
+/* Nota cumulativa dei Bonus di Purezza */
+.material-facts small { display:block; margin-top:.35rem; font-size:.76rem; line-height:1.4; font-weight:400; }
+.material-card-bonus small { font-size:.72rem; font-weight:400; }

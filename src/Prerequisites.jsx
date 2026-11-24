@@ -31,6 +31,7 @@ export default function Prerequisites({material}) {
         </div>)}
       </div>
       {structured.note && <p className="requirements-note">{structured.note}</p>}
+      <details className="requirements-help"><summary>Come si leggono le soglie di Purezza?</summary><p><strong>Purezza almeno 3:</strong> il materiale indicato deve avere 3 o più gradi. <strong>Purezza superiore di 1:</strong> deve superare di almeno un grado la Purezza del materiale che stai acquisendo. Per portare Argento a 3, ad esempio, Ferro deve essere almeno a 4.</p><p>Per i percorsi basati su una differenza di Purezza si considera il <strong>grado che vuoi ottenere</strong>, non quello posseduto prima dell’incremento.</p></details>
     </>}
   </section>;
 }

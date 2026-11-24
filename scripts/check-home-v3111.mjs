@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const main = readFileSync(new URL('../src/main.jsx', import.meta.url), 'utf8');
+const home = main.split('function Home({theme}) {')[1]?.split('function AlchemyHome() {')[0];
+assert.ok(home, 'Homepage non trovata');
+assert.match(home, /const \{pages,ready\}=useContent\(\)/, 'La home deve usare i dati del contesto e attendere il caricamento');
+assert.doesNotMatch(home, /hero-stats|Voci di lore|<span>Sezioni<\/span>|<span>Materiali<\/span>/, 'Rimuovere i contatori non rappresentativi dalla home');
+assert.match(home, /<HomeConnectionPreview theme=\{theme\}\/>/, 'Il riquadro dell’atlante deve restare presente');
+assert.match(home, /<SectionCards cards=\{homeCards\}/, 'Le schede delle sezioni devono rimanere presenti');
+assert.match(home, /const shownRoots=ready\?roots:initialSections/, 'Non perdere il caricamento graduale della home');
+console.log('OK — v3.11.1: contatori rimossi, atlante, schede e caricamento della home invariati.');

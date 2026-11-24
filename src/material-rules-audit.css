@@ -1,0 +1,12 @@
+/* v3.10.5 — leggibilità delle opzioni di Cosmologia Umana (Zero).
+   La sorgente delle regole resta identica a Exalt Core. */
+.material-zero .ability-entry:first-child .ability-body{padding-bottom:27px}
+.material-zero .ability-entry:first-child .rules ul{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:0;margin:21px 0 7px;gap:12px}
+.material-zero .ability-entry:first-child .rules ul li{position:relative;margin:0;min-width:0;padding:17px 18px 18px 20px;background:color-mix(in srgb,var(--tone-color) 7%,var(--paper));border:1px solid var(--line);border-left:3px solid var(--tone-color);border-radius:7px;line-height:1.48}
+.material-zero .ability-entry:first-child .rules ul li strong:first-child{display:block;font-family:var(--font-sans,inherit);font-size:12px;letter-spacing:.075em;text-transform:uppercase;color:var(--tone-color);margin-bottom:7px}
+.material-zero .ability-entry:first-child .rules > .exalt-prose > p:first-child{max-width:75ch}
+.requirements-help{margin:13px 0 0;padding:11px 14px;border:1px solid var(--line);border-radius:6px;background:color-mix(in srgb,var(--tone-color) 3%,var(--paper))}
+.requirements-help summary{cursor:pointer;font-size:12px;font-weight:700;color:var(--ink-strong);line-height:1.4}
+.requirements-help p{font-size:13px;line-height:1.5;margin:9px 0 0;color:var(--ink)}
+.requirements-help strong{color:var(--ink-strong)}
+@media(max-width:730px){.material-zero .ability-entry:first-child .rules ul{grid-template-columns:1fr;gap:9px}.material-zero .ability-entry:first-child .rules ul li{padding:14px 15px}}

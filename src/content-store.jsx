@@ -9,7 +9,8 @@ import previousV25 from './data/editorial-baseline-v250-history.json';
 import previousProcessesV27 from './data/editorial-baseline-v270-processes.json';
 import previousAbilitiesV271 from './data/editorial-baseline-v271-abilities.json';
 import previousAbilitiesV280 from './data/editorial-baseline-v280-abilities.json';
-import {ensureImportEntry} from './import-utils.js';
+import {ensureImportEntry, insertionOrder} from './import-utils.js';
+import {assertTreeMove, editableTreeEntries, orderEntries, LOCKED_TREE_IDS} from './collection-tree.js';
 import {expandCounterbodyPages} from './counterbody-sections.js';
 
 export const normalize = (value) => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[’‘]/g, "'");
@@ -172,6 +173,12 @@ export function ContentProvider({children}) {
     requireGM();
     if (!seeded) throw Error('Importa prima il compendio iniziale.');
     if (!entry?.id || !entry?.title || !entry?.kind) throw Error('Titolo, tipo e identificativo obbligatori.');
+    // Nuove sottoraccolte e pagine non devono risultare orfane ai lettori:
+    // prima si pubblica il contenitore, poi i contenuti al suo interno.
+    if(['page','collection','chapter'].includes(entry.kind)&&entry.parentId&&entry.parentId!=='root'&&!published.some(p=>p.id===entry.parentId))
+      throw Error('Pubblica prima la raccolta di appartenenza.');
+    if(LOCKED_TREE_IDS.has(entry.id)&&published.some(p=>p.id===entry.id&&p.parentId!==entry.parentId))
+      throw Error('La sezione strutturale non può cambiare raccolta.');
     const normalized = omitServer(entry);
     const batch = writeBatch(db);
     batch.set(doc(db,'entries',entry.id), {...normalized, published:true,updatedAt:serverTimestamp(),updatedBy:user.uid});
@@ -182,10 +189,49 @@ export function ContentProvider({children}) {
   async function remove(entryId) {
     requireGM();
     if (!seeded) throw Error('Importa prima il compendio iniziale.');
+    if (LOCKED_TREE_IDS.has(entryId)) throw Error('Non puoi eliminare una sezione strutturale del Compendio.');
+    if (entries.some(e=>e.parentId===entryId)) throw Error('La raccolta contiene ancora voci. Spostale prima di eliminarla.');
     const batch = writeBatch(db);
     batch.delete(doc(db,'entries',entryId));
     batch.delete(doc(db,'drafts',entryId));
     await batch.commit();
+  }
+  // Spostamento atomico della struttura editoriale: non riscrive il testo né le note.
+  // Aggiorna sia la versione pubblicata sia l'eventuale bozza, per evitare che
+  // una successiva pubblicazione riporti la pagina nella vecchia raccolta.
+  async function moveEntry(entryId,parentId,beforeId=null) {
+    requireGM();
+    if (!seeded) throw Error('Importa prima il compendio iniziale.');
+    const tree=editableTreeEntries(entries);
+    const source=assertTreeMove(tree,entryId,parentId);
+    if(beforeId===entryId)return;
+    const siblings=orderEntries(tree.filter(e=>e.parentId===parentId&&e.id!==entryId));
+    const index=beforeId==null?siblings.length:siblings.findIndex(e=>e.id===beforeId);
+    if(index<0)throw Error('La voce di riferimento non appartiene alla raccolta scelta.');
+    const order=insertionOrder(siblings,index);
+    const publishedRecord=published.find(e=>e.id===entryId);
+    if(publishedRecord&&parentId!=='root'&&!published.some(e=>e.id===parentId))
+      throw Error('Pubblica prima la raccolta di destinazione: non puoi spostare una pagina pubblica dentro una bozza.');
+    const recordRef=doc(db,'entries',entryId),draftRef=doc(db,'drafts',entryId);
+    await runTransaction(db,async transaction=>{
+      // Tutte le letture precedono le scritture richieste dalle transazioni Firestore.
+      const live=await transaction.get(recordRef);
+      const draft=await transaction.get(draftRef);
+      if(!live.exists()&&!draft.exists())throw Error('La voce non esiste più.');
+      if(live.exists()&&parentId!=='root'){
+        const destination=await transaction.get(doc(db,'entries',parentId));
+        if(!destination.exists()||!['collection','chapter'].includes(destination.data().kind))
+          throw Error('La raccolta di destinazione non è pubblicata.');
+      }
+      const patch={parentId,order,updatedAt:serverTimestamp(),updatedBy:user.uid};
+      if(live.exists()){
+        const snapshot=live.data();
+        transaction.update(recordRef,patch);
+        transaction.set(doc(collection(db,'revisions')),{entryId,content:omitServer({...snapshot,parentId,order}),author:user.uid,at:serverTimestamp(),action:'tree-move'});
+      }
+      if(draft.exists())transaction.update(draftRef,patch);
+    });
+    return {id:source.id,parentId,order};
   }
   async function importEntries(items,{publishNow=false,replaceExisting=false}={}) {
     requireGM();
@@ -290,6 +336,30 @@ export function ContentProvider({children}) {
     batch.set(doc(db,'site','config'), {initialized:true, source:source.source, initializedAt:serverTimestamp(),initializedBy:user.uid});
     await batch.commit();
   }
+  async function syncMaterialRequirements() {
+    requireGM();
+    if (!seeded) throw Error('Importa prima il compendio iniziale.');
+    const live = new Map(published.filter(e=>e.kind==='material').map(e=>[e.materialId,e]));
+    const draftsSet = new Set(drafts.map(e=>e.id));
+    let updated=0,unchanged=0,skipped=0;
+    const items=[];
+    for (const material of source.materials) {
+      const docu=live.get(material.id);
+      if (!docu || draftsSet.has(docu.id)) {skipped++;continue;}
+      if (docu.requirementsText === material.requirementsText) {unchanged++;continue;}
+      items.push({id:docu.id,requirementsText:material.requirementsText});
+    }
+    for (let i=0;i<items.length;i+=120) {
+      const batch=writeBatch(db);
+      for (const item of items.slice(i,i+120)) {
+        batch.update(doc(db,'entries',item.id),{
+          requirementsText:item.requirementsText,updatedAt:serverTimestamp(),updatedBy:user.uid,
+        });
+      }
+      await batch.commit();updated+=Math.min(120,items.length-i);
+    }
+    return {updated,unchanged,skipped};
+  }
   async function syncEditorial() {
     requireGM();
     if (!seeded) throw Error('Importa prima il compendio iniziale.');
@@ -391,7 +461,7 @@ export function ContentProvider({children}) {
     }
     return {updated,skipped};
   }
-  const value = { configured, user, gm, contributor, submissions, registeredUsers, contributorRecords, directoryError, authPending, seeded, loaded, ready:!configured||(loaded&&configLoaded), error, setError, entries, publishedEntries:published, draftEntries:gm?drafts:[], materials, processes, pages, isDraft, resetLegacyLore, login, logout, submitProposal, decideProposal, setContributorEnabled, saveDraft, publish, remove, loadHistory, bootstrap, syncEditorial, importEntries, baseVersion:source.version };
+  const value = { configured, user, gm, contributor, submissions, registeredUsers, contributorRecords, directoryError, authPending, seeded, loaded, ready:!configured||(loaded&&configLoaded), error, setError, entries, publishedEntries:published, draftEntries:gm?drafts:[], materials, processes, pages, isDraft, resetLegacyLore, login, logout, submitProposal, decideProposal, setContributorEnabled, saveDraft, publish, moveEntry, remove, loadHistory, bootstrap, syncEditorial, syncMaterialRequirements, importEntries, baseVersion:source.version };
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 export function useContent() { const value = useContext(context); if(!value) throw Error('ContentProvider mancante'); return value; }

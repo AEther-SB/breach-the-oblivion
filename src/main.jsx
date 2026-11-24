@@ -1,3 +1,4 @@
+import './material-rules-audit.css';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter, Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -11,7 +12,7 @@ import { ContentProvider, useContent, normalize, slug } from './content-store';
 import {isCounterbodySubsection} from './counterbody-sections.js';
 import { sanitizeHtml, validatedImageUrl } from './sanitize';
 import { formatLegacyMarkup } from './legacy-format.js';
-import { EditTrigger, GMControls, GenericBlocks } from './editor';
+import { EditTrigger, GMControls, GMCollectionActions, GenericBlocks } from './editor';
 import { buildRelations, relationsFor, glossaryEntries, linkedHtml, routes } from './relations';
 import {connectionDegrees} from './graph-metrics.js';
 import RelationMap, { HomeConnectionPreview } from './RelationMap';
@@ -35,6 +36,7 @@ import './layout-v35.css';
 import './layout-v36.css';
 import './layout-v39.css';
 import './layout-v310.css';
+import './collection-manager.css';
 
 const ALCHEMY = '/alchimia';
 const MATERIALS = '/alchimia/materiali';
@@ -291,8 +293,7 @@ function SectionCards({cards,className=""}) {
   return <div className={`home-grid ${className}`}>{cards.map(card => {const Icon=card.icon||BookOpen;return <Link className={`home-card ${card.featured ? 'home-card-featured' : ''} tone-${card.tone}`} to={card.to} key={card.to}><div className="home-card-top"><span>{card.number} / SEZIONE</span></div><div className="home-card-icon" aria-hidden="true">{card.flameHex?<span className="lore-swatch" style={{backgroundColor:card.flameHex}}/>:<Icon size={28} strokeWidth={1.4}/>}</div><div className="home-card-content"><h3>{card.title}</h3><p>{card.subtitle}</p></div><span className="home-card-bottom">{card.cta}<ArrowUpRight size={19}/></span></Link>})}</div>;
 }
 function Home({theme}) {
-  const {materials,processes,pages}=useCatalog();
-  const {ready}=useContent();
+  const {pages,ready}=useContent();
   const roots=editorialRoot(pages);
   // I sette riquadri sono presenti fin dal primo render. Non si passa più
   // da una sola voce locale a sette voci Firestore durante il refresh.
@@ -305,7 +306,7 @@ function Home({theme}) {
     <section className="home-hero"><div className="hero-inner page-width">
       <div className="hero-copy"><div className="eyebrow"><span className="eyebrow-line"/> ARCHIVIO DELL’AMBIENTAZIONE</div><h1>Breach<br/><em>the Oblivion.</em></h1><p>Fiamme ed Essenza, Quirk, Controcorpi, storia, organizzazioni e alchimia: un unico compendio dell’ambientazione.</p>
         <div className="hero-cta"><Link className="primary-button" to="/pagina/fiamme-essenza">Esplora il compendio <ArrowUpRight size={19}/></Link><Link className="home-secondary-cta" to="/atlante">Atlante <Globe2 size={17}/></Link></div>
-        <div className="hero-stats"><div><strong>{ready?(roots.length||1):'–'}</strong><span>Sezioni</span></div><div><strong>{ready?materials.length:'–'}</strong><span>Materiali</span></div><div><strong>{ready?pages.filter(p=>p.kind==='page').length:'–'}</strong><span>Voci di lore</span></div></div></div>
+      </div>
       {ready?<HomeConnectionPreview theme={theme}/>:<div className="home-atlas home-atlas-loading" aria-label="Caricamento dell’atlante delle connessioni" aria-busy="true"><div className="home-atlas-heading">ATLANTE DELLE CONNESSIONI</div><div className="home-atlas-stage"/><div className="home-atlas-detail">Caricamento dell’archivio…</div></div>}
     </div><div className="hero-bottom-line page-width"><span>BREACH THE OBLIVION · COMPENDIO</span><span>STORIA · POTERI · ALCHEMIA</span></div></section>
     <section className={`home-explore page-width ${!ready?'home-initializing':''}`} aria-label="Sezioni del compendio" aria-busy={!ready}><SectionCards cards={homeCards} className={homeCards.length%3===1?"home-grid-centre-last":""}/></section>
@@ -317,7 +318,7 @@ function AlchemyHome() {
   const extra=pages.filter(p=>p.parentId==='alchimia'&&!['alchimia','alchimia-materiali','alchimia-genesi'].includes(p.id)).map((p,i)=>({title:p.title,subtitle:p.description||'Pagina del compendio',to:entryUrl(p),tone:'planetary',number:String(i+3).padStart(2,'0'),icon:entryIcon(p),cta:'Apri'}));
   const foundation=extra.find(card=>card.to==='/pagina/alchimia-fondamenti');
   const cards=[...(foundation?[foundation]:[]),{...alchemyCards[0],featured:false,subtitle:`${materials.length} materiali · ${materials.reduce((n,m)=>n+(m.abilities||[]).length,0)} capacità`},{...alchemyCards[1],subtitle:`${processes.length} processi`},...extra.filter(card=>card!==foundation)].map((card,i)=>({...card,number:String(i+1).padStart(2,'0')}));
-  return <div className="section-landing page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/>Alchimia</div><PageHeading eyebrow="BREACH THE OBLIVION" title={current?.title||"Alchimia"} text={current?.description?.replaceAll('Processi di Genesi','processi alchemici')||"Materiali e processi alchemici."} trailing={<EditTrigger entry={current}/>}/><div className="section-landing-cards"><SectionCards cards={cards}/></div>{current?.blocks?.length>0&&<div className="gm-collection-body"><GenericBlocks entry={current}/></div>}<PlayerNotes entryId="alchimia"/></div>;
+  return <div className="section-landing page-width"><div className="breadcrumb"><Link to="/">Home</Link><ChevronRight size={15}/>Alchimia</div><PageHeading eyebrow="BREACH THE OBLIVION" title={current?.title||"Alchimia"} text={current?.description?.replaceAll('Processi di Genesi','processi alchemici')||"Materiali e processi alchemici."} trailing={<div className="gm-section-title-actions"><EditTrigger entry={current}/><GMCollectionActions entry={current}/></div>}/><div className="section-landing-cards"><SectionCards cards={cards}/></div>{current?.blocks?.length>0&&<div className="gm-collection-body"><GenericBlocks entry={current}/></div>}<PlayerNotes entryId="alchimia"/></div>;
 }
 function LegacyRedirect({ path }) { const loc = useLocation(); return <Navigate to={`${path}${loc.search}`} replace/>; }
 function LegacyMaterialRedirect() { const {id} = useParams(); const loc=useLocation(); return <Navigate to={`${MATERIALS}/${id}${loc.search}`} replace/>; }
@@ -328,7 +329,7 @@ function MaterialCard({material}) {
   return <Link to={`${MATERIALS}/${material.materialId}`} className={`material-card tone-${groupStyle[material.group]}`}>
     <div className="material-card-top"><span className="material-card-group"><GroupIcon group={material.group} size={15}/>{material.group}</span><ArrowUpRight size={18}/></div>
     <div className="material-card-title"><span className="material-card-symbol">{material.symbol || '◇'}</span><h3>{material.title}</h3></div>
-    <p className="material-card-bonus">{material.bonus}</p>
+    <p className="material-card-bonus">{material.bonus} <small>per capacità sbloccata</small></p>
     <div className="material-card-bottom"><span>{material.abilities.length} {material.abilities.length === 1 ? 'capacità' : 'capacità'}</span><span className="material-levels">{material.abilities.map(a=><span key={a.level}>{a.level}</span>)}</span></div>
   </Link>;
 }
@@ -397,7 +398,7 @@ function MaterialDetail(){
   const currentSelected=new URLSearchParams(loc.search).get('abilita');
   const related=relationsFor(graph,`material:${mat.materialId}`);
   const suggestions=[...related.outgoing,...related.incoming.filter(n=>!related.outgoing.some(x=>x.id===n.id))];
-  return <div className={`detail-page page-width tone-${groupStyle[mat.group]||'elements'}`}>
+  return <div className={`detail-page page-width tone-${groupStyle[mat.group]||'elements'} material-${mat.materialId}`}>
     <div className="breadcrumb"><Link to={ALCHEMY}>Alchimia</Link><ChevronRight size={15}/><Link to={MATERIALS}>Materiali</Link><ChevronRight size={15}/><Link to={`${MATERIALS}?categoria=${encodeURIComponent(mat.group)}`}>{mat.group}</Link><ChevronRight size={15}/><span>{mat.title}</span></div>
     <div className="detail-layout"><aside className="detail-sidebar"><div className="sidebar-head">INDICE DEI MATERIALI</div><div className="sidebar-groups">{groups.map(g=><div key={g}><div className="sidebar-group-label">{g}</div>{byName.filter(m=>m.group===g).map(m=><Link key={m.id} className={`sidebar-item ${m.materialId===id?'selected':''}`} to={`${MATERIALS}/${m.materialId}`}><span>{m.symbol || '◇'}</span>{m.title}</Link>)}</div>)}</div></aside>
       <article className="detail-main" tabIndex={0} aria-label={`Scheda di ${mat.title}`}><div className="material-overview"><div className={`detail-hero tone-${groupStyle[mat.group]}`}><div className="detail-hero-top"><span><GroupIcon group={mat.group}/>{mat.group}</span><div className="detail-actions"><EditTrigger entry={mat}/><button type="button" className="share-button" onClick={share}>{copied?<Check size={17}/>:<Copy size={17}/>}<span>{copied?'Copiato':'Copia link'}</span></button></div></div><div className="detail-hero-title"><div><span className="detail-kicker">MATERIALE ALCHEMICO</span><h1>{mat.title}</h1></div><div className="detail-symbol" aria-hidden="true">{mat.symbol || '◇'}</div></div><p className="detail-hero-bottom">{mat.abilities.length} capacità <span>·</span> Gradi {mat.abilities.map(a=>a.level).join(', ')}</p></div>
@@ -406,10 +407,10 @@ function MaterialDetail(){
           <LinkedText text={mat.profile?.theme} currentId={`material:${mat.materialId}`} className="material-portrait-theme"/>
           <p className="material-portrait-history">{mat.profile?.history}</p>
         </div>
-        <div className="material-facts"><div><span>BONUS DI PUREZZA</span><strong>{mat.bonus}</strong></div><div><span>CARATTERISTICA</span><strong>{abilityLabel[mat.ability] || '—'}</strong></div></div>
+        <div className="material-facts"><div><span>BONUS DI PUREZZA (PER CAPACITÀ)</span><strong>{mat.bonus}</strong><small>Si cumula per ogni capacità attualmente sbloccata del materiale (fino a ×{mat.abilities.length}).</small></div><div><span>CARATTERISTICA</span><strong>{abilityLabel[mat.ability] || '—'}</strong></div></div>
         <Prerequisites material={mat}/>
         </div>
-        <div className="dc-note"><FlaskConical size={19}/><div><span>CD DEI TIRI SALVEZZA</span><p><strong>6 + Competenza + Purezza effettiva di {mat.title} + modificatore di Intelligenza</strong></p><small>Salvo modificatori specifici delle capacità.</small></div></div>
+        <div className="dc-note"><FlaskConical size={19}/><div><span>CD DEI TIRI SALVEZZA</span><p><strong>6 + Competenza + Purezza effettiva di {mat.title} + modificatore di Intelligenza</strong></p><small>Formula base: i talenti <em>Disciplina Alchemica: Saggezza</em> e <em>Disciplina Alchemica: Carisma</em> sostituiscono INT con SAG o CAR nelle CD. Si applicano anche gli eventuali modificatori specifici della capacità.</small></div></div>
         <div className="abilities-toc"><span>VAI ALLA CAPACITÀ</span><div>{mat.abilities.map(a=><button key={a.name} type="button" onClick={()=>navigate(`${MATERIALS}/${id}?abilita=${encodeURIComponent(a.name)}`)} className={currentSelected===a.name?'toc-current':''}><b>{a.level}</b>{a.name}</button>)}</div></div>
         <AbilityList key={id} features={mat.abilities} currentId={`material:${mat.materialId}`}/>
         <div className="material-relations"><div className="material-relations-head"><div><span className="eyebrow">RIFERIMENTI NEL COMPENDIO</span><h2>Connessioni</h2></div><Link to={RELATIONS}>Apri la mappa <ArrowUpRight size={16}/></Link></div>{suggestions.length ? <div className="material-relation-links">{suggestions.slice(0,10).map(node=><Link key={node.id} to={node.url} className={`relation-chip relation-${node.tone}`}>{node.title}<ArrowUpRight size={14}/></Link>)}</div> : <p className="material-relation-empty">Esplora i materiali della stessa categoria attraverso la mappa.</p>}</div>
@@ -467,7 +468,7 @@ function LoreEditorialSidebar({entry,pages}){
       <h1 className={entry.title.length>12?'lore-long-title':''}>{entry.title}</h1>
       {entry.description&&<p className="lore-editorial-lead">{entry.description}</p>}
       {entry.imagePlacement==='sidebar'&&validatedImageUrl(entry.imageUrl)&&<figure className="lore-sidebar-portrait"><img src={validatedImageUrl(entry.imageUrl)} alt={entry.imageAlt||`Ritratto di ${entry.title}`} loading="lazy" referrerPolicy="no-referrer"/></figure>}
-      <div className="lore-editorial-actions">{entry.flameHex&&/^#[a-f0-9]{6}$/i.test(entry.flameHex)&&<span className="bto-flame-label"><i style={{backgroundColor:entry.flameHex}}/>{entry.flameColor}</span>}<EditTrigger entry={entry}/><ProposalAction entry={entry}/></div>
+      <div className="lore-editorial-actions">{entry.flameHex&&/^#[a-f0-9]{6}$/i.test(entry.flameHex)&&<span className="bto-flame-label"><i style={{backgroundColor:entry.flameHex}}/>{entry.flameColor}</span>}<EditTrigger entry={entry}/><ProposalAction entry={entry}/></div><GMCollectionActions entry={entry}/>
       <LoreTOC entry={entry}/>
       {parent&&<Link className="lore-editorial-parent" to={entryUrl(parent)}><ArrowLeft size={14}/>{parent.title}</Link>}
     </div>

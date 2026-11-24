@@ -107,13 +107,13 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/entries/$(request.resource.data.entryId))
         && request.resource.data.authorId == request.auth.uid
         && request.resource.data.createdAt == request.time;
-      allow update: if noteWriter() && resource.data.authorId == request.auth.uid
+      allow update: if (gm() || (noteWriter() && resource.data.authorId == request.auth.uid))
         && validNoteGroup()
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['title','updatedAt']);
       allow delete: if gm() || (contributor() && resource.data.authorId == request.auth.uid);
     }
     function validNoteFields() {
-      return request.resource.data.keys().hasOnly(['entryId','authorId','authorName','title','body','parentId','groupId','deleted','hidden','createdAt','updatedAt'])
+      return request.resource.data.keys().hasOnly(['entryId','authorId','authorName','title','body','parentId','groupId','deleted','hidden','createdAt','updatedAt','moderatedAt'])
         && request.resource.data.keys().hasAll(['entryId','authorId','authorName','title','body','parentId','groupId','deleted','hidden','createdAt','updatedAt'])
         && request.resource.data.entryId is string
         && request.resource.data.entryId.size() > 0
@@ -151,7 +151,8 @@ service cloud.firestore {
       );
     }
     match /pageNotes/{noteId} {
-      allow get, list: if true;
+      // Le query pubbliche devono includere where(hidden, ==, false).
+      allow get, list: if gm() || resource.data.hidden == false;
       allow create: if noteWriter() && validNoteFields()
         && request.resource.data.authorId == request.auth.uid
         && exists(/databases/$(database)/documents/entries/$(request.resource.data.entryId))
@@ -160,6 +161,7 @@ service cloud.firestore {
         && request.resource.data.body.size() > 0
         && request.resource.data.deleted == false
         && request.resource.data.hidden == false
+        && !request.resource.data.keys().hasAny(['moderatedAt'])
         && request.resource.data.createdAt == request.time
         && validNoteGroupUse() && validNoteParent(noteId);
       // Il partecipante può ritirare/modificare solo i propri testi: autore,
